@@ -1,0 +1,7 @@
+# dsh-continue-button bundle: one row. The row exists so this package owns a
+# loader entry — the client-half scanner (dsh-client-modules) reads
+# `dsh.client` from the package of every composed row, and the browser half is
+# the whole plugin. The host half itself is a no-op.
+- insert:
+    - id: continue-button
+      name: dsh-continue-button

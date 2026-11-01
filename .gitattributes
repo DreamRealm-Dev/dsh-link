@@ -1,0 +1,5 @@
+# R119: the vendored third-party tree is hashed byte for byte (dsh-ops.lock.json folds a sha256 per
+# file), so git must never rewrite its line endings. This machine runs core.autocrlf=true, and without
+# this rule a fresh checkout turned LF into CRLF and the fold came out 031c8248... instead of the
+# committed c2add6ab... - gate #88's first reading would have been red on every clone but this one.
+vendor/dsh-ops/** -text

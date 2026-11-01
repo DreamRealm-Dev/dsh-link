@@ -1,0 +1,31 @@
+{
+  "name": "dsh-browser",
+  "version": "0.1.0",
+  "requires": { "dsh": "^0.2.0" },
+  "private": true,
+  "description": "DSH 持久浏览器能力：以 host 平面插件常驻，向所有会话注册 browser_* 工具，用真实 Chrome 截图与真实鼠标/键盘事件操作网页。零运行时依赖，不读取页面源码/DOM。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "README.md"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "dsh": {
+    "client": {
+      "platform": "web"
+    }
+  }
+}

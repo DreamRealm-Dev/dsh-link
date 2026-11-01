@@ -1,0 +1,15 @@
+{
+ "format": "dsh-link.host-modules/1",
+ "note": "What the host provides to a plugin without the plugin declaring it. Two sources, both read from data: the kernel's own package tree (core/deepseek-harness/packages/** and vendor/*, enumerated by scripts/compose-profile-rows.mjs kernelRoster) and this client baseline, which is the module table the web shell preloads (see packages/client/web/src/platform.ts in the kernel). plugins/build.mjs reads clientBaseline from this file so there is one copy of the list, not a constant beside a capture.",
+ "clientBaseline": [
+  "react",
+  "react/jsx-runtime",
+  "react-dom",
+  "react-dom/client",
+  "@deepseek-ai/cordis",
+  "@deepseek-ai/dsh-client-store",
+  "@deepseek-ai/dsh-client-ui-slots",
+  "@deepseek-ai/dsh-client-ui-primitives",
+  "@deepseek-ai/dsh-client-ui-dockkit"
+ ]
+}

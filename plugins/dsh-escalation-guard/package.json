@@ -1,0 +1,19 @@
+{
+  "name": "dsh-escalation-guard",
+  "version": "0.1.0",
+  "requires": { "dsh": "^0.2.0" },
+  "private": true,
+  "description": "Sandbox 升级护栏（dsh-hotfix 的运行时移植）：模型请求一个不比当前有效模式更宽的 sandbox_permissions 时，不再让整个工具调用失败，而是按当前有效模式直接执行。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib"
+  ],
+  "license": "MIT"
+}

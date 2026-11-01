@@ -1,0 +1,19 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The window renders the official DSH client, served by the shell's own loopback proxy, so it needs no privileged capability at all. Window control stays allowed because the official client treats its host as a desktop app.",
+  "windows": ["main"],
+  "remote": {
+    "urls": ["http://127.0.0.1:31761"]
+  },
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-minimize",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-unmaximize",
+    "core:window:allow-close",
+    "core:window:allow-is-maximized",
+    "core:window:allow-set-theme"
+  ]
+}

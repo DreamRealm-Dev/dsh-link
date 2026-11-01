@@ -1,0 +1,25 @@
+# Three independent market components; no unconditional host executor override.
+# Shell and file are enabled by default. Background is explicitly opt-in.
+- insert:
+    - id: dsh-ops-shell
+      name: dsh-ops/shell
+      config:
+        promptPolicy: true
+        publishBashTool: true
+        shellPolicy: advise
+        allowSystemShellFallback: true
+    - id: dsh-ops-file
+      name: dsh-ops/file
+      config:
+        promptPolicy: true
+        enableShellTools: false
+        required: false
+        toolCallTimeoutMs: 300000
+    - id: dsh-ops-background
+      name: dsh-ops/background
+      disabled: true
+      config:
+        promptPolicy: true
+        enableShellTools: true
+        required: false
+        toolCallTimeoutMs: 300000

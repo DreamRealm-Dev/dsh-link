@@ -1,0 +1,6 @@
+# dsh-theme-settings bundle: one row. The entry id IS the settings namespace
+# the plugin's Config is published under, and the id the client half reads
+# through ctx.configForms.get() — the two must stay equal.
+- insert:
+    - id: theme-settings
+      name: dsh-theme-settings

@@ -1,0 +1,310 @@
+/**
+ * dsh-browser — Client half: the right-sidebar browser panel.
+ *
+ * Bundled by `dsh-client-modules` as a CommonJS module (the same shape
+ * `dsh-lan-bridge/lib/client.js` uses), so `require('react')` is available and
+ * the optional primitives package is pulled in behind a try/catch.
+ *
+ * The panel is deliberately a *viewer plus controls*, not a second driver:
+ * every action goes through the same host RPC the model tools use, so the panel
+ * and the agent see one shared set of instances and either side can open or
+ * recycle the other's.
+ *
+ * The image is captured at the zoom the panel renders it at, so it is always
+ * shown 1:1 inside a native scroll container: the browser viewport stays pinned
+ * while the user zooms and pans with the container's own scrollbars.
+ */
+const CHANNEL = 'dsh-browser/ui'
+const TAB_KIND = 'browser'
+const TAB_ID = 'dsh-browser:panel'
+const POLL_MS = 1300
+const ZOOMS = [0.25, 0.4, 0.5, 0.67, 0.8, 1]
+
+function createPanel(ctx, react) {
+  const h = react.createElement
+  let primitives = null
+  try {
+    primitives = require('@deepseek-ai/dsh-client-ui-primitives')
+  } catch {
+    primitives = null
+  }
+
+  function Glyph(props) {
+    const size = props && props.size
+    const className = props && props.className
+    const Icon = primitives && (primitives.IconGlobe16 || primitives.IconBrowser16 || primitives.IconWindow16)
+    if (Icon) return h(Icon, { size, className })
+    return h('span', { className, style: { fontSize: 14, lineHeight: 1 } }, '🌐')
+  }
+
+  function call(op, args) {
+    const rpc = ctx.connection && ctx.connection.rpc
+    if (!rpc || typeof rpc.call !== 'function') return Promise.reject(new Error('the connection RPC is not composed in this host'))
+    return rpc.call(CHANNEL, op, args || {}, undefined)
+  }
+
+  const S = {
+    root: { display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, gap: 6, padding: '6px 8px', fontSize: 12 },
+    row: { display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
+    chip: (active) => ({
+      display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 7px', borderRadius: 10, cursor: 'pointer',
+      border: '1px solid var(--dsw-alias-border-l2, #3a3a3a)',
+      background: active ? 'var(--dsw-alias-interactive-bg-active, #2d3a4d)' : 'transparent',
+      color: 'var(--dsw-alias-label-primary, #ddd)',
+    }),
+    btn: {
+      padding: '3px 8px', borderRadius: 7, cursor: 'pointer', fontSize: 12,
+      border: '1px solid var(--dsw-alias-border-l2, #3a3a3a)',
+      background: 'transparent', color: 'var(--dsw-alias-label-primary, #ddd)',
+    },
+    input: {
+      flex: '1 1 160px', minWidth: 120, padding: '3px 6px', borderRadius: 7, fontSize: 12,
+      border: '1px solid var(--dsw-alias-border-l2, #3a3a3a)',
+      background: 'var(--dsw-alias-fill-l1, #1b1b1b)', color: 'var(--dsw-alias-label-primary, #ddd)',
+    },
+    viewport: {
+      flex: '1 1 auto', minHeight: 140, overflow: 'auto', borderRadius: 8,
+      border: '1px solid var(--dsw-alias-border-l2, #3a3a3a)', background: '#000',
+      scrollbarGutter: 'stable both-edges',
+    },
+    meta: { color: 'var(--dsw-alias-label-tertiary, #999)', fontSize: 11, lineHeight: 1.5, wordBreak: 'break-all' },
+    err: { color: '#ff8a8a', fontSize: 11, wordBreak: 'break-all' },
+  }
+
+  function BrowserBody() {
+    const [state, setState] = react.useState(null)
+    const [activeId, setActiveId] = react.useState(null)
+    const [frame, setFrame] = react.useState(null)
+    const [zoom, setZoom] = react.useState(0.5)
+    const [auto, setAuto] = react.useState(true)
+    const [error, setError] = react.useState(null)
+    const [pathDraft, setPathDraft] = react.useState(null)
+    const [busy, setBusy] = react.useState(false)
+    const frameSeq = react.useRef(0)
+
+    const refreshState = react.useCallback(async () => {
+      try {
+        const next = await call('state')
+        setState(next)
+        setError(null)
+        setActiveId((current) => {
+          if (current && next.instances.some((i) => i.id === current)) return current
+          return next.instances.length > 0 ? next.instances[0].id : null
+        })
+      } catch (e) {
+        setError(e && e.message ? e.message : String(e))
+      }
+    }, [])
+
+    react.useEffect(() => {
+      void refreshState()
+    }, [refreshState])
+
+    const grabFrame = react.useCallback(async () => {
+      if (!activeId) {
+        setFrame(null)
+        return
+      }
+      try {
+        const next = await call('frame', { id: activeId, scale: zoom })
+        frameSeq.current += 1
+        setFrame(next)
+        setError(null)
+      } catch (e) {
+        setError(e && e.message ? e.message : String(e))
+      }
+    }, [activeId, zoom])
+
+    react.useEffect(() => {
+      void grabFrame()
+    }, [grabFrame])
+
+    react.useEffect(() => {
+      if (!auto || !activeId || typeof setInterval !== 'function') return undefined
+      const timer = setInterval(() => {
+        void grabFrame()
+      }, POLL_MS)
+      return () => clearInterval(timer)
+    }, [auto, activeId, grabFrame])
+
+    async function run(label, fn) {
+      setBusy(true)
+      try {
+        await fn()
+        await refreshState()
+        await grabFrame()
+        setError(null)
+      } catch (e) {
+        setError(`${label}: ${e && e.message ? e.message : String(e)}`)
+      } finally {
+        setBusy(false)
+      }
+    }
+
+    if (!state) {
+      return h('div', { style: S.root }, h('div', { style: S.meta }, error ? `加载失败: ${error}` : '读取浏览器状态…'))
+    }
+
+    const instances = state.instances || []
+    const active = instances.find((i) => i.id === activeId) || null
+    const zoomIndex = Math.max(0, ZOOMS.indexOf(zoom))
+
+    return h(
+      'div',
+      { style: S.root },
+      // instance chips
+      h(
+        'div',
+        { style: S.row },
+        instances.length === 0
+          ? h('span', { style: S.meta }, '没有打开的浏览器')
+          : instances.map((i) =>
+              h(
+                'span',
+                { key: i.id, style: S.chip(i.id === activeId), onClick: () => setActiveId(i.id), title: i.url },
+                h('span', null, i.id),
+                h('span', { style: { opacity: 0.6 } }, i.viewport),
+              ),
+            ),
+      ),
+      // actions
+      h(
+        'div',
+        { style: S.row },
+        h('button', { style: S.btn, disabled: busy, onClick: () => run('打开', () => call('open', {})) }, '＋ 打开'),
+        h('button', { style: S.btn, disabled: busy || !activeId, onClick: () => run('关闭', () => call('close', { id: activeId, kill: true })) }, '✕ 关闭'),
+        h('button', { style: S.btn, disabled: busy || instances.length === 0, onClick: () => run('全部关闭', () => call('close', { all: true, kill: true })) }, '全部关闭'),
+        h('button', { style: S.btn, disabled: busy || !activeId, onClick: () => void grabFrame() }, '刷新画面'),
+        h(
+          'label',
+          { style: { ...S.meta, display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer' } },
+          h('input', { type: 'checkbox', checked: auto, onChange: (e) => setAuto(e.target.checked) }),
+          '自动',
+        ),
+      ),
+      // zoom
+      h(
+        'div',
+        { style: S.row },
+        h('span', { style: S.meta }, '缩放'),
+        h(
+          'button',
+          { style: S.btn, onClick: () => setZoom(ZOOMS[Math.max(0, zoomIndex - 1)]) },
+          '−',
+        ),
+        h('span', { style: { ...S.meta, minWidth: 36, textAlign: 'center' } }, `${Math.round(zoom * 100)}%`),
+        h(
+          'button',
+          { style: S.btn, onClick: () => setZoom(ZOOMS[Math.min(ZOOMS.length - 1, zoomIndex + 1)]) },
+          '＋',
+        ),
+        h('button', { style: S.btn, onClick: () => setZoom(0.5) }, '适应'),
+        h('button', { style: S.btn, onClick: () => setZoom(1) }, '100%'),
+      ),
+      // viewport
+      h(
+        'div',
+        { style: S.viewport },
+        frame
+          ? h('img', {
+              src: frame.dataUrl,
+              alt: 'browser viewport',
+              style: { width: frame.width, height: frame.height, display: 'block', imageRendering: zoom >= 1 ? 'pixelated' : 'auto' },
+            })
+          : h('div', { style: { ...S.meta, padding: 10 } }, activeId ? '抓取画面…' : '打开一个浏览器实例以查看画面'),
+      ),
+      // meta
+      h(
+        'div',
+        { style: S.meta },
+        frame
+          ? `${frame.url}\n视口 ${frame.viewportWidth}×${frame.viewportHeight}（恒定），显示 ${frame.width}×${frame.height}，捕获 #${frame.seq}`
+          : active
+            ? `${active.url}`
+            : '—',
+      ),
+      error ? h('div', { style: S.err }, error) : null,
+      // settings: chrome path
+      h(
+        'div',
+        { style: S.row },
+        h('input', {
+          style: S.input,
+          placeholder: 'Chrome 路径（留空 = 自动探测）',
+          value: pathDraft === null ? (state.config.browserExecutable || '') : pathDraft,
+          onChange: (e) => setPathDraft(e.target.value),
+        }),
+        h(
+          'button',
+          {
+            style: S.btn,
+            disabled: busy,
+            onClick: () =>
+              void run('保存路径', async () => {
+                await call('config', { patch: { browserExecutable: pathDraft === null ? (state.config.browserExecutable || '') : pathDraft } })
+                setPathDraft(null)
+              }),
+          },
+          '保存',
+        ),
+      ),
+      h(
+        'div',
+        { style: S.meta },
+        `生效路径: ${state.resolvedExecutable || '（未找到）'}${state.executableError ? ` — ${state.executableError}` : ''}\n默认视口 ${state.config.viewport.width}×${state.config.viewport.height} · 可见 ${state.config.visible ? '是' : '否（headless）'}\n配置文件: ${state.baseDir}`,
+      ),
+    )
+  }
+
+  function BrowserTitle() {
+    return h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 4 } }, h(Glyph, { size: 14 }), '浏览器')
+  }
+
+  return { BrowserBody, BrowserTitle, Glyph }
+}
+
+const inject = ['slots', 'sidebarRightTabs', 'connection']
+
+function apply(ctx) {
+  const react = require('react')
+  const panel = createPanel(ctx, react)
+
+  ctx.effect(
+    () =>
+      ctx.sidebarRightTabs.register({
+        id: TAB_ID,
+        kind: TAB_KIND,
+        priority: 'builtin',
+        title: () => '浏览器',
+        guide: [
+          {
+            order: 20,
+            title: () => '浏览器',
+            description: () => '打开受控 Chrome 的实时画面：恒定分辨率，可缩放、可拖动滚动条，可多开与回收。',
+            icon: panel.Glyph,
+          },
+        ],
+      }),
+    'dsh-browser: browser tab type',
+  )
+
+  ctx.effect(
+    () =>
+      ctx.slots.inject('sidebar.right.pane.tab', () =>
+        ctx.slots.register({ name: 'sidebar.right.pane.tab', key: TAB_ID }, panel.BrowserBody),
+      ),
+    'dsh-browser: browser tab body',
+  )
+
+  ctx.effect(
+    () =>
+      ctx.slots.inject('sidebar.right.pane.tab.title', () =>
+        ctx.slots.register({ name: 'sidebar.right.pane.tab.title', key: TAB_ID }, panel.BrowserTitle),
+      ),
+    'dsh-browser: browser tab title',
+  )
+}
+
+exports.name = 'dsh-browser'
+exports.inject = inject
+exports.apply = apply

@@ -1,0 +1,25 @@
+{
+  "name": "dsh-link",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "DSH Link — a Tauri desktop shell that supervises DeepSeek Harness 0.2.2-alpha.2 and serves the official DSH client, so frontend plugins keep working.",
+  "scripts": {
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "build:installers": "node scripts/build-installers.mjs",
+    "core:install": "pnpm --dir core/deepseek-harness install --frozen-lockfile",
+    "core:build": "pnpm --dir core/deepseek-harness run build",
+    "core:version": "node scripts/core-version.mjs",
+    "probe": "node scripts/probe-proxy.mjs",
+    "e2e": "node scripts/e2e-session.mjs",
+    "setup": "npm run core:install && npm run core:build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.2.0"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  }
+}

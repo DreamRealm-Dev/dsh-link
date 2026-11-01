@@ -1,0 +1,21 @@
+{
+  "format": "dsh-link.migrations/1",
+  "current": 2,
+  "steps": [
+    {
+      "from": 1,
+      "to": 2,
+      "actions": [
+        {
+          "kind": "add-config",
+          "key": "window.scale",
+          "value": 1
+        },
+        {
+          "kind": "note",
+          "text": "layout 1 -> 2: the window scale key appears"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,909 @@
+diff --git a/packages/experimental/agent-team/src/index.ts b/packages/experimental/agent-team/src/index.ts
+index c0da4c9a24..ee8b939067 100644
+--- a/packages/experimental/agent-team/src/index.ts
++++ b/packages/experimental/agent-team/src/index.ts
+@@ -40,6 +40,7 @@ declare module '@deepseek-ai/cordis' {
+ }
+ 
+ const DEFAULT_MAX_MEMBERS = 16
++const DEFAULT_MAX_DEPTH = 1
+ const DEFAULT_MAX_TASKS = 256
+ const DEFAULT_MAX_MESSAGE_BYTES = 65_536
+ const DEFAULT_DISPOSAL_TIMEOUT_MS = 5_000
+@@ -58,6 +59,9 @@ export class TeamService extends Service {
+ 
+   static Config: z<Config> = z.object({
+     maxMembers: z.number().step(1).min(1).default(DEFAULT_MAX_MEMBERS),
++    maxDepth: z.number().step(1).min(1).default(DEFAULT_MAX_DEPTH),
++    teammatesMaySpawn: z.boolean().default(false),
++    interruptScope: z.union(['none', 'descendants'] as const).default('none'),
+     maxTasks: z.number().step(1).min(1).default(DEFAULT_MAX_TASKS),
+     maxMessageBytes: z.number().step(1).min(1).default(DEFAULT_MAX_MESSAGE_BYTES),
+     disposalTimeoutMs: z.number().step(1).min(1).default(DEFAULT_DISPOSAL_TIMEOUT_MS),
+@@ -76,6 +80,9 @@ export class TeamService extends Service {
+     super(ctx, 'agentTeams')
+     this.config = {
+       maxMembers: positiveLimit('maxMembers', config.maxMembers ?? DEFAULT_MAX_MEMBERS),
++      maxDepth: positiveLimit('maxDepth', config.maxDepth ?? DEFAULT_MAX_DEPTH),
++      teammatesMaySpawn: config.teammatesMaySpawn ?? false,
++      interruptScope: config.interruptScope ?? 'none',
+       maxTasks: positiveLimit('maxTasks', config.maxTasks ?? DEFAULT_MAX_TASKS),
+       maxMessageBytes: positiveLimit('maxMessageBytes', config.maxMessageBytes ?? DEFAULT_MAX_MESSAGE_BYTES),
+       disposalTimeoutMs: positiveLimit(
+@@ -92,7 +99,12 @@ export class TeamService extends Service {
+     const ctx = this.ctx
+     const teamProjectionHandle = await ctx.sessionProjections.register(teamProjectionDefinition)
+     this.journal = new TeamJournal(ctx, teamProjectionHandle, (root) => { this.activity.notify(TeamId(root.id)) })
+-    this.roster = new TeamRoster(ctx, this.journal, this.lifecycle, this.config.maxMembers)
++    this.roster = new TeamRoster(ctx, this.journal, this.lifecycle, {
++      maxMembers: this.config.maxMembers,
++      maxDepth: this.config.maxDepth,
++      teammatesMaySpawn: this.config.teammatesMaySpawn ?? false,
++      interruptScope: this.config.interruptScope ?? 'none',
++    })
+     this.tasks = new TeamTaskBoard(this.journal, this.config.maxTasks)
+     ctx.effect(() => () => this.disposeRuntime(), 'agentTeams.runtimeLifecycle()')
+ 
+@@ -113,6 +125,19 @@ export class TeamService extends Service {
+     return this.roster.membership(agent)
+   }
+ 
++  /**
++   * The deployment policy a loader may read (and, through the agent-team row config, widen):
++   * how deep the roster may nest, whether teammates may create teammates, and who may interrupt.
++   * @returns the effective limits, with the upstream single-level defaults filled in.
++   */
++  policy(): { maxDepth: number; teammatesMaySpawn: boolean; interruptScope: 'none' | 'descendants' } {
++    return {
++      maxDepth: this.config.maxDepth,
++      teammatesMaySpawn: this.config.teammatesMaySpawn ?? false,
++      interruptScope: this.config.interruptScope ?? 'none',
++    }
++  }
++
+   /**
+    * List the runtime-enriched roster visible to one Team member.
+    * @param agent - exact live Team member.
+diff --git a/packages/experimental/agent-team/src/projection.ts b/packages/experimental/agent-team/src/projection.ts
+index dc02db2298..941ab4fff4 100644
+--- a/packages/experimental/agent-team/src/projection.ts
++++ b/packages/experimental/agent-team/src/projection.ts
+@@ -72,6 +72,8 @@ const teamMemberSnapshotSchema = z.object({
+   context: z.enum(['fresh', 'fork']),
+   phase: z.enum(['provisioning', 'active', 'failed']),
+   error: z.string().optional(),
++  spawnedBy: z.string().optional(),
++  depth: z.number().int().positive().optional(),
+ }).strict() as z.ZodType<TeamMemberSnapshot>
+ 
+ const teamTaskSnapshotSchema = z.object({
+@@ -309,6 +311,8 @@ const teamMemberProjectionSchema = z.object({
+   role: z.enum(['lead', 'teammate']),
+   phase: z.enum(['provisioning', 'active', 'failed']),
+   error: z.string().optional(),
++  spawnedBy: z.string().optional(),
++  depth: z.number().int().positive().optional(),
+ }).strict() as z.ZodType<TeamMemberProjection>
+ 
+ const teamTaskViewSchema = z.object({
+@@ -343,6 +347,8 @@ function buildTeamProjection(state: TeamProjectionState): TeamProjection {
+       role: 'teammate',
+       phase: member.phase,
+       ...member.error === undefined ? {} : { error: member.error },
++      ...member.spawnedBy === undefined ? {} : { spawnedBy: member.spawnedBy },
++      ...member.depth === undefined ? {} : { depth: member.depth },
+     })
+   }
+   return {
+diff --git a/packages/experimental/agent-team/src/roster.ts b/packages/experimental/agent-team/src/roster.ts
+index 7b1047a0a2..60939ceffc 100644
+--- a/packages/experimental/agent-team/src/roster.ts
++++ b/packages/experimental/agent-team/src/roster.ts
+@@ -30,8 +30,25 @@ export interface TeamMembership {
+   readonly id: TeamId
+   readonly role: 'lead' | 'teammate'
+   readonly name: string
++  /** Roster depth of this member: Lead = 0, a direct child = 1, a teammate's child = 2, … */
++  readonly depth?: number
++  /** Model-facing name of the member that created this one ("lead" for a direct child of the root). */
++  readonly spawnedBy?: string
+ }
+ 
++/**
++ * Deployment policy handed to the roster: size, depth, spawn admission, and interrupt admission.
++ * Defaults (maxDepth 1, teammatesMaySpawn false, interruptScope none) are exactly the upstream
++ * single-level Team; a loader may widen them through the agent-team row config.
++ */
++export interface TeamRosterOptions {
++  readonly maxMembers: number
++  readonly maxDepth: number
++  readonly teammatesMaySpawn: boolean
++  readonly interruptScope: 'none' | 'descendants'
++}
++
++
+ /**
+  * Resolve one active Team member by model-facing name, including the Lead pseudo-row.
+  * @param root - exact live Team Lead.
+@@ -59,15 +76,20 @@ export class TeamRoster {
+    * @param ctx - Team service context with Agent, Session, persistence, and subagent services.
+    * @param journal - authoritative Lead-log transaction owner.
+    * @param lifecycle - shared Team runtime admission cutoff.
+-   * @param maxMembers - maximum immutable roster entries per Team.
++   * @param options - deployment policy: size, depth, spawn admission, and interrupt admission.
+    */
+   constructor(
+     private readonly ctx: Context,
+     private readonly journal: TeamJournal,
+     private readonly lifecycle: TeamRuntimeLifecycle,
+-    private readonly maxMembers: number,
++    private readonly options: TeamRosterOptions,
+   ) {}
+ 
++  /** Whether this deployment admits nesting at all; false keeps every upstream shape byte-identical. */
++  private get multiLevel(): boolean {
++    return this.options.teammatesMaySpawn && this.options.maxDepth > 1
++  }
++
+   /**
+    * Resolve one exact live Agent's Team role.
+    * @param agent - exact live Agent used as the authority credential.
+@@ -89,35 +111,79 @@ export class TeamRoster {
+   tryMembership(agent: Agent): TeamMembership | undefined {
+     if (this.ctx.agents.get(agent.id) !== agent) return undefined
+     try {
+-      const parentId = agent.session.header.parentSession
+-      if (parentId !== undefined) {
+-        const root = this.ctx.agents.get(parentId)
+-        if (root !== undefined) {
+-          const member = this.journal.state(root).members.find(candidate => candidate.id === agent.id)
+-          if (member?.phase === 'active' || member?.phase === 'provisioning') {
+-            return { root, id: TeamId(root.id), role: 'teammate', name: member.name }
++      // R484 (multi-level): a teammate's own child is a roster member too, so the walk goes up the
++      // whole live ancestry instead of looking exactly one level up. The roster journal lives on
++      // the TOP session, so the nearest ancestor whose state names this agent is the Team root.
++      for (const root of this.liveAncestors(agent)) {
++        const member = this.journal.state(root).members.find(candidate => candidate.id === agent.id)
++        if (member?.phase === 'active' || member?.phase === 'provisioning') {
++          return {
++            root,
++            id: TeamId(root.id),
++            role: 'teammate',
++            name: member.name,
++            ...member.depth === undefined ? {} : { depth: member.depth },
++            ...member.spawnedBy === undefined ? {} : { spawnedBy: member.spawnedBy },
+           }
+-          // A direct child outside the durable roster is not a teammate. Ordinary
+-          // host forks are independent roots; subagent descriptors distinguish
+-          // provider-owned workers that must not receive a nested Team identity.
+-          if (this.subagentDescriptor(agent)) return undefined
+-          return { root: agent, id: TeamId(agent.id), role: 'lead', name: 'lead' }
+         }
+       }
+-      // A continuation can briefly outlive its parent during child-first teardown.
+-      // Do not reinterpret that durable child as a new implicit root Team. A host-
+-      // resumed ordinary fork has no descriptor in its own suffix and remains a
+-      // valid new root whose inherited Team records stay outside its projected Team state.
++      const parentId = agent.session.header.parentSession
++      if (parentId !== undefined && this.ctx.agents.get(parentId) !== undefined) {
++        // A direct child outside the durable roster is not a teammate. Ordinary host forks are
++        // independent roots; subagent descriptors distinguish provider-owned workers that must not
++        // receive a nested Team identity.
++        if (this.subagentDescriptor(agent)) return undefined
++        return { root: agent, id: TeamId(agent.id), role: 'lead', name: 'lead', ...this.multiLevel ? { depth: 0 } : {} }
++      }
++      // A continuation can briefly outlive its parent during child-first teardown. Do not
++      // reinterpret that durable child as a new implicit root Team. A host-resumed ordinary fork
++      // has no descriptor in its own suffix and remains a valid new root whose inherited Team
++      // records stay outside its projected Team state.
+       if (this.subagentDescriptor(agent)) return undefined
+-      return { root: agent, id: TeamId(agent.id), role: 'lead', name: 'lead' }
++      return { root: agent, id: TeamId(agent.id), role: 'lead', name: 'lead', ...this.multiLevel ? { depth: 0 } : {} }
+     } catch {
+-      // This method is used by lifecycle observers and teardown discovery. A
+-      // malformed durable stream is surfaced by authoritative Team operations;
+-      // the non-throwing probe must not veto unrelated Agent lifecycle edges.
++      // This method is used by lifecycle observers and teardown discovery. A malformed durable
++      // stream is surfaced by authoritative Team operations; the non-throwing probe must not veto
++      // unrelated Agent lifecycle edges.
+       return undefined
+     }
+   }
+ 
++  /** Exact live ancestors of one Agent, nearest first; a cycle is cut at 64 hops. */
++  private liveAncestors(agent: Agent): Agent[] {
++    const ancestors: Agent[] = []
++    const seen = new Set<string>([String(agent.id)])
++    let cursor: Agent | undefined = agent
++    while (cursor !== undefined && ancestors.length < 64) {
++      const parentId = cursor.session.header.parentSession
++      if (parentId === undefined || seen.has(String(parentId))) break
++      seen.add(String(parentId))
++      const parent = this.ctx.agents.get(parentId)
++      if (parent === undefined) break
++      ancestors.push(parent)
++      cursor = parent
++    }
++    return ancestors
++  }
++
++  /** The durable roster record of one exact live member (undefined for the Lead). */
++  private rosterEntryOf(membership: TeamMembership): TeamMemberSnapshot | undefined {
++    if (membership.role === 'lead') return undefined
++    return this.journal.state(membership.root).members.find(candidate => candidate.name === membership.name)
++  }
++
++  /** Whether one durable member sits below `ancestorName` in the spawn chain. */
++  private isDescendantOf(state: TeamState, member: TeamMemberSnapshot, ancestorName: string): boolean {
++    let cursor: string | undefined = member.spawnedBy ?? 'lead'
++    const seen = new Set<string>()
++    while (cursor !== undefined && cursor !== 'lead' && !seen.has(cursor)) {
++      if (cursor === ancestorName) return true
++      seen.add(cursor)
++      cursor = state.members.find(candidate => candidate.name === cursor)?.spawnedBy ?? 'lead'
++    }
++    return false
++  }
++
+   /**
+    * List the runtime-enriched roster visible to one Team member.
+    * @param membership - exact caller membership resolved by this roster.
+@@ -133,6 +199,7 @@ export class TeamRoster {
+       status: availability(root),
+       ...root.options.model === undefined ? {} : { model: root.options.model },
+       diagnostics: [],
++      ...this.multiLevel ? { depth: 0 } : {},
+     }]
+     for (const member of state.members) {
+       const live = this.ctx.agents.get(member.id)
+@@ -151,6 +218,8 @@ export class TeamRoster {
+         context: member.context,
+         ...model === undefined ? {} : { model },
+         diagnostics: member.error === undefined ? [] : [member.error],
++        ...member.depth === undefined ? {} : { depth: member.depth },
++        ...member.spawnedBy === undefined ? {} : { spawnedBy: member.spawnedBy },
+       })
+     }
+     return result
+@@ -186,10 +255,25 @@ export class TeamRoster {
+    */
+   interrupt(caller: Agent, targetName: string): { previousStatus: 'running' | 'inactive' } {
+     const membership = this.membership(caller)
+-    if (membership.role !== 'lead') throw new TeamError('only the Team Lead can interrupt teammates', 'TEAM_LEAD_REQUIRED')
+     const state = this.journal.state(membership.root)
++    const wanted = targetName.trim()
++    if (membership.role !== 'lead') {
++      if (this.options.interruptScope !== 'descendants') {
++        throw new TeamError('only the Team Lead can interrupt teammates', 'TEAM_LEAD_REQUIRED')
++      }
++      const targetMember = state.members.find(candidate => candidate.name === wanted)
++      if (targetMember === undefined) {
++        throw new TeamError(`active teammate "${wanted}" not found`, 'TEAM_MEMBER_NOT_FOUND')
++      }
++      if (!this.isDescendantOf(state, targetMember, membership.name)) {
++        throw new TeamError(
++          `"${membership.name}" can only interrupt its own descendants, not "${wanted}"`,
++          'TEAM_INTERRUPT_FORBIDDEN',
++        )
++      }
++    }
+     const target = resolveActiveMember(membership.root, state, targetName)
+-    if (target.id === membership.root.id) throw new TeamError('the Team Lead cannot interrupt itself', 'TEAM_INVALID_TARGET')
++    if (target.id === caller.id) throw new TeamError('a Team member cannot interrupt itself', 'TEAM_INVALID_TARGET')
+     const live = this.ctx.agents.get(target.id)
+     if (live === undefined) return { previousStatus: 'inactive' }
+     const previousStatus = availability(live)
+@@ -225,14 +309,36 @@ export class TeamRoster {
+     await this.lifecycle.withTimeout(this.ctx.subagents.drainChildren(root, childIds))
+   }
+ 
++  /**
++   * Release one just-created child of the exact parent that created it (failure cleanup).
++   * @param parent - exact live creator Agent (the root for a Lead spawn, a teammate otherwise).
++   * @param childId - the durable child id created by that parent.
++   */
++  async stopChild(parent: Agent, childId: SessionId): Promise<void> {
++    await this.lifecycle.withTimeout(this.ctx.subagents.drainChildren(parent, [childId]))
++  }
++
+   /** Perform one creation admitted before the Team runtime disposal cutoff. */
+   private async spawnAdmitted(
+     caller: Agent,
+     request: SpawnTeammateRequest,
+   ): Promise<SpawnTeammateResult> {
+     const membership = this.membership(caller)
++    // R484 (multi-level): the Lead always admits; a teammate admits only when the deployment policy
++    // says so and only one level below the configured depth limit. Absent metadata on an old log
++    // means "direct child of the root" (depth 1, created by the Lead).
++    const callerEntry = membership.role === 'lead' ? undefined : this.rosterEntryOf(membership)
++    const callerDepth = membership.role === 'lead' ? 0 : callerEntry?.depth ?? 1
+     if (membership.role !== 'lead') {
+-      throw new TeamError('only the Team Lead can create teammates', 'TEAM_LEAD_REQUIRED')
++      if (!this.options.teammatesMaySpawn) {
++        throw new TeamError('only the Team Lead can create teammates', 'TEAM_LEAD_REQUIRED')
++      }
++      if (callerDepth + 1 > this.options.maxDepth) {
++        throw new TeamError(
++          `Team depth limit ${this.options.maxDepth} reached: "${membership.name}" is at depth ${callerDepth}`,
++          'TEAM_DEPTH_LIMIT',
++        )
++      }
+     }
+     const signal = AbortSignal.any([request.signal, this.lifecycle.signal])
+     signal.throwIfAborted()
+@@ -247,6 +353,9 @@ export class TeamRoster {
+       provider: requiredText(request.provider, 'provider', 200),
+       context: request.context,
+       phase: 'provisioning',
++      ...this.multiLevel
++        ? { spawnedBy: membership.role === 'lead' ? 'lead' : membership.name, depth: callerDepth + 1 }
++        : {},
+     }
+ 
+     await this.journal.transact(root.id, async () => {
+@@ -254,13 +363,15 @@ export class TeamRoster {
+       if (state.members.some(member => member.name === name)) {
+         throw new TeamError(`teammate name "${name}" was already used in this Team`, 'TEAM_MEMBER_NAME_TAKEN')
+       }
+-      if (state.members.length >= this.maxMembers) {
+-        throw new TeamError(`Team member limit ${this.maxMembers} reached`, 'TEAM_MEMBER_LIMIT')
++      if (state.members.length >= this.options.maxMembers) {
++        throw new TeamError(`Team member limit ${this.options.maxMembers} reached`, 'TEAM_MEMBER_LIMIT')
+       }
+       await this.journal.appendAndFlush(root, 'team/member', { version: 2, teamId: TeamId(root.id), member })
+     })
+ 
+     try {
++      // The child is a real continuable child of the CALLER, not of the root: that is what makes
++      // ancestry (and therefore interrupt/teardown) agree with the roster for a nested team.
+       const started = await this.ctx.subagents.startActivation({
+         delivery: 'parent',
+         childId,
+@@ -268,7 +379,7 @@ export class TeamRoster {
+         label: description,
+         request: {
+           prompt: request.prompt,
+-          parent: root,
++          parent: caller,
+         },
+         signal,
+       })
+@@ -281,7 +392,7 @@ export class TeamRoster {
+       }
+       try {
+         const phase = await this.settleProvisioning(root, failed)
+-        await this.stopTeammates(root, [childId])
++        await this.stopChild(caller, childId)
+         if (phase === 'active') {
+           throw new TeamError(
+             `teammate "${name}" became active while its creator reported failure`,
+@@ -309,7 +420,7 @@ export class TeamRoster {
+         'TEAM_PROVISIONING_CONFLICT',
+       )
+       try {
+-        await this.stopTeammates(root, [childId])
++        await this.stopChild(caller, childId)
+       } catch (cleanupError: unknown) {
+         /* v8 ignore next -- requires the independently tested HMR settlement conflict and cleanup failure together. */
+         throw new AggregateError([conflict, cleanupError], 'provisioning conflict cleanup failed')
+@@ -429,6 +540,8 @@ export class TeamRoster {
+       context: member.context,
+       ...live?.options.model === undefined ? {} : { model: live.options.model },
+       diagnostics: [],
++      ...member.depth === undefined ? {} : { depth: member.depth },
++      ...member.spawnedBy === undefined ? {} : { spawnedBy: member.spawnedBy },
+     }
+   }
+ 
+diff --git a/packages/experimental/agent-team/src/types.ts b/packages/experimental/agent-team/src/types.ts
+index 465f6bbf12..ba7db3ca54 100644
+--- a/packages/experimental/agent-team/src/types.ts
++++ b/packages/experimental/agent-team/src/types.ts
+@@ -53,6 +53,14 @@ export interface TeamMemberSnapshot {
+   readonly context: 'fresh' | 'fork'
+   readonly phase: TeamMemberPhase
+   readonly error?: string
++  /**
++   * Model-facing name of the member that created this one ("lead" for a direct child of the root).
++   * Optional so a log written by a kernel without multi-level teams still folds: the row is then a
++   * direct child of the root, which is what absence has always meant.
++   */
++  readonly spawnedBy?: string
++  /** One for a direct child of the root, two for a teammate's child, and so on. Absent means one. */
++  readonly depth?: number
+ }
+ 
+ /** Current runtime-enriched roster row. */
+@@ -66,6 +74,10 @@ export interface TeamMemberView {
+   readonly context?: 'fresh' | 'fork'
+   readonly model?: string
+   readonly diagnostics: string[]
++  /** Creator's model-facing name; absent only on the Lead row and on pre-multi-level rows. */
++  readonly spawnedBy?: string
++  /** Zero for the Lead row, one for a direct child, two for a teammate's child, and so on. */
++  readonly depth?: number
+ }
+ 
+ /** Durable task lifecycle. */
+@@ -105,6 +117,10 @@ export interface TeamMemberProjection {
+   /** Durable lifecycle; the Lead row is always `active`. Turn activity comes from Session status. */
+   readonly phase: TeamMemberPhase
+   readonly error?: string
++  /** Creator's model-facing name; absent on the Lead row and on pre-multi-level logs. */
++  readonly spawnedBy?: string
++  /** Zero for the Lead row, one for a direct child, two for a teammate's child, and so on. */
++  readonly depth?: number
+ }
+ 
+ /**
+@@ -153,6 +169,22 @@ declare module '@deepseek-ai/dsh-llm' {
+ export interface Config {
+   /** Maximum immutable teammate names retained by one Team. */
+   readonly maxMembers?: number
++  /**
++   * Maximum roster depth this Team admits. One means "only the Lead creates teammates" (the
++   * upstream default); three admits Lead -> teammate -> teammate's teammate. Checked before every
++   * spawn; a caller one level below the limit is refused with `TEAM_DEPTH_LIMIT`.
++   */
++  readonly maxDepth?: number
++  /**
++   * Whether a teammate may create its own teammates. False is the upstream default (Lead-only
++   * creation); true lets any member at a depth below `maxDepth` create one child of its own.
++   */
++  readonly teammatesMaySpawn?: boolean
++  /**
++   * Who may interrupt a teammate's current turn. `none` is the upstream default (Lead only);
++   * `descendants` also admits any ancestor of the target, which is what a nested team needs.
++   */
++  readonly interruptScope?: 'none' | 'descendants'
+   /** Maximum non-deleted tasks retained by one Team. */
+   readonly maxTasks?: number
+   /** Maximum UTF-8 bytes in one complete sender-framed delivery. */
+diff --git a/packages/experimental/agent-team/tests/multilevel.spec.ts b/packages/experimental/agent-team/tests/multilevel.spec.ts
+new file mode 100644
+index 0000000000..bd5d181624
+--- /dev/null
++++ b/packages/experimental/agent-team/tests/multilevel.spec.ts
+@@ -0,0 +1,319 @@
++/**
++ * Multi-level Agent Teams regression coverage (R484/R490).
++ *
++ * The default suite only reaches the Lead's direct children. These cases exercise the
++ * nesting paths that were measured LIVE and had no automated coverage: roster
++ * depth/spawnedBy metadata, nested spawn parent identity, depth admission, the
++ * interrupt-scope matrix, and the model-facing tool-output contract that turned a
++ * successful multi-level spawn into INVALID_TOOL_OUTPUT. The composition mirrors
++ * `team.spec.ts`: real Cordis plugins with the mock LLM adapter.
++ */
++
++import { afterEach, describe, expect, it, vi } from 'vitest'
++import { mkdtempSync, rmSync } from 'node:fs'
++import { tmpdir } from 'node:os'
++import { join } from 'node:path'
++import { Context } from '@deepseek-ai/cordis'
++import type { Agent } from '@deepseek-ai/dsh-agent'
++import AgentLoop from '@deepseek-ai/dsh-agent-loop'
++import { mountAgentLoopTestDependencies } from '@deepseek-ai/dsh-agent-loop-testkit'
++import { ToolCallId } from '@deepseek-ai/dsh-llm'
++import { SessionId } from '@deepseek-ai/dsh-session'
++import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
++import SubagentService from '@deepseek-ai/dsh-subagent'
++import * as SubagentFork from '@deepseek-ai/dsh-subagent-fork-in-process'
++import * as SubagentSpawn from '@deepseek-ai/dsh-subagent-spawn-in-process'
++import { MockAdapter } from '../../../core/agent-loop/tests/mock-adapter.ts'
++import { mountWorkingDirectoryFixture } from '../../../subagent/subagent/tests/working-directory-fixture.ts'
++import * as toolTeam from '../../tool-agent-team/src/index.ts'
++import TeamService from '../src/index.ts'
++import type { Config, TeamMemberSnapshot, TeamMemberView } from '../src/index.ts'
++import { teamProjectionDefinition } from '../src/projection.ts'
++import { TestSessionQuery } from './test-session-query.ts'
++
++const SIGNAL = new AbortController().signal
++const roots: string[] = []
++const contexts: Context[] = []
++
++/** Deployment that admits Lead -> teammate -> teammate's teammate and ancestor interruption. */
++const NESTED: Config = { maxDepth: 3, teammatesMaySpawn: true, interruptScope: 'descendants' }
++
++afterEach(async () => {
++  vi.restoreAllMocks()
++  for (const ctx of contexts.splice(0).reverse()) await ctx.fiber.dispose()
++  for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true })
++})
++
++async function setup(
++  script: ConstructorParameters<typeof MockAdapter>[0],
++  config: Config = {},
++  options: { readonly tools?: boolean } = {},
++) {
++  const ctx = new Context()
++  contexts.push(ctx)
++  await mountAgentLoopTestDependencies(ctx)
++  await mountWorkingDirectoryFixture(ctx)
++  const storageRoot = mkdtempSync(join(tmpdir(), 'dsh-team-multilevel-'))
++  roots.push(storageRoot)
++  await ctx.plugin(JsonlSessionPersistence, { root: storageRoot })
++  await ctx.plugin(TestSessionQuery)
++  await ctx.plugin(AgentLoop, { agents: [] })
++  await ctx.plugin(SubagentService)
++  await ctx.plugin(SubagentSpawn, { providerName: 'spawn' })
++  await ctx.plugin(SubagentFork, { providerName: 'fork' })
++  await ctx.plugin(TeamService, config)
++  if (options.tools === true) await ctx.plugin(toolTeam)
++  const adapter = new MockAdapter(script)
++  ctx.llm.registerAdapter(['mock'], adapter)
++  const lead = await ctx.agentLoop.create(SessionId('lead'), { provider: 'mock', model: 'mock' })
++  return { ctx, lead, adapter }
++}
++
++function content(text: string) {
++  return [{ type: 'text' as const, text }]
++}
++
++/** Request one teammate creation as the exact live caller. */
++function spawn(ctx: Context, caller: Agent, name: string) {
++  return ctx.agentTeams.spawnTeammate(caller, {
++    name,
++    description: `${name} responsibility`,
++    prompt: content(`${name} initial`),
++    context: 'fresh',
++    provider: 'spawn',
++    signal: SIGNAL,
++  })
++}
++
++/** Fold the Lead's durable Session log through the shipped Team projection. */
++function durableMembers(agent: Agent): readonly TeamMemberSnapshot[] {
++  let projected = teamProjectionDefinition.init(agent.session.header)
++  for (const event of agent.session.snapshotEvents()) projected = teamProjectionDefinition.apply(projected, event)
++  if (projected.failure !== undefined) throw new Error(projected.failure)
++  return projected.members
++}
++
++/** Resolve one runtime roster row by name, failing loudly when absent. */
++function rosterMember(ctx: Context, caller: Agent, name: string): TeamMemberView {
++  const row = ctx.agentTeams.listMembers(caller).find(candidate => candidate.name === name)
++  if (row === undefined) throw new Error(`Team roster has no member "${name}"`)
++  return row
++}
++
++/** Observe each subagent activation request while keeping the real provider behavior. */
++function captureStartActivations(ctx: Context): Array<{ readonly parent: Agent }> {
++  const started: Array<{ readonly parent: Agent }> = []
++  const start = ctx.subagents.startActivation.bind(ctx.subagents)
++  vi.spyOn(ctx.subagents, 'startActivation').mockImplementation(async (spec) => {
++    started.push({ parent: spec.request.parent })
++    return start(spec)
++  })
++  return started
++}
++
++async function waitRunning(ctx: Context, id: SessionId): Promise<Agent> {
++  return vi.waitFor(() => {
++    const agent = ctx.agents.get(id)
++    expect(agent?.status).toBe('running')
++    return agent!
++  }, { timeout: 5_000 })
++}
++
++let callNumber = 0
++
++/** Execute one scoped Team tool as an exact live member, through the batch executor. */
++async function execute(ctx: Context, agent: Agent, name: string, args: unknown) {
++  const batch = await ctx.tools.execute({
++    calls: [{ type: 'tool-call', id: ToolCallId(`multilevel-call-${++callNumber}`), name, arguments: JSON.stringify(args) }],
++    signal: SIGNAL,
++    agent,
++  })
++  const outcome = batch.results[0]
++  if (outcome === undefined) throw new Error('tool batch omitted the result')
++  return outcome.result
++}
++
++function text(result: Awaited<ReturnType<typeof execute>>): string {
++  return result.content.flatMap(block => block.type === 'text' ? [block.text] : []).join('')
++}
++
++describe('multi-level Agent Teams', () => {
++  it('records a Lead-created teammate as depth 1 and spawnedBy "lead" once nesting is admitted', async () => {
++    const { ctx, lead } = await setup(['hang'], NESTED)
++    const starts = captureStartActivations(ctx)
++
++    const started = await spawn(ctx, lead, 'l2-worker')
++    await waitRunning(ctx, started.member.id)
++
++    expect(starts).toHaveLength(1)
++    expect(starts[0]?.parent).toBe(lead)
++    expect(started.member).toMatchObject({
++      name: 'l2-worker',
++      role: 'teammate',
++      depth: 1,
++      spawnedBy: 'lead',
++    })
++    expect(durableMembers(lead)[0]).toMatchObject({
++      name: 'l2-worker',
++      phase: 'active',
++      depth: 1,
++      spawnedBy: 'lead',
++    })
++    const rows = ctx.agentTeams.listMembers(lead)
++    expect(rows.map(row => [row.name, row.role, row.depth, row.spawnedBy])).toEqual([
++      ['lead', 'lead', 0, undefined],
++      ['l2-worker', 'teammate', 1, 'lead'],
++    ])
++    expect(rows[0]).not.toHaveProperty('spawnedBy')
++    const membership = ctx.agentTeams.membership(ctx.agents.get(started.member.id)!)
++    expect(membership.root).toBe(lead)
++    expect(membership).toMatchObject({ name: 'l2-worker', role: 'teammate', depth: 1, spawnedBy: 'lead' })
++  })
++
++  it('spawns a nested teammate under its creator and lets that ancestor interrupt it', async () => {
++    const { ctx, lead } = await setup(['hang', 'hang'], NESTED)
++    const starts = captureStartActivations(ctx)
++
++    const outer = await spawn(ctx, lead, 'builder')
++    const builder = await waitRunning(ctx, outer.member.id)
++    const inner = await spawn(ctx, builder, 'probe')
++    const probe = await waitRunning(ctx, inner.member.id)
++
++    expect(starts).toHaveLength(2)
++    expect(starts[0]?.parent).toBe(lead)
++    expect(starts[1]?.parent).toBe(builder)
++    expect(inner.member).toMatchObject({ name: 'probe', role: 'teammate', depth: 2, spawnedBy: 'builder' })
++    expect(durableMembers(lead).find(member => member.name === 'probe')).toMatchObject({
++      phase: 'active',
++      depth: 2,
++      spawnedBy: 'builder',
++    })
++    const membership = ctx.agentTeams.membership(probe)
++    expect(membership.root).toBe(lead)
++    expect(membership).toMatchObject({ name: 'probe', role: 'teammate', depth: 2, spawnedBy: 'builder' })
++    expect(ctx.agentTeams.listMembers(builder).map(row => [row.name, row.depth, row.spawnedBy])).toEqual([
++      ['lead', 0, undefined],
++      ['builder', 1, 'lead'],
++      ['probe', 2, 'builder'],
++    ])
++
++    expect(ctx.agentTeams.interrupt(builder, 'probe')).toEqual({ previousStatus: 'running' })
++    await probe.whenIdle()
++    expect(ctx.agentTeams.interrupt(lead, 'probe')).toEqual({ previousStatus: 'inactive' })
++  })
++
++  it('admits a depth-2 child at maxDepth 2 and refuses the next generation with TEAM_DEPTH_LIMIT', async () => {
++    const { ctx, lead } = await setup(['hang', 'hang'], { maxDepth: 2, teammatesMaySpawn: true })
++    const outer = await spawn(ctx, lead, 'builder')
++    const builder = await waitRunning(ctx, outer.member.id)
++    const inner = await spawn(ctx, builder, 'probe')
++    const probe = await waitRunning(ctx, inner.member.id)
++    expect(inner.member).toMatchObject({ depth: 2, spawnedBy: 'builder' })
++
++    await expect(spawn(ctx, probe, 'too-deep')).rejects.toMatchObject({ code: 'TEAM_DEPTH_LIMIT' })
++    expect(durableMembers(lead).map(member => member.name)).toEqual(['builder', 'probe'])
++  })
++
++  it('refuses the first teammate-created child when maxDepth stays at 1', async () => {
++    const { ctx, lead } = await setup(['hang'], { maxDepth: 1, teammatesMaySpawn: true })
++    const outer = await spawn(ctx, lead, 'builder')
++    const builder = await waitRunning(ctx, outer.member.id)
++
++    await expect(spawn(ctx, builder, 'probe')).rejects.toMatchObject({ code: 'TEAM_DEPTH_LIMIT' })
++    expect(durableMembers(lead).map(member => member.name)).toEqual(['builder'])
++  })
++
++  it('keeps the upstream single-level shape and Lead-only creation under default configuration', async () => {
++    const { ctx, lead } = await setup(['hang'])
++    expect(ctx.agentTeams.policy()).toEqual({ maxDepth: 1, teammatesMaySpawn: false, interruptScope: 'none' })
++
++    const started = await spawn(ctx, lead, 'worker')
++    await waitRunning(ctx, started.member.id)
++
++    const snapshot = durableMembers(lead)[0]!
++    expect(Object.keys(snapshot).sort()).toEqual(['context', 'description', 'id', 'name', 'phase', 'provider'])
++    expect(snapshot).not.toHaveProperty('depth')
++    expect(snapshot).not.toHaveProperty('spawnedBy')
++    expect(started.member).not.toHaveProperty('depth')
++    expect(started.member).not.toHaveProperty('spawnedBy')
++    const rows = ctx.agentTeams.listMembers(lead)
++    expect(rows[0]).not.toHaveProperty('depth')
++    expect(rows[1]).not.toHaveProperty('depth')
++    expect(rows[1]).not.toHaveProperty('spawnedBy')
++
++    const worker = ctx.agents.get(started.member.id)!
++    await expect(spawn(ctx, worker, 'nested')).rejects.toMatchObject({ code: 'TEAM_LEAD_REQUIRED' })
++  })
++
++  it('keeps interruption Lead-only under the default interruptScope', async () => {
++    const { ctx, lead } = await setup(['hang', 'hang'])
++    const first = await spawn(ctx, lead, 'first')
++    const firstAgent = await waitRunning(ctx, first.member.id)
++    const second = await spawn(ctx, lead, 'second')
++    await waitRunning(ctx, second.member.id)
++
++    expect(() => ctx.agentTeams.interrupt(firstAgent, 'second'))
++      .toThrow(expect.objectContaining({ code: 'TEAM_LEAD_REQUIRED' }))
++    expect(ctx.agentTeams.interrupt(lead, 'second')).toEqual({ previousStatus: 'running' })
++    expect(() => ctx.agentTeams.interrupt(lead, 'lead'))
++      .toThrow(expect.objectContaining({ code: 'TEAM_INVALID_TARGET' }))
++  })
++
++  it('admits descendant interruption and rejects sibling targets when interruptScope is descendants', async () => {
++    const { ctx, lead } = await setup(['hang', 'hang', 'hang'], NESTED)
++    const leftSpawn = await spawn(ctx, lead, 'left')
++    const left = await waitRunning(ctx, leftSpawn.member.id)
++    const rightSpawn = await spawn(ctx, lead, 'right')
++    const right = await waitRunning(ctx, rightSpawn.member.id)
++    const probeSpawn = await spawn(ctx, left, 'left-probe')
++    await waitRunning(ctx, probeSpawn.member.id)
++
++    expect(() => ctx.agentTeams.interrupt(right, 'left-probe'))
++      .toThrow(expect.objectContaining({ code: 'TEAM_INTERRUPT_FORBIDDEN' }))
++    expect(() => ctx.agentTeams.interrupt(left, 'right'))
++      .toThrow(expect.objectContaining({ code: 'TEAM_INTERRUPT_FORBIDDEN' }))
++    expect(ctx.agentTeams.interrupt(left, 'left-probe')).toEqual({ previousStatus: 'running' })
++    expect(ctx.agentTeams.interrupt(lead, 'right')).toEqual({ previousStatus: 'running' })
++  })
++
++  it('keeps nested spawn_teammate and list_agents values inside the declared tool-output schema', async () => {
++    const { ctx, lead } = await setup(['hang', 'hang'], NESTED, { tools: true })
++
++    const leadSpawn = await execute(ctx, lead, 'spawn_teammate', {
++      name: 'builder',
++      description: 'builder responsibility',
++      prompt: 'build',
++    })
++    expect(leadSpawn.isError, text(leadSpawn)).toBe(false)
++    const builder = await waitRunning(ctx, rosterMember(ctx, lead, 'builder').id)
++    expect(JSON.parse(text(leadSpawn))).toMatchObject({
++      member: { target: 'builder', depth: 1, spawnedBy: 'lead' },
++    })
++
++    // The P1 regression: a multi-level spawn value that the output schema did not declare
++    // failed validation with INVALID_TOOL_OUTPUT even though the spawn itself succeeded.
++    const nestedSpawn = await execute(ctx, builder, 'spawn_teammate', {
++      name: 'probe',
++      description: 'probe responsibility',
++      prompt: 'probe',
++    })
++    expect(nestedSpawn.isError, text(nestedSpawn)).toBe(false)
++    expect(JSON.parse(text(nestedSpawn))).toMatchObject({
++      member: { target: 'probe', depth: 2, spawnedBy: 'builder' },
++    })
++    await waitRunning(ctx, rosterMember(ctx, lead, 'probe').id)
++
++    const listed = await execute(ctx, builder, 'list_agents', {})
++    expect(listed.isError, text(listed)).toBe(false)
++    const rows = JSON.parse(text(listed)) as Array<{
++      target: string
++      depth?: number
++      spawnedBy?: string
++    }>
++    expect(rows.map(row => [row.target, row.depth, row.spawnedBy])).toEqual([
++      ['lead', 0, undefined],
++      ['builder', 1, 'lead'],
++      ['probe', 2, 'builder'],
++    ])
++  })
++})
+diff --git a/packages/experimental/tool-agent-team/src/index.ts b/packages/experimental/tool-agent-team/src/index.ts
+index bc827c5f8c..16988c695b 100644
+--- a/packages/experimental/tool-agent-team/src/index.ts
++++ b/packages/experimental/tool-agent-team/src/index.ts
+@@ -31,8 +31,11 @@ export const Config: z<Config> = z.object({
+ })
+ 
+ /** Model-facing collaboration guidance shared by Lead and teammates. */
+-function teamPolicy(interrupt: boolean): string {
+-  return `Agent Teams is available in this session
++function teamPolicy(interrupt: boolean, nesting: { maxDepth: number; teammatesMaySpawn: boolean }): string {
++  const nestingLine = nesting.teammatesMaySpawn && nesting.maxDepth > 1
++    ? `\n\nThis Team is multi-level (depth limit ${String(nesting.maxDepth)}): the Lead creates teammates, and a teammate may create its own teammates below it while that limit admits it. A member can message the Lead and any other member of the same Team; list_agents shows each row's spawnedBy and depth (a row written before multi-level was enabled has neither: absent spawnedBy means the Lead, absent depth means one), so build the tree from those fields rather than assuming every member is the Lead's child. Only a member's own ancestors may interrupt it (the Lead is the ancestor of everyone).`
++    : ''
++  return `Agent Teams is available in this session${nestingLine}
+ 
+ The Team Lead and all teammates share the same working directory and filesystem. Edits are immediately visible to every member. Split write work into disjoint scopes, record expected write scopes on shared tasks, and use task dependencies when work must be ordered. Write-scope overlap is advisory, not a lock.
+ 
+@@ -61,9 +64,18 @@ const MEMBER_VIEW_SCHEMA = {
+     context: { type: 'string', enum: ['fresh', 'fork'] },
+     model: { type: 'string' },
+     diagnostics: { type: 'array', required: true, items: { type: 'string' } },
++    // R484-P1: these MUST be declared. In a multi-level Team the roster rows carry the spawn edge and
++    // the tool-output contract validates with additionalProperties:false — an undeclared field turned
++    // a successful spawn into ToolOutputError INVALID_TOOL_OUTPUT for the model (measured LIVE:
++    // builder seq9793), which looks like a failure and invites a duplicate spawn. Both fields are
++    // optional, and a default (single-level) Team publishes no values for them, so model-visible
++    // output is otherwise unchanged.
++    spawnedBy: { type: 'string' },
++    depth: { type: 'integer' },
+   },
+ } as const
+ 
++
+ /** Expose the member name as its model-facing target. */
+ function modelMember(member: TeamMemberView): InferValue<typeof MEMBER_VIEW_SCHEMA> {
+   const { id: _id, name, ...details } = member
+@@ -71,6 +83,16 @@ function modelMember(member: TeamMemberView): InferValue<typeof MEMBER_VIEW_SCHE
+ }
+ 
+ /** One shared task, matching the public `TeamTaskView`. */
++const SPAWN_VALUE_SCHEMA = {
++  type: 'object',
++  additionalProperties: false,
++  properties: {
++    member: { ...MEMBER_VIEW_SCHEMA, required: true },
++  },
++} as const
++
++const MEMBER_LIST_VALUE_SCHEMA = { type: 'array', items: MEMBER_VIEW_SCHEMA } as const
++
+ const TASK_VIEW_SCHEMA = {
+   type: 'object',
+   additionalProperties: false,
+@@ -88,16 +110,6 @@ const TASK_VIEW_SCHEMA = {
+   },
+ } as const
+ 
+-const SPAWN_VALUE_SCHEMA = {
+-  type: 'object',
+-  additionalProperties: false,
+-  properties: {
+-    member: { ...MEMBER_VIEW_SCHEMA, required: true },
+-  },
+-} as const
+-
+-const MEMBER_LIST_VALUE_SCHEMA = { type: 'array', items: MEMBER_VIEW_SCHEMA } as const
+-
+ const SEND_VALUE_SCHEMA = {
+   type: 'object',
+   additionalProperties: false,
+@@ -167,13 +179,21 @@ function callingAgent(agent: Agent | undefined, toolName: string): Agent {
+ /** Register the complete Team tool set in one exact Agent scope. */
+ function install(agent: Agent, ctx: Context, config: Required<Config>): () => void {
+   const scoped = agent.ctx
++  const teamPolicyView = ctx.agentTeams.policy()
++  const nestingAdmitted = teamPolicyView.teammatesMaySpawn && teamPolicyView.maxDepth > 1
++  const spawnDescription = nestingAdmitted
++    ? `Create one named, durable teammate under the calling agent. The Lead may always; a teammate may create one below itself while the Team depth policy (limit ${String(teamPolicyView.maxDepth)}) admits it.`
++    : 'Create one named, durable teammate. Only the Team Lead may call this tool.'
++  const interruptDescription = nestingAdmitted && teamPolicyView.interruptScope === 'descendants'
++    ? 'Interrupt one member\'s current turn while preserving its pending inbox. The Lead may interrupt anyone; a teammate may interrupt its own descendants.'
++    : 'Interrupt one teammate\'s current turn while preserving its pending inbox. Team Lead only.'
+   const disposers: Array<() => unknown> = []
+   const register = (disposer: () => unknown): void => { disposers.push(disposer) }
+   try {
+     register(scoped.systemPrompt.section({
+       name: 'team:policy',
+       order: scoped.systemPrompt.getSectionOrder('TEAM_POLICY'),
+-      text: teamPolicy(config.interrupt),
++      text: teamPolicy(config.interrupt, teamPolicyView),
+     }))
+     register(scoped.systemPrompt.context({
+       name: 'team:identity',
+@@ -191,7 +211,7 @@ To message another teammate, use send_message({ target: "<teammate name>", messa
+ 
+     register(scoped.tools.register(defineTool({
+       name: 'spawn_teammate',
+-      description: 'Create one named, durable teammate. Only the Team Lead may call this tool.',
++      description: spawnDescription,
+       parameters: {
+         name: { type: 'string', required: true, description: 'Unique lower-kebab-case teammate name.' },
+         description: { type: 'string', required: true, description: 'Short description of the delegated responsibility.' },
+@@ -238,7 +258,9 @@ To message another teammate, use send_message({ target: "<teammate name>", messa
+ 
+     register(scoped.tools.register(defineTool({
+       name: 'list_agents',
+-      description: 'List the Lead and every durable teammate with an addressable target and current availability. inactive means no turn is executing, not a task result. provisioning and failed describe member creation.',
++      description: nestingAdmitted
++        ? 'List the Lead and every durable teammate with an addressable target, current availability, and spawnedBy/depth for the multi-level tree. A row written before multi-level was enabled carries neither field: absent spawnedBy means the Lead, absent depth means one (a direct child). inactive means no turn is executing, not a task result. provisioning and failed describe member creation.'
++        : 'List the Lead and every durable teammate with an addressable target and current availability. inactive means no turn is executing, not a task result. provisioning and failed describe member creation.',
+       parameters: {},
+       output: jsonOutput(MEMBER_LIST_VALUE_SCHEMA),
+       execute(_args, exec) {
+@@ -284,7 +306,7 @@ To message another teammate, use send_message({ target: "<teammate name>", messa
+     if (config.interrupt) {
+       register(scoped.tools.register(defineTool({
+         name: 'interrupt_agent',
+-        description: 'Interrupt one teammate\'s current turn while preserving its pending inbox. Team Lead only.',
++        description: interruptDescription,
+         parameters: {
+           target: { type: 'string', required: true, description: 'Teammate target returned by spawn_teammate or list_agents.' },
+         },

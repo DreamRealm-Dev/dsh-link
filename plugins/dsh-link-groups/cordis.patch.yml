@@ -1,0 +1,66 @@
+# dsh-link-groups bundle layer.
+#
+# One host-plane row, mounted on the HOST composition (not inside a preset), so the
+# group kernel can install into every agent scope it sees. Every group member must be
+# registered on an ANCESTOR layer (global or preset scope) because a restriction
+# filters what a scope inherits and never what its own layer registers; a group whose
+# member is registered into the agent's own layer is reported `broken`, never
+# silently half-masked.
+#
+# The default table: the TEAM tools are the one family with a measured reading of
+# "the model needs it and the user did not disable it", so they are `auto` — closed
+# until the model declares them, openable in one call.
+#
+# PTC presets must not mount this row at all: `tools.restrict()` refuses to name
+# `run_code`, and under PTC a model-direct call may only name that transport, so the
+# third state is undefined there.
+#
+# `state: off` means the user turned the group off: it still opens, but only through
+# the approval seam (`ask` from `tools/pre-execute`), and an unavailable answerer
+# leaves it closed. `userDisabled: true` is the same fact stated for a group whose
+# configuration a human already froze; a group is `auto` when the condition is a
+# declaration and `on` when it must never be closed.
+- insert:
+    - id: link-groups
+      name: dsh-link-groups
+      config:
+        groups:
+          - id: teams
+            title: Agent Teams
+            summary: Create, message, and manage Agent Teams teammates and their tasks.
+            # R185-F measured the live face before this was corrected: the nine names that stood here exist nowhere
+            # in the kernel, in any other plugin, or in the live tool face - grep found them only in this file and in
+            # the README - so the one group the live profile configured was un-openable by construction and the model
+            # got GROUPS_NO_TOOLS twice, correctly. A group declares tools that exist: these twelve are the ones the
+            # live face really carries for team work (eight from the collaboration bus, four from the teams plugin).
+            tools:
+              - team_answer_merge
+              - team_answer_peer
+              - team_declare_capability
+              - team_declare_subteam
+              - team_heartbeat
+              - team_reclaim_task
+              - team_request_merge
+              - team_request_peer
+            # R185-F measured the boundary live, one round after the names above were corrected: four names
+            # (team_task_create/get/list/update) ARE in this session's tool face but are registered on the agent's
+            # own context, and a group can only move tools that live on an ancestor layer - restrict filters the
+            # inherited layers, so a member on the agent layer cannot be masked or added. The plugin refuses the
+            # whole group by name (GROUPS_NO_TOOLS) rather than opening it half-way, which is why the group is
+            # declared with the eight names it can actually manage.
+            provider: team_
+            state: auto
+            auto:
+              when: declare
+          - id: notes
+            title: Notes
+            summary: Read the notes ledger and add a note to it after approval.
+            tools:
+              - notes_list
+              - notes_add
+            provider: notes_
+            state: auto
+            auto:
+              when: declare
+        catalogPreamble: Tools are organised in groups; a closed group costs no schema budget.
+        deferredNotice: true

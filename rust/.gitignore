@@ -1,0 +1,3 @@
+/target/
+# The copied addon is a build artifact; plugins/dsh-link-compute/lib/ ignores it too.
+**/*.node

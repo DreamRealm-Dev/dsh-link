@@ -1,0 +1,18 @@
+# dsh-agent-context bundle layer.
+#
+# One host-plane row. The plugin publishes no service and needs no realm: it
+# registers its two tools into the scope of every delegation-participating
+# agent (Team members, agents with a parent, agents with live children), the
+# same way the shipped Team tool package scopes its own tools, so a session
+# that never delegates sees nothing new.
+#
+# `promptHint: true` adds one short prompt section telling the Lead to read a
+# delegate's measured pressure before piling on work; set it to false to ship
+# the tools without the policy text.
+- insert:
+    - id: agent-context
+      name: dsh-agent-context
+      config:
+        promptHint: true
+        reviveInactive: true
+        maxRows: 32

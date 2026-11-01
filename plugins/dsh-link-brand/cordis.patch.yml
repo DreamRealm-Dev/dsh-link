@@ -1,0 +1,6 @@
+# dsh-link-brand bundle: one row. The client half is loaded by
+# @deepseek-ai/dsh-client-modules from the package's ./client export; the Host half
+# has no behaviour and exists so the row resolves.
+- insert:
+    - id: link-brand
+      name: dsh-link-brand

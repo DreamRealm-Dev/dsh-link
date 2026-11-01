@@ -1,0 +1,53 @@
+{
+  "note": "The English that stays English in this package's browser half, one entry per literal, each with the reason it is not copy. The self-check (test/toolbar-copy.spec.mjs, reading T5) scans src/client/** for copy and every such finding must be covered here; an entry whose anchor is not in the tree fails too, and every id is named in README.md. An entry carried by `key` names a dictionary key whose zh and en values are byte-identical on purpose (reading T8): the value is a product name or an identifier, never an untranslated sentence.",
+  "entries": [
+    {
+      "id": "kv-product-name",
+      "key": "toolbar.open",
+      "kind": "product-name",
+      "why": "按钮上就是产品名 DSH LINK：两份字典同值是**有意**的（标识符不是句子），所以它不属于「翻了但翻错」那一类。"
+    },
+    {
+      "id": "kv-effect-label-dictionaries",
+      "file": "src/client/index.tsx",
+      "match": "dsh-link-toolbar: dictionaries",
+      "kind": "effect-label",
+      "why": "注册字典的 ctx.effect 标签：给日志与门 125 读的开发面标识，从不渲染给用户。"
+    },
+    {
+      "id": "kv-effect-label-stylesheet",
+      "file": "src/client/index.tsx",
+      "match": "dsh-link-toolbar: entry stylesheet",
+      "kind": "effect-label",
+      "why": "挂样式表的 ctx.effect 标签：同上，开发面标识，不是文案。"
+    },
+    {
+      "id": "kv-marker-attribute-layout",
+      "file": "src/client/toolbar-items.ts",
+      "match": "data-dsh-link-layout",
+      "kind": "protocol-attribute",
+      "why": "标记属性名：由 dsh-link-responsive 写在文档根上、本半边读回来，逐字节对上才算读到。"
+    },
+    {
+      "id": "kv-marker-attribute-notes",
+      "file": "src/client/toolbar-items.ts",
+      "match": "data-dsh-link-notes",
+      "kind": "protocol-attribute",
+      "why": "同上：便条账本半边的标记属性名。"
+    },
+    {
+      "id": "kv-marker-attribute-glass",
+      "file": "src/client/toolbar-items.ts",
+      "match": "data-dsh-link-glass",
+      "kind": "protocol-attribute",
+      "why": "同上：玻璃皮肤半边的标记属性名。"
+    },
+    {
+      "id": "kv-marker-attribute-browser",
+      "file": "src/client/toolbar-items.ts",
+      "match": "data-dsh-browser",
+      "kind": "protocol-attribute",
+      "why": "同上：内置浏览器半边的标记属性名。"
+    }
+  ]
+}

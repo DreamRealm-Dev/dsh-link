@@ -1,0 +1,951 @@
+{
+  "format": "dsh-link.surface/1",
+  "capturedAt": "2026-10-06T17:54:44.740Z",
+  "kernel": {
+    "id": "dsh-v0.1.5-rc.1",
+    "version": "0.1.5-rc.1",
+    "commit": null,
+    "globalVersion": null,
+    "node": "v24.16.0",
+    "pid": 27128
+  },
+  "env": {
+    "DSH_HOME": null,
+    "DSH_LINK_PROFILE": null
+  },
+  "provenance": {
+    "kind": "packaged-libs",
+    "level": "code-provable",
+    "root": "<install-dir>\\resources\\app\\node_modules",
+    "label": "0.1.5-rc.1",
+    "packages": 246,
+    "files": 245,
+    "note": "extracted from shipped declarations: a service is listed when a Context declaration names a class whose members the package also declares"
+  },
+  "counts": {
+    "declaredProperties": 75,
+    "reachableServices": 46,
+    "events": 0,
+    "tools": null
+  },
+  "declared": [
+    {
+      "key": "agentDefaultModel",
+      "type": "AgentDefaultModelConfig"
+    },
+    {
+      "key": "agentLoop",
+      "type": "AgentLoop"
+    },
+    {
+      "key": "agentPresets",
+      "type": "AgentPresets"
+    },
+    {
+      "key": "agents",
+      "type": "AgentRegistry"
+    },
+    {
+      "key": "apiProxy",
+      "type": "ApiProxy"
+    },
+    {
+      "key": "appExit",
+      "type": "AppExit"
+    },
+    {
+      "key": "appReady",
+      "type": "AppReady"
+    },
+    {
+      "key": "approval",
+      "type": "ApprovalService"
+    },
+    {
+      "key": "attachments",
+      "type": "AttachmentStore"
+    },
+    {
+      "key": "authorization",
+      "type": "AuthorizationService"
+    },
+    {
+      "key": "clientModules",
+      "type": "ClientModuleRegistry"
+    },
+    {
+      "key": "cmdlineArgs",
+      "type": "CmdlineArgs"
+    },
+    {
+      "key": "codeRuntime",
+      "type": "CodeRuntime"
+    },
+    {
+      "key": "commands",
+      "type": "CommandRuntime"
+    },
+    {
+      "key": "compaction",
+      "type": "CompactionEngine"
+    },
+    {
+      "key": "configuredAgentIdentities",
+      "type": "ConfiguredAgentIdentities"
+    },
+    {
+      "key": "credentials",
+      "type": "CredentialProvider"
+    },
+    {
+      "key": "deepseekLlmApiExtensions",
+      "type": "DeepSeekLlmApiExtensionRegistry"
+    },
+    {
+      "key": "directoryPicker",
+      "type": "DirectoryPicker"
+    },
+    {
+      "key": "dshHomePath",
+      "type": "typeof dshHomePath"
+    },
+    {
+      "key": "dynamicCordisRunner",
+      "type": "DynamicCordisRunnerService"
+    },
+    {
+      "key": "entry",
+      "type": "Entry"
+    },
+    {
+      "key": "error",
+      "type": "unknown"
+    },
+    {
+      "key": "fileReferences",
+      "type": "FileReferenceService"
+    },
+    {
+      "key": "fileUploads",
+      "type": "FileUploads"
+    },
+    {
+      "key": "fs",
+      "type": "FileSystem"
+    },
+    {
+      "key": "goals",
+      "type": "GoalService"
+    },
+    {
+      "key": "hmr",
+      "type": "Hmr"
+    },
+    {
+      "key": "invariants",
+      "type": "InvariantRegistry"
+    },
+    {
+      "key": "jobs",
+      "type": "JobRegistry"
+    },
+    {
+      "key": "launchEnvironment",
+      "type": "LaunchEnvironmentSnapshot"
+    },
+    {
+      "key": "launcherSessionQueryPath",
+      "type": "string"
+    },
+    {
+      "key": "llm",
+      "type": "LlmRuntime"
+    },
+    {
+      "key": "loader",
+      "type": "Loader"
+    },
+    {
+      "key": "messageFeedback",
+      "type": "MessageFeedbackService"
+    },
+    {
+      "key": "permissionPresets",
+      "type": "PermissionPresetService"
+    },
+    {
+      "key": "planMode",
+      "type": "PlanModeController"
+    },
+    {
+      "key": "sandbox",
+      "type": "SandboxProvider"
+    },
+    {
+      "key": "sandboxPolicy",
+      "type": "SandboxPolicyService"
+    },
+    {
+      "key": "sessionController",
+      "type": "SessionController"
+    },
+    {
+      "key": "sessionFeedback",
+      "type": "SessionFeedbackService"
+    },
+    {
+      "key": "sessionId",
+      "type": "SessionId"
+    },
+    {
+      "key": "sessionPersistence",
+      "type": "SessionPersistence"
+    },
+    {
+      "key": "sessionProjectionCache",
+      "type": "SessionProjectionCache"
+    },
+    {
+      "key": "sessionProjections",
+      "type": "SessionProjectionRegistry"
+    },
+    {
+      "key": "sessionQuery",
+      "type": "SessionQueryEngine"
+    },
+    {
+      "key": "sessionReferenceResolver",
+      "type": "SessionReferenceResolver"
+    },
+    {
+      "key": "sessions",
+      "type": "SessionStore"
+    },
+    {
+      "key": "sessionTelemetry",
+      "type": "SessionTelemetryBackend"
+    },
+    {
+      "key": "sessionTitle",
+      "type": "SessionTitleService"
+    },
+    {
+      "key": "settings",
+      "type": "SettingsProvider"
+    },
+    {
+      "key": "settingsController",
+      "type": "SettingsController"
+    },
+    {
+      "key": "shell",
+      "type": "ShellExecutor"
+    },
+    {
+      "key": "shellEnv",
+      "type": "ShellEnvRegistry"
+    },
+    {
+      "key": "skills",
+      "type": "SkillRegistry"
+    },
+    {
+      "key": "spillStore",
+      "type": "SpillStore"
+    },
+    {
+      "key": "startTime",
+      "type": "number"
+    },
+    {
+      "key": "storage",
+      "type": "Storage"
+    },
+    {
+      "key": "storageDomain",
+      "type": "DomainFacility"
+    },
+    {
+      "key": "subagents",
+      "type": "SubagentRuntime"
+    },
+    {
+      "key": "subprocess",
+      "type": "SubprocessRuntime"
+    },
+    {
+      "key": "systemPrompt",
+      "type": "SystemPrompt"
+    },
+    {
+      "key": "terminals",
+      "type": "TerminalSessionService"
+    },
+    {
+      "key": "tokenMeter",
+      "type": "TokenMeter"
+    },
+    {
+      "key": "toolResultPruner",
+      "type": "ToolResultPruner"
+    },
+    {
+      "key": "tools",
+      "type": "ToolRuntime"
+    },
+    {
+      "key": "userQuestions",
+      "type": "UserQuestionService"
+    },
+    {
+      "key": "version",
+      "type": "FsVersion"
+    },
+    {
+      "key": "web",
+      "type": "WebRuntime"
+    },
+    {
+      "key": "webhookRuntime",
+      "type": "WebhookRuntime"
+    },
+    {
+      "key": "webServer",
+      "type": "WebServer"
+    },
+    {
+      "key": "workflowEngine",
+      "type": "WorkflowEngine"
+    },
+    {
+      "key": "workspaceController",
+      "type": "WorkspaceController"
+    },
+    {
+      "key": "workspaceFiles",
+      "type": "WorkspaceFiles"
+    },
+    {
+      "key": "workspaceRegistry",
+      "type": "WorkspaceRegistry"
+    }
+  ],
+  "services": {
+    "hmr": {
+      "type": "object",
+      "ctor": "Hmr",
+      "members": [
+        "getLinked",
+        "registerConfig"
+      ],
+      "fields": []
+    },
+    "loader": {
+      "type": "object",
+      "ctor": "Loader",
+      "members": [
+        "exit",
+        "locate",
+        "showLog",
+        "unwrapExports",
+        "write"
+      ],
+      "fields": []
+    },
+    "agents": {
+      "type": "object",
+      "ctor": "AgentRegistry",
+      "members": [
+        "announce",
+        "create",
+        "currentInitiator",
+        "enter",
+        "get",
+        "isOwnedBy",
+        "list",
+        "register",
+        "requireInitiator",
+        "resume",
+        "roots",
+        "setFactory"
+      ],
+      "fields": []
+    },
+    "agentDefaultModel": {
+      "type": "object",
+      "ctor": "AgentDefaultModelConfig",
+      "members": [
+        "currentSelection",
+        "saveSelection"
+      ],
+      "fields": []
+    },
+    "agentLoop": {
+      "type": "object",
+      "ctor": "AgentLoop",
+      "members": [
+        "create",
+        "createAgent",
+        "resume"
+      ],
+      "fields": []
+    },
+    "agentPresets": {
+      "type": "object",
+      "ctor": "AgentPresets",
+      "members": [
+        "composeFrom",
+        "composedPreset",
+        "compositionInventory",
+        "copy",
+        "list",
+        "mount",
+        "read",
+        "readDocument",
+        "recompose",
+        "remoteExportCopy",
+        "remoteExportDelete",
+        "remoteExportList",
+        "remove",
+        "resolve",
+        "select",
+        "standingKeyFor"
+      ],
+      "fields": []
+    },
+    "sessionController": {
+      "type": "object",
+      "ctor": "SessionController",
+      "members": [
+        "attachment",
+        "canOpenWorkspacePath",
+        "cancel",
+        "control",
+        "create",
+        "follow",
+        "fork",
+        "inspect",
+        "list",
+        "modelCatalog",
+        "openWorkspacePath",
+        "page",
+        "prompt",
+        "rename",
+        "resolveAgent",
+        "search",
+        "selectModel",
+        "updateQueue",
+        "workspaceDesktop"
+      ],
+      "fields": []
+    },
+    "settingsController": {
+      "type": "object",
+      "ctor": "SettingsController",
+      "members": [
+        "canOpenAgentPresetDirectory",
+        "describe",
+        "mutate",
+        "openAgentPresetDirectory",
+        "openSettingsDocument",
+        "replace",
+        "update"
+      ],
+      "fields": []
+    },
+    "workspaceController": {
+      "type": "object",
+      "ctor": "WorkspaceController",
+      "members": [
+        "archiveSession",
+        "create",
+        "delete",
+        "follow",
+        "insertBefore",
+        "insertSessionBefore",
+        "rename"
+      ],
+      "fields": []
+    },
+    "workspaceFiles": {
+      "type": "object",
+      "ctor": "WorkspaceFiles",
+      "members": [
+        "changes",
+        "list",
+        "read",
+        "readAll",
+        "readBytes",
+        "readRelated",
+        "stat"
+      ],
+      "fields": []
+    },
+    "attachments": {
+      "type": "object",
+      "ctor": "AttachmentStore",
+      "members": [
+        "admitEncodedFile",
+        "admitPromptContent",
+        "fileHostPath",
+        "imageHostPath",
+        "isAttachmentError",
+        "readFileStream",
+        "readImageRequest",
+        "saveFile",
+        "saveFileStream",
+        "saveImages"
+      ],
+      "fields": []
+    },
+    "authorization": {
+      "type": "object",
+      "ctor": "AuthorizationService",
+      "members": [
+        "begin",
+        "cancel",
+        "describe",
+        "list",
+        "registerFlow"
+      ],
+      "fields": []
+    },
+    "fileUploads": {
+      "type": "object",
+      "ctor": "FileUploads",
+      "members": [
+        "bindPrompt",
+        "registerAgentResolver",
+        "resolve",
+        "retirePrompt",
+        "upload",
+        "uploadStream"
+      ],
+      "fields": []
+    },
+    "clientModules": {
+      "type": "object",
+      "ctor": "ClientModuleRegistry",
+      "members": [
+        "artifactBaseline",
+        "clientPath",
+        "fetchBundle",
+        "graph",
+        "onGraphChanged",
+        "onRebuilt",
+        "rebuilt"
+      ],
+      "fields": []
+    },
+    "sessionFeedback": {
+      "type": "object",
+      "ctor": "SessionFeedbackService",
+      "members": [
+        "record"
+      ],
+      "fields": []
+    },
+    "commands": {
+      "type": "object",
+      "ctor": "CommandRuntime",
+      "members": [
+        "execute",
+        "find",
+        "list",
+        "register",
+        "registerFileReceiptResolver"
+      ],
+      "fields": []
+    },
+    "toolResultPruner": {
+      "type": "object",
+      "ctor": "ToolResultPruner",
+      "members": [
+        "measureContent",
+        "pruneContent",
+        "pruneSession"
+      ],
+      "fields": []
+    },
+    "dynamicCordisRunner": {
+      "type": "object",
+      "ctor": "DynamicCordisRunnerService",
+      "members": [
+        "define",
+        "getClientCode",
+        "inspectPackage",
+        "inspectPlugin",
+        "inventory",
+        "invoke",
+        "listPlugins",
+        "reference",
+        "reportClientGuardFailure",
+        "reportRenderFailure",
+        "resolveInspectQuery",
+        "resolveRequestRun",
+        "run",
+        "runHostHalf",
+        "settleUserRun",
+        "snapshot",
+        "stop",
+        "stopFromPanel",
+        "syncInspectManifest",
+        "undefine",
+        "undefineFromPanel"
+      ],
+      "fields": []
+    },
+    "deepseekLlmApiExtensions": {
+      "type": "object",
+      "ctor": "DeepSeekLlmApiExtensionRegistry",
+      "members": [
+        "prepare"
+      ],
+      "fields": []
+    },
+    "fs": {
+      "type": "object",
+      "ctor": "FileSystem",
+      "members": [
+        "processPathFromHostPath"
+      ],
+      "fields": []
+    },
+    "goals": {
+      "type": "object",
+      "ctor": "GoalService",
+      "members": [
+        "block",
+        "clear",
+        "complete",
+        "create",
+        "disarm",
+        "edit",
+        "get",
+        "pause",
+        "remoteExportCreate",
+        "resume"
+      ],
+      "fields": []
+    },
+    "webServer": {
+      "type": "object",
+      "ctor": "WebServer",
+      "members": [
+        "applyIndexTaps",
+        "collectIndexInjections",
+        "register",
+        "registerFallback",
+        "registerUpgrade",
+        "renderIndex",
+        "tapIndex"
+      ],
+      "fields": []
+    },
+    "invariants": {
+      "type": "object",
+      "ctor": "InvariantRegistry",
+      "members": [
+        "register"
+      ],
+      "fields": []
+    },
+    "llm": {
+      "type": "object",
+      "ctor": "LlmRuntime",
+      "members": [
+        "discoverModels",
+        "fileRequestText",
+        "imageRequestPricing",
+        "listConfigurableProviders",
+        "listModels",
+        "listProviders",
+        "prepareCall",
+        "providerRetryPolicy",
+        "registerAdapter",
+        "registerConfigurableProviders",
+        "registerModelDiscovery",
+        "remoteDiscoverModels",
+        "resolveCallConfig",
+        "resolveModelInfo",
+        "stream"
+      ],
+      "fields": []
+    },
+    "messageFeedback": {
+      "type": "object",
+      "ctor": "MessageFeedbackService",
+      "members": [
+        "delete",
+        "list",
+        "put"
+      ],
+      "fields": []
+    },
+    "permissionPresets": {
+      "type": "object",
+      "ctor": "PermissionPresetService",
+      "members": [
+        "current",
+        "optionOf",
+        "resolve",
+        "selectFor",
+        "set"
+      ],
+      "fields": []
+    },
+    "planMode": {
+      "type": "object",
+      "ctor": "PlanModeController",
+      "members": [
+        "get",
+        "set"
+      ],
+      "fields": []
+    },
+    "sandboxPolicy": {
+      "type": "object",
+      "ctor": "SandboxPolicyService",
+      "members": [
+        "overrideOf",
+        "resolve"
+      ],
+      "fields": []
+    },
+    "sessions": {
+      "type": "object",
+      "ctor": "SessionStore",
+      "members": [
+        "announce",
+        "create",
+        "enter",
+        "flush",
+        "fork",
+        "get",
+        "list",
+        "prepare"
+      ],
+      "fields": []
+    },
+    "sessionProjections": {
+      "type": "object",
+      "ctor": "SessionProjectionRegistry",
+      "members": [
+        "cachedSnapshot",
+        "checkpoint",
+        "hydrate",
+        "onChanged",
+        "restore",
+        "restoreFloor",
+        "snapshot",
+        "viewCheckpoint"
+      ],
+      "fields": []
+    },
+    "sessionProjectionCache": {
+      "type": "object",
+      "ctor": "SessionProjectionCache",
+      "members": [
+        "cachedPredecessorTitle",
+        "cachedSnapshot",
+        "coldSnapshot",
+        "hydratePrepared",
+        "write"
+      ],
+      "fields": []
+    },
+    "sessionQuery": {
+      "type": "object",
+      "ctor": "SessionQueryEngine",
+      "members": [
+        "filterEvents",
+        "filterSessions",
+        "listEvents",
+        "listSessions",
+        "observeSession",
+        "readEvent",
+        "readSession",
+        "readSurface",
+        "readTitle",
+        "readTitleSnapshot",
+        "readTitleSnapshots",
+        "traceEvent",
+        "traceSession"
+      ],
+      "fields": []
+    },
+    "sessionReferenceResolver": {
+      "type": "object",
+      "ctor": "SessionReferenceResolver",
+      "members": [
+        "listCandidates",
+        "prepare",
+        "remoteExportCandidates"
+      ],
+      "fields": []
+    },
+    "sessionTitle": {
+      "type": "object",
+      "ctor": "SessionTitleService",
+      "members": [
+        "get",
+        "refresh",
+        "register",
+        "rename"
+      ],
+      "fields": []
+    },
+    "shellEnv": {
+      "type": "object",
+      "ctor": "ShellEnvRegistry",
+      "members": [
+        "collect",
+        "list",
+        "register"
+      ],
+      "fields": []
+    },
+    "skills": {
+      "type": "object",
+      "ctor": "SkillRegistry",
+      "members": [
+        "get",
+        "list",
+        "register",
+        "registerProvider",
+        "snapshot"
+      ],
+      "fields": []
+    },
+    "storageDomain": {
+      "type": "object",
+      "ctor": "DomainFacility",
+      "members": [
+        "closeAll",
+        "get"
+      ],
+      "fields": []
+    },
+    "subagents": {
+      "type": "object",
+      "ctor": "SubagentRuntime",
+      "members": [
+        "drainContinuableChildren",
+        "drainContinuableDescendants",
+        "getProvider",
+        "interrupt",
+        "interruptByParent",
+        "list",
+        "listChildren",
+        "listDescendants",
+        "prompt",
+        "registerProvider",
+        "remoteExportList",
+        "sendMessage",
+        "start",
+        "startContinuable"
+      ],
+      "fields": []
+    },
+    "systemPrompt": {
+      "type": "object",
+      "ctor": "SystemPrompt",
+      "members": [
+        "assemble",
+        "context",
+        "getContextOrder",
+        "getSectionOrder",
+        "section",
+        "suppressRuntimeContext",
+        "tools",
+        "variable"
+      ],
+      "fields": []
+    },
+    "terminals": {
+      "type": "object",
+      "ctor": "TerminalSessionService",
+      "members": [
+        "hasOwnerActivity",
+        "kill",
+        "list",
+        "listBackends",
+        "read",
+        "registerBackend",
+        "signal",
+        "spawn",
+        "startSend"
+      ],
+      "fields": []
+    },
+    "tokenMeter": {
+      "type": "object",
+      "ctor": "TokenMeter",
+      "members": [
+        "estimateMessage",
+        "measure"
+      ],
+      "fields": []
+    },
+    "tools": {
+      "type": "object",
+      "ctor": "ToolRuntime",
+      "members": [
+        "execute",
+        "executionMode",
+        "get",
+        "guard",
+        "presentAs",
+        "register",
+        "restrict",
+        "schemas"
+      ],
+      "fields": []
+    },
+    "approval": {
+      "type": "object",
+      "ctor": "ApprovalService",
+      "members": [
+        "overrideOf",
+        "request",
+        "setPolicy"
+      ],
+      "fields": []
+    },
+    "userQuestions": {
+      "type": "object",
+      "ctor": "UserQuestionService",
+      "members": [
+        "ask"
+      ],
+      "fields": []
+    },
+    "web": {
+      "type": "object",
+      "ctor": "WebRuntime",
+      "members": [
+        "fetch",
+        "registerFetchProvider",
+        "registerSearchProvider",
+        "search"
+      ],
+      "fields": []
+    },
+    "workspaceRegistry": {
+      "type": "object",
+      "ctor": "WorkspaceRegistry",
+      "members": [
+        "archiveSession",
+        "create",
+        "delete",
+        "get",
+        "insertBefore",
+        "list",
+        "resolveByPath"
+      ],
+      "fields": []
+    }
+  },
+  "events": [],
+  "tools": null
+}

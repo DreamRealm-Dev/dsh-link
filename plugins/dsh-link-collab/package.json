@@ -1,0 +1,36 @@
+{
+  "name": "dsh-link-collab",
+  "version": "0.1.0",
+  "requires": { "dsh": "^0.2.0" },
+  "private": true,
+  "description": "The collaboration bus control channel: an append-only, replayable control log beside the kernel Agent Teams service, plus a TTL data channel that never blocks it. Its browser half declares one status row into the LINK panel.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+# dsh-link-notes bundle layer.
+#
+# One host-plane row, and it is the row the package was missing: until this file and the
+# `dsh.bundle.patch` entry in package.json existed, the package carried no bundle patch, so naming
+# it in `dsh.profile.bundles` would have contributed no layer at all (plugins/build.mjs:47-54).
+#
+# The row opens the note ledger, publishes the store, registers the `notes:ledger` prompt section and
+# the two `notes` group tools, and admits maxNotes/maxChars overrides (md item 13, R186). The ledger
+# directory is machine state, so the row carries no path: an empty `dir` means the DSH home, and a
+# deployment that wants another directory overrides `dir` in a later layer.
+- insert:
+    - id: link-notes
+      name: dsh-link-notes

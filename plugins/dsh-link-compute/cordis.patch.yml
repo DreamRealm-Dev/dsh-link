@@ -1,0 +1,15 @@
+# dsh-link-compute bundle: one Host row, no client half.
+#
+# The row publishes ctx.linkCompute (foldCollabRecords / indexTeamStatus over a napi-rs addon,
+# with a pure-TypeScript fallback) and registers nothing else: no tool, no route, no prompt
+# section, no browser half. It is OFF by default, which is the R486 product decision: a profile
+# that wants the native core opts in here.
+#
+# Enablement (Lead-owned, not part of this package's delivery): add the row to the LINK profile's
+# bundle list and set enabled: true on it; the kernel does not need a change.
+- insert:
+    - id: dsh-link-compute
+      name: dsh-link-compute
+      config:
+        enabled: false
+        nativeEnabled: true

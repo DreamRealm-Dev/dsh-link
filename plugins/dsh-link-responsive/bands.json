@@ -1,0 +1,8 @@
+{
+  "format": "dsh-link.responsive-bands/1",
+  "bands": [
+    { "name": "narrow", "maxWidth": 720, "decisions": { "sidebar": "drawer", "toolbar": "condensed", "gap": 4 } },
+    { "name": "wide", "minWidth": 1080, "decisions": { "sidebar": "docked", "toolbar": "full", "gap": 12 } },
+    { "name": "default", "catchAll": true, "decisions": { "sidebar": "docked", "toolbar": "compact", "gap": 8 } }
+  ]
+}

@@ -1,0 +1,6 @@
+# dsh-liquid-glass bundle: one row. The entry id is the plugin's identity in the
+# profile; the client half is loaded by @deepseek-ai/dsh-client-modules from the
+# package's ./client export.
+- insert:
+    - id: liquid-glass
+      name: dsh-liquid-glass

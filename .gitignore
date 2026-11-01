@@ -1,0 +1,36 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+
+# Rust / Tauri
+src-tauri/target/
+src-tauri/gen/schemas/
+
+# Pinned WebView2 engine (Windows): ~294MB cab, ~600MB extracted. Fetched by
+# scripts/fetch-webview2-fixed.mjs; the installer embeds the extracted folder.
+src-tauri/webview2-fixed.cab
+src-tauri/webview2-fixed/
+src-tauri/resources/pnpm/
+src-tauri/resources/pnpm-*.tgz
+
+# Verso experiment residue (pre-built Servo webview), kept out of the build.
+src-tauri/versoview/
+
+# Vendored DSH kernel: source is a pinned checkout, its build output is disposable.
+core/deepseek-harness/node_modules/
+core/deepseek-harness/.git/
+core/deepseek-harness/**/lib/
+core/deepseek-harness/**/*.tsbuildinfo
+core/deepseek-harness/apps/web/dist/
+core/deepseek-harness/.dsh-build/
+src-tauri/host-app/gen/
+
+# Local credentials and runtime state never belong in the repository.
+.credentials.yaml
+.credentials.yaml.*
+kernel-home/
+boot.log*
+profiles/
+.env
+.env.*

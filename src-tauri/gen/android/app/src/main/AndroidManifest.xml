@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- The phone is the *bridge end* of the device net (see core/device_bridge.rs): a paired
+         host reads this device's shared storage through fs.list / fs.read. Without "all files
+         access" Android 11+ still lets the app LIST /sdcard but refuses to OPEN a file in it,
+         so every real fs.read came back path-denied. This is the same surface a file manager
+         or adb pull exposes, and it is read-only here: nothing in this app writes to it.
+         READ_EXTERNAL_STORAGE covers Android 12 and older, where all-files access did not
+         exist as a single grant. -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <!-- R330: the phone as an INPUT of the device net, not only a read target.
+         Measured from the phone own WebView over CDP before this line existed:
+             navigator.mediaDevices.getUserMedia({audio:true})  ->  NotAllowedError: Permission denied
+             (isSecureContext true, navigator.mediaDevices present, MediaRecorder present, WebView of "DSH Link")
+         So the page can capture once the APP holds the permission: the manifest was the missing piece, and
+         `adb shell pm grant dev.dshlink.client android.permission.RECORD_AUDIO` makes it real without a prompt.
+         R380: the camera is declared now, because the build DOES honour it - `media.capture` / `photo` asks the page
+         for one still frame and the same capture route writes it. The earlier note here said a permission this build
+         cannot honour would be a fake; the answer was to build the path, not to keep the permission out. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- R380: the phone as a CAMERA. Only the app can be granted this; the page asks getUserMedia({video:true}) and
+         the WebView permission bridge answers it from the app's grant. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Tauri webview permission bridge (RustWebChromeClient.androidPermissionsForResources) asks for BOTH of
+         these when a page requests RESOURCE_AUDIO_CAPTURE; a permission that is not declared can never be granted,
+         so the page request is denied even though RECORD_AUDIO itself is held. -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!-- AndroidTV support -->
+    <uses-feature android:name="android.software.leanback" android:required="false" />
+
+    <application
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.dsh_link"
+        android:usesCleartextTraffic="${usesCleartextTraffic}">
+        <activity
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
+            android:launchMode="singleTask"
+            android:label="@string/main_activity_title"
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <!-- AndroidTV support -->
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+          android:name="androidx.core.content.FileProvider"
+          android:authorities="${applicationId}.fileprovider"
+          android:exported="false"
+          android:grantUriPermissions="true">
+          <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>

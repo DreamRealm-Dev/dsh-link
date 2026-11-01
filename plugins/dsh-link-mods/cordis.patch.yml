@@ -1,0 +1,95 @@
+# dsh-link-mods bundle：把桌面版（DeepSeek Harness 0.1.5-rc.1）的自制插件与
+# 调参移植到 dsh-link 的 0.2.1 内核。挂载行分两组：
+#
+#   活跃 —— 桌面版 home 补丁里的 image-guard、anti-repeat 三件套（调参照搬），
+#           外加 escalation-guard（dsh-hotfix 的运行时移植，见 plugins/dsh-escalation-guard）。
+#   停用 —— 桌面版 2026-10-04 起停用的 agent-context / lan-bridge / browser，
+#           以及桌面上已装未挂的 delegation-model-choice。保持停用是为了镜像
+#           桌面版当时的实际状态；启用 = 删掉该行的 disabled: true。
+#
+# 本 bundle 的包（dsh-image-guard 等）以 link: 依赖装进 profile，由
+# "profile 能解析到包" 这一层提供模块；anti-repeat 三件套来自 npm
+# （0.2.x 兼容版本，见 README）。行用 bundle 补丁声明：repeat-guard 的
+# volatile 字段（拦截表等）由设置表单按行 id 写回 profile 补丁，编辑链路
+# 与上游官方插件一致。
+- insert:
+    # ── dsh-image-guard 0.1.0：图片数量硬上限（plugins/dsh-image-guard） ──────
+    # 第 31 张 read_image 直接拒绝，避免上游 400 把会话烧死。调参照搬桌面版 home 补丁。
+    - id: image-guard
+      name: dsh-image-guard
+      config:
+        maxImagesPerRequest: 30
+        imageTools: [ read_image ]
+        onRequestExceed: error
+
+    # ── dsh-repeat-guard 0.2.2：思考段碎片复读（查表，独占一行的空话） ────────
+    # 本行不在这里声明：dsh-repeat-guard 自带 bundle 补丁（package.json 的
+    # dsh.bundle.patch），装进 profile 就已经挂出 id: dsh-repeat-guard 这一行。
+    # 先前这里再 insert 一行同 id，组成出的表里就有两行同 id：loader 的 store 按 id
+    # 建键，后一行覆盖前一行，于是真正生效的是没有 config 的那一行（插件跑默认表）；
+    # 而 config-editor 的写回校验按 composeEntries() 里的第一行比对，两边对不上就报
+    # "Configuration ... is overridden by a home patch or command-line overlay"。
+    # 现在 volatile 字段（拦截表、阈值、计数）写在 profile 的 cordis.patch.yml 里，
+    # 也就是设置表单写回的那一层；这里只留这段说明。
+
+    # ── @argszero/cordis-plugin-thinking-loop-guard 0.1.9：本行不在这里声明 ──
+    # 该包自带 bundle 补丁（node_modules/@argszero/cordis-plugin-thinking-loop-guard/
+    # cordis.patch.yml）在 bundle 顺序里排在本 bundle 之后，同 id 时它胜出、且**不带
+    # config** ⇒ 这里原先写的 12 项调参**全是死旗**。2026-10-07 R3-2d 实测：当前生效值
+    # = 上游默认（maxThinkingSteps 3 / minReasoningChars 2048 / maxFires 4）。要真调参
+    # 只能写更晚的层；本机的取值已写在 profile 补丁里（见
+    # docs/handoff/R3-enable-rows.md 的 R3-2d 一节）。0.1.9 的 peer 上限 <0.2.0，装进
+    # 0.2.1 需要 `dsh plugin allow-version` 豁免（见本 bundle 的 README.md）。
+
+    # ── dsh-repetition-guard 0.1.0：本行也不在这里声明 ────────────────────────
+    # 同理：该包自带补丁（node_modules/dsh-repetition-guard/cordis.patch.yml）排在
+    # 本 bundle 之后，它写的是 threshold 12 / tailChars 160 ⇒ 这里原先写的
+    # **10/240 从未生效**（2026-10-07 R3-2d 实测生效值 12/160）。本机的 10/240 已移到
+    # profile 补丁里。
+
+    # ── dsh-escalation-guard 0.1.0：sandbox 升级护栏（plugins/dsh-escalation-guard）
+    # dsh-hotfix 的运行时移植：不（更）宽的 sandbox_permissions 请求按有效模式放行，
+    # 不再烧掉整个工具调用。内核 checkout 保持零改动。
+    - id: escalation-guard
+      name: dsh-escalation-guard
+
+    # ── 以下三行不在本 bundle 里声明：插件自带 bundle 补丁已经挂出同 id 的行 ──
+    # agent-context（plugins/dsh-agent-context/cordis.patch.yml，config 逐字相同）、
+    # lan-bridge（plugins/dsh-lan-bridge/cordis.patch.yml，config 也是 {}）、
+    # delegation-model-choice（plugins/dsh-delegation-model-choice/cordis.patch.yml，
+    # config 是这里从未写过的超集 {requireApproval, maxMembers}）。
+    # R3-2b（2026-10-07）删掉了本文件里这三行的重复 insert，理由两条：
+    #   1) 同 id 两行时，loader 的 store 按 id 建键、后一行整体覆盖前一行（后一行是
+    #      插件自己那份，bundle 顺序在本 bundle 之后），所以本文件写的 config 与
+    #      disabled 全是死旗——R3-2 实测 lan-bridge 一直带着 disabled: true 在跑；
+    #   2) 同 id 两行会让 config-editor 的 entries()（只收 id 唯一的行）把该行整个排除
+    #      出设置表单，用户改不了。
+    # 要调这三行的 config：改插件自己的 cordis.patch.yml，或按上游惯例写进 profile 补丁。
+    # 组成与表面读数（每 id 恰好一行、declared 121/services 92/events 78/tools 6 不变）
+    # 见 docs/handoff/R3-enable-rows.md 的 R3-2b 一节。
+
+    # ── dsh-browser：常驻浏览器能力（host 平面，实测 14 个 browser_* 工具） ──
+    # R3-2c 已启用（2026-10-07）：桌面版 2026-10-04 起停用，理由是「8 GB 显存 / 27B
+    # 三元模型扛工具描述开销不划算」。本条注释里的「10 个」是那时的说法，实测
+    # BROWSER_TOOL_NAMES 是 14 个、模型面 schema 合计 9434 B（数字与四角/工具面读数见
+    # docs/handoff/R3-enable-rows.md 的 R3-2c 一节）。
+    # 回滚路径（一行）：在本行加回 `      disabled: true`，重启壳。
+    - id: browser
+      name: dsh-browser
+      config:
+        viewport:
+          width: 1280
+          height: 800
+
+# ── R185（link-groups / link-notes）不在上面的 insert 列表里，这是判据 ──────────
+# 判据与 R3-2b 同一把尺：本文件只给**没有 dsh.bundle.patch 声明**的包带行。
+#   · dsh-link-groups 自带 bundle 补丁（plugins/dsh-link-groups/package.json 的
+#     dsh.bundle.patch → cordis.patch.yml，行 id: link-groups）⇒ 它的行由**它自己**带；
+#     这里再 insert 一个同 id 就是 R3-2b 删掉的那种重复：两行同 id 时后者整体覆盖前者，
+#     且 config-editor 的 entries() 会把该行排除出设置表单。
+#   · dsh-link-notes 的载体已在包内补齐（R185-P3：cordis.patch.yml + dsh.bundle.patch），同理。
+# 两者的挂载都是**活档案的一次显式编辑**：<profile>/package.json 的 dependencies 加 link:
+# 依赖 + dsh.profile.bundles 加条目（两处；先例 dsh-link-collab / dsh-link-teams，执行链见
+# docs/handoff/R90-live-mount.md）。dsh-browser / dsh-image-guard / dsh-escalation-guard
+# 之所以走本文件，是因为它们没有 bundle 声明（实测三份 package.json 均无 dsh.bundle）。
+# 本注释写在文件末尾，正是为了不移动上面任何一行的行号：契约判定里按 file:line 引用它们。

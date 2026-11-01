@@ -1,0 +1,26 @@
+# DSH-LINK native compute cores.
+#
+# One crate today: `dsh-compute-napi`, the napi-rs addon loaded by the
+# `dsh-link-compute` Cordis host plugin as `lib/dsh_compute.node`.
+# `cargo build -p dsh-compute-napi --release` is the whole native build; no
+# Node/npm toolchain is required to produce the addon (rust/scripts/build.mjs
+# only copies the artifact and verifies it).
+#
+# Keep `panic = "unwind"` (the Cargo default): every N-API entry point wraps its
+# body in `catch_unwind` and reports a panic as a JS error instead of aborting
+# the kernel process.
+[workspace]
+resolver = "2"
+members = ["crates/dsh-compute-napi"]
+
+[workspace.package]
+version = "0.3.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = "debuginfo"

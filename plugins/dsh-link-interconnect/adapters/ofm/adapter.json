@@ -1,0 +1,37 @@
+{
+  "id": "ofm",
+  "name": "Our Free Model",
+  "vendor": "Ebony-Vinyl",
+  "match": {
+    "files": [
+      { "path": "~/.our-free-model/settings.json", "jsonPath": "standalonePort", "as": "port" },
+      { "path": "$OFM_HOME/settings.json", "jsonPath": "standalonePort", "as": "port" }
+    ],
+    "env": ["OFM_HOME"],
+    "identity": {
+      "method": "GET",
+      "url": "http://127.0.0.1:{port}/health",
+      "contains": "our-free-model"
+    }
+  },
+  "connect": {
+    "baseUrl": "http://127.0.0.1:{port}",
+    "credential": { "kind": "file-json", "path": "~/.our-free-model/settings.json", "jsonPath": "forwardKey" },
+    "verify": [
+      { "method": "GET", "path": "/v1/models", "expectStatus": 200, "auth": "bearer" }
+    ]
+  },
+  "capabilities": [
+    {
+      "kind": "models.provide",
+      "version": 1,
+      "from": "openai",
+      "as": { "providerId": "our-free-model", "label": "Our Free Model" }
+    }
+  ],
+  "consent": {
+    "title": "接入 Our Free Model 作为模型供应商",
+    "scopes": ["models.provide"]
+  },
+  "limits": { "rpm": 60, "timeoutMs": 15000 }
+}

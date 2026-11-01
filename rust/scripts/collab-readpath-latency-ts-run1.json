@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-10-27T14:34:55.632Z",
+  "node": "v24.16.0",
+  "ledger": {
+    "path": "C:\\Users\\<user>\\AppData\\Roaming\\dev.dshlink.client\\dsh-link\\kernel-home\\collab\\control.jsonl",
+    "bytes": 602754,
+    "records": 1578,
+    "snapshotRecords": 1578
+  },
+  "caveat": "The running kernel is not this worktree; HTTP numbers are a baseline to re-measure after R504/R507, never a before/after claim.",
+  "projectTeamState": {
+    "p50Ms": 1.6302,
+    "p99Ms": 10.1788,
+    "repeats": 10
+  },
+  "shadowObservePerCallUs": 0.07465,
+  "shadowBackgroundSample": {
+    "runs": 8,
+    "p50Ms": 0,
+    "p99Ms": 6,
+    "maxMs": 6,
+    "lastMs": 0,
+    "failures": 0,
+    "lastError": null
+  },
+  "syncSampleForComparison": {
+    "p50Ms": 5.2369,
+    "p99Ms": 8.2691,
+    "repeats": 10
+  },
+  "httpGetStateRoute": {
+    "p50Ms": 2.8105,
+    "p99Ms": 24.1975,
+    "repeats": 60
+  }
+}

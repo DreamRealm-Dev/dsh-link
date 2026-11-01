@@ -1,0 +1,3235 @@
+{
+  "format": "dsh-link.surface/1",
+  "capturedAt": "2026-10-31T14:21:44.257Z",
+  "kernel": {
+    "id": "dsh-v0.2.2-alpha.2",
+    "version": "0.2.2-alpha.2",
+    "commit": "1ee84404fa",
+    "globalVersion": null,
+    "node": "v24.16.0",
+    "pid": 17504
+  },
+  "env": {
+    "DSH_HOME": "<workspace>\\\\dsh-link\\.tmp\\esbuild-tmp\\dsh-link-probe-Foieqp",
+    "DSH_LINK_PROFILE": "web"
+  },
+  "counts": {
+    "declaredProperties": 129,
+    "reachableServices": 101,
+    "events": 82,
+    "tools": 29
+  },
+  "declared": [
+    {
+      "key": "accessor",
+      "type": "accessor"
+    },
+    {
+      "key": "accountController",
+      "type": "service"
+    },
+    {
+      "key": "agentDefaultModel",
+      "type": "service"
+    },
+    {
+      "key": "agentLoop",
+      "type": "service"
+    },
+    {
+      "key": "agentPresets",
+      "type": "service"
+    },
+    {
+      "key": "agentTeams",
+      "type": "service"
+    },
+    {
+      "key": "agents",
+      "type": "service"
+    },
+    {
+      "key": "appExit",
+      "type": "service"
+    },
+    {
+      "key": "appReady",
+      "type": "service"
+    },
+    {
+      "key": "approval",
+      "type": "service"
+    },
+    {
+      "key": "attachments",
+      "type": "service"
+    },
+    {
+      "key": "authorization",
+      "type": "service"
+    },
+    {
+      "key": "bail",
+      "type": "accessor"
+    },
+    {
+      "key": "clientModules",
+      "type": "service"
+    },
+    {
+      "key": "cmdlineArgs",
+      "type": "service"
+    },
+    {
+      "key": "commands",
+      "type": "service"
+    },
+    {
+      "key": "compaction",
+      "type": "service"
+    },
+    {
+      "key": "configEditor",
+      "type": "service"
+    },
+    {
+      "key": "connection",
+      "type": "service"
+    },
+    {
+      "key": "cordisInspect",
+      "type": "service"
+    },
+    {
+      "key": "credentials",
+      "type": "service"
+    },
+    {
+      "key": "credentialsController",
+      "type": "service"
+    },
+    {
+      "key": "debounce",
+      "type": "accessor"
+    },
+    {
+      "key": "deepseekAccount",
+      "type": "service"
+    },
+    {
+      "key": "deepseekLlmApiExtensions",
+      "type": "service"
+    },
+    {
+      "key": "directoryPicker",
+      "type": "service"
+    },
+    {
+      "key": "directoryPickerController",
+      "type": "service"
+    },
+    {
+      "key": "dshHomePath",
+      "type": "service"
+    },
+    {
+      "key": "dynamicCordisRunner",
+      "type": "service"
+    },
+    {
+      "key": "effect",
+      "type": "accessor"
+    },
+    {
+      "key": "emit",
+      "type": "accessor"
+    },
+    {
+      "key": "fileReferences",
+      "type": "service"
+    },
+    {
+      "key": "fileUploads",
+      "type": "service"
+    },
+    {
+      "key": "fs",
+      "type": "service"
+    },
+    {
+      "key": "get",
+      "type": "accessor"
+    },
+    {
+      "key": "goals",
+      "type": "service"
+    },
+    {
+      "key": "hmr",
+      "type": "service"
+    },
+    {
+      "key": "inject",
+      "type": "accessor"
+    },
+    {
+      "key": "interval",
+      "type": "accessor"
+    },
+    {
+      "key": "invocation",
+      "type": "accessor"
+    },
+    {
+      "key": "jobController",
+      "type": "service"
+    },
+    {
+      "key": "jobs",
+      "type": "service"
+    },
+    {
+      "key": "launchEnvironment",
+      "type": "service"
+    },
+    {
+      "key": "linkCollab",
+      "type": "service"
+    },
+    {
+      "key": "linkGroups",
+      "type": "service"
+    },
+    {
+      "key": "linkNotes",
+      "type": "service"
+    },
+    {
+      "key": "llm",
+      "type": "service"
+    },
+    {
+      "key": "loader",
+      "type": "service"
+    },
+    {
+      "key": "mcpResources",
+      "type": "service"
+    },
+    {
+      "key": "messageFeedback",
+      "type": "service"
+    },
+    {
+      "key": "mixin",
+      "type": "accessor"
+    },
+    {
+      "key": "officeToPdf",
+      "type": "service"
+    },
+    {
+      "key": "on",
+      "type": "accessor"
+    },
+    {
+      "key": "once",
+      "type": "accessor"
+    },
+    {
+      "key": "openDesignGoUsage",
+      "type": "service"
+    },
+    {
+      "key": "openDesignGoUsageLedger",
+      "type": "service"
+    },
+    {
+      "key": "opencodeGoModels",
+      "type": "service"
+    },
+    {
+      "key": "opencodeGoUsage",
+      "type": "service"
+    },
+    {
+      "key": "otel",
+      "type": "service"
+    },
+    {
+      "key": "parallel",
+      "type": "accessor"
+    },
+    {
+      "key": "permissionPresets",
+      "type": "service"
+    },
+    {
+      "key": "planMode",
+      "type": "service"
+    },
+    {
+      "key": "plugin",
+      "type": "accessor"
+    },
+    {
+      "key": "pluginInventory",
+      "type": "service"
+    },
+    {
+      "key": "pluginManager",
+      "type": "service"
+    },
+    {
+      "key": "pluginPackages",
+      "type": "service"
+    },
+    {
+      "key": "pluginRegistryProbe",
+      "type": "service"
+    },
+    {
+      "key": "profileContext",
+      "type": "service"
+    },
+    {
+      "key": "provide",
+      "type": "accessor"
+    },
+    {
+      "key": "ptcRuntime",
+      "type": "service"
+    },
+    {
+      "key": "remoteAccess",
+      "type": "service"
+    },
+    {
+      "key": "runtime",
+      "type": "accessor"
+    },
+    {
+      "key": "sandbox",
+      "type": "service"
+    },
+    {
+      "key": "sandboxPolicy",
+      "type": "service"
+    },
+    {
+      "key": "schedule",
+      "type": "service"
+    },
+    {
+      "key": "serial",
+      "type": "accessor"
+    },
+    {
+      "key": "sessionController",
+      "type": "service"
+    },
+    {
+      "key": "sessionFeedback",
+      "type": "service"
+    },
+    {
+      "key": "sessionFileReferences",
+      "type": "service"
+    },
+    {
+      "key": "sessionPersistence",
+      "type": "service"
+    },
+    {
+      "key": "sessionProjectionCache",
+      "type": "service"
+    },
+    {
+      "key": "sessionProjections",
+      "type": "service"
+    },
+    {
+      "key": "sessionQuery",
+      "type": "service"
+    },
+    {
+      "key": "sessionReferenceResolver",
+      "type": "service"
+    },
+    {
+      "key": "sessionSkillCatalog",
+      "type": "service"
+    },
+    {
+      "key": "sessionTelemetry",
+      "type": "service"
+    },
+    {
+      "key": "sessionTitle",
+      "type": "service"
+    },
+    {
+      "key": "sessionToolResults",
+      "type": "service"
+    },
+    {
+      "key": "sessions",
+      "type": "service"
+    },
+    {
+      "key": "set",
+      "type": "accessor"
+    },
+    {
+      "key": "setInterval",
+      "type": "accessor"
+    },
+    {
+      "key": "setTimeout",
+      "type": "accessor"
+    },
+    {
+      "key": "settings",
+      "type": "service"
+    },
+    {
+      "key": "settingsController",
+      "type": "service"
+    },
+    {
+      "key": "shell",
+      "type": "service"
+    },
+    {
+      "key": "shellEnv",
+      "type": "service"
+    },
+    {
+      "key": "skills",
+      "type": "service"
+    },
+    {
+      "key": "speechController",
+      "type": "service"
+    },
+    {
+      "key": "speechToText",
+      "type": "service"
+    },
+    {
+      "key": "spillStore",
+      "type": "service"
+    },
+    {
+      "key": "storage",
+      "type": "service"
+    },
+    {
+      "key": "storage.backend.json",
+      "type": "service"
+    },
+    {
+      "key": "storageDomain",
+      "type": "service"
+    },
+    {
+      "key": "subagentModelSelection",
+      "type": "service"
+    },
+    {
+      "key": "subagents",
+      "type": "service"
+    },
+    {
+      "key": "subprocess",
+      "type": "service"
+    },
+    {
+      "key": "systemPrompt",
+      "type": "service"
+    },
+    {
+      "key": "terminalController",
+      "type": "service"
+    },
+    {
+      "key": "terminals",
+      "type": "service"
+    },
+    {
+      "key": "throttle",
+      "type": "accessor"
+    },
+    {
+      "key": "timeout",
+      "type": "accessor"
+    },
+    {
+      "key": "timer",
+      "type": "service"
+    },
+    {
+      "key": "tokenMeter",
+      "type": "service"
+    },
+    {
+      "key": "toolResultPruner",
+      "type": "service"
+    },
+    {
+      "key": "tools",
+      "type": "service"
+    },
+    {
+      "key": "typert",
+      "type": "service"
+    },
+    {
+      "key": "typertGateway",
+      "type": "service"
+    },
+    {
+      "key": "userQuestions",
+      "type": "service"
+    },
+    {
+      "key": "waterfall",
+      "type": "accessor"
+    },
+    {
+      "key": "web",
+      "type": "service"
+    },
+    {
+      "key": "webApp",
+      "type": "service"
+    },
+    {
+      "key": "webServer",
+      "type": "service"
+    },
+    {
+      "key": "webStartup",
+      "type": "service"
+    },
+    {
+      "key": "workflowEngine",
+      "type": "service"
+    },
+    {
+      "key": "workingDirectory",
+      "type": "service"
+    },
+    {
+      "key": "workspaceChanges",
+      "type": "service"
+    },
+    {
+      "key": "workspaceController",
+      "type": "service"
+    },
+    {
+      "key": "workspaceFiles",
+      "type": "service"
+    },
+    {
+      "key": "workspaceRegistry",
+      "type": "service"
+    }
+  ],
+  "services": {
+    "accountController": {
+      "type": "object",
+      "ctor": "AccountController",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "ackBonusNotified",
+        "cancelSignIn",
+        "getBalance",
+        "getProfile",
+        "getState",
+        "getUnnotifiedBonuses",
+        "hasRunningAccountTasks",
+        "signOut",
+        "startSignIn",
+        "watch",
+        "watchExpiry"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "agentDefaultModel": {
+      "type": "object",
+      "ctor": "AgentDefaultModelConfig",
+      "members": [
+        "currentSelection",
+        "saveSelection"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "ownerContext",
+        "saves"
+      ]
+    },
+    "agentLoop": {
+      "type": "object",
+      "ctor": "AgentLoop",
+      "members": [
+        "appendUnstoredSuffix",
+        "applyConfiguredRoute",
+        "create",
+        "createAgent",
+        "createStoredSession",
+        "initializeAgent",
+        "reportConfiguredStartupFailure",
+        "restoreOrCreateConfigured",
+        "resume",
+        "resumeWith",
+        "waitForDrainingConfiguredIdentity"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "inboxProjectionHandle",
+        "modelProjectionHandle",
+        "name",
+        "ownership",
+        "runtime"
+      ]
+    },
+    "agentPresets": {
+      "type": "object",
+      "ctor": "AgentPresetRegistry",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "acquireScope",
+        "activate",
+        "bind",
+        "collect",
+        "composeFrom",
+        "composedPreset",
+        "compositionInventory",
+        "defaultId",
+        "diagnostic",
+        "generationFor",
+        "inspectCompositions",
+        "join",
+        "list",
+        "mount",
+        "presetForSession",
+        "readDocument",
+        "recompose",
+        "register",
+        "remoteExportList",
+        "resolve",
+        "retain",
+        "select",
+        "serviceFor"
+      ],
+      "fields": [
+        "agentPresetProjectionHandle",
+        "bindings",
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "definitions",
+        "generations",
+        "name",
+        "owner",
+        "switches",
+        "typertRemote"
+      ]
+    },
+    "agentTeams": {
+      "type": "object",
+      "ctor": "TeamService",
+      "members": [
+        "createTask",
+        "disposeRuntime",
+        "getTask",
+        "interrupt",
+        "listMembers",
+        "listTasks",
+        "membership",
+        "policy",
+        "scheduleRecovery",
+        "sendAdmitted",
+        "sendMessage",
+        "spawnTeammate",
+        "tryMembership",
+        "updateTask",
+        "waitForChange"
+      ],
+      "fields": [
+        "activity",
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "journal",
+        "lifecycle",
+        "name",
+        "roster",
+        "tasks"
+      ]
+    },
+    "agents": {
+      "type": "object",
+      "ctor": "AgentRegistry",
+      "members": [
+        "announce",
+        "assertInitiatorsReadable",
+        "closeInitiators",
+        "create",
+        "currentInitiator",
+        "detachEntered",
+        "disposeInitiators",
+        "emitDisposed",
+        "enter",
+        "get",
+        "hasLifecycleAncestor",
+        "isOwnedBy",
+        "list",
+        "register",
+        "releaseInitiatorRun",
+        "releaseReentrantInitiatorRuns",
+        "requireFactory",
+        "requireInitiator",
+        "resume",
+        "roots",
+        "runWithInitiator",
+        "setFactory",
+        "turnBoundaryOf",
+        "withInitiator",
+        "withoutInitiator"
+      ],
+      "fields": [
+        "activeInitiatorRuns",
+        "cordis.tracker",
+        "ctx",
+        "factory",
+        "initiatorDisposal",
+        "initiatorDrain",
+        "initiatorRuns",
+        "initiatorState",
+        "initiators",
+        "name",
+        "store",
+        "turnBoundaryProjectionHandle"
+      ]
+    },
+    "appExit": {
+      "type": "function"
+    },
+    "appReady": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": []
+    },
+    "approval": {
+      "type": "object",
+      "ctor": "ApprovalService",
+      "members": [
+        "approvalStateOf",
+        "decide",
+        "effectivePolicy",
+        "overrideOf",
+        "request",
+        "setPolicy"
+      ],
+      "fields": [
+        "approvalProjectionHandle",
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "name"
+      ]
+    },
+    "attachments": {
+      "type": "object",
+      "ctor": "LocalAttachmentStore",
+      "members": [
+        "fileHostPath",
+        "imageHostPath",
+        "readFileStream",
+        "readImage",
+        "readImageRequest",
+        "requestVersion",
+        "saveFile",
+        "saveFileStream",
+        "saveImage",
+        "saveImages",
+        "validateImage"
+      ],
+      "fields": [
+        "cacheRoot",
+        "compression",
+        "cordis.tracker",
+        "ctx",
+        "imageCompressionConcurrency",
+        "imageLimits",
+        "name",
+        "normalizationPolicy",
+        "requestInflight",
+        "root"
+      ]
+    },
+    "authorization": {
+      "type": "object",
+      "ctor": "AuthorizationService",
+      "members": [
+        "attempt",
+        "begin",
+        "cancel",
+        "describe",
+        "entry",
+        "list",
+        "registerFlow",
+        "settle",
+        "warnSettledListenerFailure"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "flows",
+        "name",
+        "running"
+      ]
+    },
+    "clientModules": {
+      "type": "object",
+      "ctor": "ClientModuleRegistry",
+      "members": [
+        "artifactBaseline",
+        "assetResponse",
+        "bundleResource",
+        "captureArtifactBaseline",
+        "chunkRequest",
+        "chunkResponse",
+        "clientPath",
+        "compose",
+        "fetchBundle",
+        "flush",
+        "graph",
+        "locatePkgJson",
+        "nearestPackage",
+        "notifyGraphChanged",
+        "onGraphChanged",
+        "onRebuilt",
+        "processOne",
+        "readClientBundle",
+        "rebuilt",
+        "reconcilePackage",
+        "resolveMeta",
+        "resolveSource",
+        "sourceKey"
+      ],
+      "fields": [
+        "batchResponses",
+        "composed",
+        "cordis.tracker",
+        "ctx",
+        "dirty",
+        "flushQueued",
+        "graphListeners",
+        "name",
+        "previousBatchResponses",
+        "rebuildListeners",
+        "release",
+        "responses",
+        "sources",
+        "table"
+      ]
+    },
+    "cmdlineArgs": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": []
+    },
+    "commands": {
+      "type": "object",
+      "ctor": "CommandRuntime",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "appendLifecycle",
+        "execute",
+        "find",
+        "list",
+        "mintCommandId",
+        "notifyChange",
+        "register",
+        "registerFileReceiptResolver",
+        "settleThrown",
+        "view"
+      ],
+      "fields": [
+        "commandSeq",
+        "cordis.tracker",
+        "ctx",
+        "fileReceipts",
+        "instanceToken",
+        "layers",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "configEditor": {
+      "type": "object",
+      "ctor": "ConfigEditor",
+      "members": [
+        "configuration",
+        "documentPath",
+        "edit",
+        "entries",
+        "inherited"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "ownerContext"
+      ]
+    },
+    "connection": {
+      "type": "object",
+      "ctor": "HostConnectionService",
+      "members": [
+        "admit",
+        "admitConnection",
+        "authenticatedUrl",
+        "authorizeConnect",
+        "authorizeIndex",
+        "createPeer",
+        "createSharedFetchHandler",
+        "fetch",
+        "isTrusted",
+        "publishPeer",
+        "register",
+        "registerFetchRoute",
+        "registerInterceptor",
+        "requestRejection",
+        "rpc"
+      ],
+      "fields": [
+        "allowsRemoteAuthorities",
+        "browserAuth",
+        "browserPeer",
+        "cordis.tracker",
+        "ctx",
+        "disposed",
+        "fetchRoutes",
+        "interceptors",
+        "name",
+        "owner",
+        "peers",
+        "trustedHosts"
+      ]
+    },
+    "cordisInspect": {
+      "type": "object",
+      "ctor": "CordisInspectRegistryService",
+      "members": [
+        "list",
+        "query",
+        "queryClient",
+        "register",
+        "resolveClientQuery",
+        "syncClientManifest"
+      ],
+      "fields": [
+        "clientManifest",
+        "clientQueryTimeoutMs",
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "nextRequest",
+        "pending",
+        "providers"
+      ]
+    },
+    "credentials": {
+      "type": "object",
+      "ctor": "LocalCredentialProvider",
+      "members": [
+        "changedRecords",
+        "changedRefs",
+        "deleteRecord",
+        "describe",
+        "describeRecord",
+        "dotenvFallback",
+        "enqueue",
+        "inherited",
+        "isClosed",
+        "listRecords",
+        "loadInitial",
+        "migrateFlatDocument",
+        "modifyRecord",
+        "queueRefresh",
+        "readRecord",
+        "reconcileFromDisk",
+        "refresh",
+        "resolve",
+        "set",
+        "unset",
+        "warnIgnoredKeys",
+        "write"
+      ],
+      "fields": [
+        "closed",
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "operations",
+        "records",
+        "spec",
+        "text",
+        "values"
+      ]
+    },
+    "credentialsController": {
+      "type": "object",
+      "ctor": "CredentialsController",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "describe",
+        "provider",
+        "set",
+        "unset",
+        "write"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "deepseekAccount": {
+      "type": "object",
+      "ctor": "PlatformAccount",
+      "members": [
+        "ackBonusNotified",
+        "cacheProfile",
+        "cancelRequest",
+        "cancelSignIn",
+        "changed",
+        "currentAccountId",
+        "detailHeaders",
+        "expireCredential",
+        "finishFailedCallback",
+        "getBalance",
+        "getDetail",
+        "getDeviceIdentity",
+        "getPlatformSession",
+        "getProfile",
+        "getState",
+        "getUnnotifiedBonuses",
+        "identityOf",
+        "invalidateDetails",
+        "readCurrentGrant",
+        "rejectPayload",
+        "rejectToken",
+        "request",
+        "resolveToken",
+        "revoke",
+        "run",
+        "signOut",
+        "startSignIn",
+        "update",
+        "watch"
+      ],
+      "fields": [
+        "accountRequestHeaders",
+        "attempt",
+        "attemptTimeout",
+        "balanceTimeout",
+        "closed",
+        "cordis.tracker",
+        "ctx",
+        "detailsLifetime",
+        "embeddedPageDist",
+        "inferenceOrigin",
+        "lastProfile",
+        "listeners",
+        "logoutLifetime",
+        "logoutPolicy",
+        "name",
+        "origin",
+        "platform",
+        "removing",
+        "requestHeaders",
+        "requestTimeout",
+        "revocations",
+        "rewriteBrowserOrigin"
+      ]
+    },
+    "deepseekLlmApiExtensions": {
+      "type": "object",
+      "ctor": "DeepSeekLlmApiExtensionRegistry",
+      "members": [
+        "prepare",
+        "register"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "providers",
+        "warnedFields"
+      ]
+    },
+    "directoryPicker": {
+      "type": "object",
+      "ctor": "NativeDirectoryPicker",
+      "members": [
+        "capability"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "nativeCapability"
+      ]
+    },
+    "directoryPickerController": {
+      "type": "object",
+      "ctor": "DirectoryPickerController",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "createDirectory",
+        "list",
+        "pick",
+        "requireCapability"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "dshHomePath": {
+      "type": "function"
+    },
+    "dynamicCordisRunner": {
+      "type": "object",
+      "ctor": "DynamicCordisRunnerService",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "activate",
+        "announceResolved",
+        "cancelPending",
+        "claimRuntimeFailure",
+        "commitActivation",
+        "createAttempt",
+        "define",
+        "diagnostic",
+        "failAttempt",
+        "getClientCode",
+        "injectUserContext",
+        "injectUserRunOutcome",
+        "inspectPackage",
+        "inspectPlugin",
+        "inventory",
+        "invoke",
+        "listPlugins",
+        "owned",
+        "reference",
+        "reportClientGuardFailure",
+        "reportRenderFailure",
+        "requireGroup",
+        "resolveInspectQuery",
+        "resolvePlan",
+        "resolveRequestRun",
+        "retract",
+        "run",
+        "runHostHalf",
+        "runResponse",
+        "settleActivation",
+        "settleUserRun",
+        "snapshot",
+        "startFresh",
+        "startHost",
+        "steerGuardFailure",
+        "steerHostHandlerFailure",
+        "steerRenderFailure",
+        "steerRunOutcome",
+        "stop",
+        "stopFromPanel",
+        "syncInspectManifest",
+        "undefine",
+        "undefineFromPanel"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "group",
+        "inspectRegistry",
+        "name",
+        "registry",
+        "resolved",
+        "rootCtx",
+        "starting",
+        "typertRemote"
+      ]
+    },
+    "fileReferences": {
+      "type": "object",
+      "ctor": "LocalFileReferenceService",
+      "members": [
+        "list"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "promptDisposals",
+        "promptFibers",
+        "searches"
+      ]
+    },
+    "fileUploads": {
+      "type": "object",
+      "ctor": "FileUploads",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "assertOrdinaryAgent",
+        "bindPrompt",
+        "observeSessionEvent",
+        "registerAgentResolver",
+        "resolve",
+        "resolveAgent",
+        "retire",
+        "retirePrompt",
+        "stage",
+        "store",
+        "upload",
+        "uploadImageStream",
+        "uploadStream"
+      ],
+      "fields": [
+        "agentResolution",
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "stagedFiles",
+        "typertRemote"
+      ]
+    },
+    "fs": {
+      "type": "object",
+      "ctor": "SandboxedFileSystem",
+      "members": [
+        "checkedTarget",
+        "editText",
+        "sandboxMode",
+        "writeText"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "defaultMode",
+        "internals",
+        "locks",
+        "name"
+      ]
+    },
+    "goals": {
+      "type": "object",
+      "ctor": "GoalService",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "assertLive",
+        "block",
+        "clear",
+        "commit",
+        "commitCurrent",
+        "commitSnapshot",
+        "complete",
+        "create",
+        "disarm",
+        "edit",
+        "expectCurrent",
+        "get",
+        "nextMutationTime",
+        "pause",
+        "prepareMutation",
+        "remoteExportCreate",
+        "resume",
+        "runtimeState",
+        "setActivation",
+        "state",
+        "transition",
+        "transitionError",
+        "view",
+        "withPhase"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "goalProjectionHandle",
+        "name",
+        "resolved",
+        "runtimeStates",
+        "typertRemote"
+      ]
+    },
+    "hmr": {
+      "type": "object",
+      "ctor": "Hmr",
+      "members": [
+        "analyzeChanges",
+        "contained",
+        "esmHas",
+        "esmJob",
+        "esmUrls",
+        "evict",
+        "evictDropped",
+        "getLinked",
+        "hasEsmCache",
+        "loadedUrls",
+        "mainJob",
+        "moduleGraph",
+        "partialReload",
+        "planReplacement",
+        "pluginsOf",
+        "profileModules",
+        "reconcileProfile",
+        "runExclusive",
+        "runReload",
+        "stopPlanned",
+        "watchConfig"
+      ],
+      "fields": [
+        "accepted",
+        "applicationReady",
+        "baseDir",
+        "closing",
+        "config",
+        "configPaths",
+        "cordis.tracker",
+        "ctx",
+        "declined",
+        "executing",
+        "externals",
+        "files",
+        "internal",
+        "manifests",
+        "name",
+        "operations",
+        "ownerContext",
+        "stashed",
+        "watcher"
+      ]
+    },
+    "jobController": {
+      "type": "object",
+      "ctor": "JobController",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "follow",
+        "kill",
+        "list"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "observeFlushMs",
+        "observeMaxFrameBytes",
+        "typertRemote"
+      ]
+    },
+    "jobs": {
+      "type": "object",
+      "ctor": "LocalJobRegistry",
+      "members": [
+        "activeJobCount",
+        "appendRing",
+        "assertAccess",
+        "attachController",
+        "cancelForTeardown",
+        "disposeAll",
+        "disposeOwned",
+        "drop",
+        "emit",
+        "emitOutput",
+        "ensureOwnerCleanup",
+        "events",
+        "expect",
+        "get",
+        "guardSource",
+        "kill",
+        "killJob",
+        "list",
+        "read",
+        "readAt",
+        "readJob",
+        "recordSessionEvent",
+        "remove",
+        "resolveOwner",
+        "servesOwner",
+        "settle",
+        "start",
+        "updateProgress",
+        "view",
+        "wait",
+        "waitJob"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "hub",
+        "layers",
+        "maxConcurrentJobsPerOwner",
+        "name",
+        "ownerCleanups",
+        "pumpPollMs",
+        "retainBytes",
+        "selfCtx",
+        "settledRetainBytes",
+        "store"
+      ]
+    },
+    "launchEnvironment": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": []
+    },
+    "linkCollab": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": [
+        "broker",
+        "computeShadow",
+        "diagnostics",
+        "fold",
+        "log",
+        "recorded",
+        "relay",
+        "retry",
+        "status",
+        "tools"
+      ]
+    },
+    "linkGroups": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": []
+    },
+    "linkNotes": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": [
+        "dir",
+        "log"
+      ]
+    },
+    "llm": {
+      "type": "object",
+      "ctor": "LlmRuntime",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "adapterStream",
+        "commitRoutes",
+        "detachedModalities",
+        "discoverModels",
+        "emitAdaptersUpdated",
+        "fileReadPath",
+        "fileRequestText",
+        "forAdapter",
+        "imageRequestPricing",
+        "imageRequestTarget",
+        "listConfigurableProviders",
+        "listModels",
+        "listProviders",
+        "normalizeModelInfo",
+        "prepareCall",
+        "prepareRoutes",
+        "providerRetryPolicy",
+        "registerAdapter",
+        "registerConfigurableProviders",
+        "registerModelDiscovery",
+        "registration",
+        "remoteDiscoverModels",
+        "resolveCallConfig",
+        "resolveCallFor",
+        "resolveCallWithInfo",
+        "resolveModelInfo",
+        "resolveModelInfoFor",
+        "stream",
+        "streamWithRegistration",
+        "warnAdaptersListenerFailure"
+      ],
+      "fields": [
+        "adapters",
+        "cordis.tracker",
+        "ctx",
+        "directory",
+        "discoveries",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "loader": {
+      "type": "object",
+      "ctor": "Loader",
+      "members": [
+        "exit",
+        "locate",
+        "showLog",
+        "unwrapExports",
+        "write"
+      ],
+      "fields": [
+        "builtins",
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "enableLogs",
+        "envData",
+        "internal",
+        "name",
+        "root",
+        "store"
+      ]
+    },
+    "mcpResources": {
+      "type": "object",
+      "ctor": "McpResourceRuntime",
+      "members": [
+        "register",
+        "registerTools",
+        "request"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "layers",
+        "name",
+        "selfCtx"
+      ]
+    },
+    "messageFeedback": {
+      "type": "object",
+      "ctor": "MessageFeedbackService",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "delete",
+        "enqueue",
+        "list",
+        "put",
+        "resolveNote",
+        "versionConflict",
+        "withSession"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "maxNoteBytes",
+        "mutationAdmissionOpen",
+        "name",
+        "operationTails",
+        "typertRemote"
+      ]
+    },
+    "officeToPdf": {
+      "type": "object",
+      "ctor": "OfficeToPdf",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "convert",
+        "convertBytes",
+        "getGeneration",
+        "render",
+        "renderFile"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "generation",
+        "name",
+        "options",
+        "queue",
+        "remoteLifetime",
+        "remoteRequests",
+        "slots",
+        "typertRemote"
+      ]
+    },
+    "openDesignGoUsage": {
+      "type": "object",
+      "ctor": "OpenDesignUsageService",
+      "members": [
+        "describe",
+        "read"
+      ],
+      "fields": [
+        "options"
+      ]
+    },
+    "openDesignGoUsageLedger": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": []
+    },
+    "opencodeGoModels": {
+      "type": "object",
+      "ctor": "GoModelsService",
+      "members": [
+        "read"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "options",
+        "typertRemote"
+      ]
+    },
+    "opencodeGoUsage": {
+      "type": "object",
+      "ctor": "GoUsageService",
+      "members": [
+        "read"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "identity",
+        "name",
+        "options",
+        "typertRemote"
+      ]
+    },
+    "otel": {
+      "type": "object",
+      "ctor": "OTel",
+      "members": [
+        "createEventReporter",
+        "createSessionLogReporter"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name"
+      ]
+    },
+    "permissionPresets": {
+      "type": "object",
+      "ctor": "PermissionPresetService",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "apply",
+        "catalog",
+        "current",
+        "defaultPreset",
+        "derive",
+        "emitCatalogChanged",
+        "names",
+        "optionOf",
+        "permissionState",
+        "pinInitialPermission",
+        "registerAuto",
+        "resolve",
+        "set",
+        "specOf"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "permissionProjectionHandle",
+        "presets",
+        "typertRemote"
+      ]
+    },
+    "pluginInventory": {
+      "type": "object",
+      "ctor": "PluginInventoryGateway",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "list"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "pluginManager": {
+      "type": "object",
+      "ctor": "PluginManager",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "askRegistries",
+        "bundleRows",
+        "cancelInstall",
+        "change",
+        "configure",
+        "declaredRows",
+        "diskState",
+        "inspect",
+        "installBundle",
+        "listBundles",
+        "listPlugins",
+        "listVersionExemptions",
+        "listVersions",
+        "listedBundle",
+        "operationTarget",
+        "operationVersion",
+        "protectsManager",
+        "publishAndReload",
+        "readBundleDetail",
+        "readBundles",
+        "readRestoredFiles",
+        "refreshPackages",
+        "registries",
+        "registryFor",
+        "reload",
+        "removeBundle",
+        "reportOperation",
+        "restoreFiles",
+        "runPnpm",
+        "selectBundle",
+        "serveDetailFile",
+        "setBundleEnabled",
+        "setPluginEnabled",
+        "setVersionExemption",
+        "updateBundle",
+        "waitForInstall"
+      ],
+      "fields": [
+        "abort",
+        "configuredRegistries",
+        "cordis.tracker",
+        "ctx",
+        "detail",
+        "gitTransportTimeoutMs",
+        "githubConnectionTimeoutMs",
+        "idleTimeoutMs",
+        "inspectTimeoutMs",
+        "installedFrom",
+        "installs",
+        "lockWaitMs",
+        "managementBundles",
+        "name",
+        "outputBytes",
+        "ownerContext",
+        "ownerEntryId",
+        "packageOperations",
+        "pnpmCommand",
+        "profile",
+        "typertRemote",
+        "versionListLimit",
+        "versionLookupConcurrency"
+      ]
+    },
+    "pluginPackages": {
+      "type": "object",
+      "ctor": "PluginPackages",
+      "members": [
+        "metaOf",
+        "packageOf",
+        "refresh",
+        "replace",
+        "resolution"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "current",
+        "interception",
+        "name",
+        "packages"
+      ]
+    },
+    "pluginRegistryProbe": {
+      "type": "object",
+      "ctor": "PluginRegistryProbe",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "fastest",
+        "probe"
+      ],
+      "fields": [
+        "cached",
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "lifetime",
+        "name",
+        "pending",
+        "typertRemote"
+      ]
+    },
+    "profileContext": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": [
+        "cwd",
+        "dir",
+        "home",
+        "installAnchor",
+        "name",
+        "overlays",
+        "patchPath",
+        "startedBundles",
+        "telemetryDisabledEnv"
+      ]
+    },
+    "ptcRuntime": {
+      "type": "object",
+      "ctor": "NodePtcRuntime",
+      "members": [
+        "executionInstructions",
+        "programFormat",
+        "release",
+        "resolve",
+        "retainsState",
+        "run",
+        "sandboxMode",
+        "timeout"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "disposed",
+        "execution",
+        "isolation",
+        "language",
+        "live",
+        "name",
+        "processes"
+      ]
+    },
+    "remoteAccess": {
+      "type": "object",
+      "ctor": "RemoteAccessService",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "allows",
+        "bindingsOf",
+        "decide",
+        "evaluate",
+        "explain",
+        "follow",
+        "grantsFor",
+        "invalidate",
+        "registerPolicy",
+        "report",
+        "snapshotFor"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "followers",
+        "lifetime",
+        "name",
+        "policies",
+        "reported",
+        "typertRemote"
+      ]
+    },
+    "sandbox": {
+      "type": "object",
+      "ctor": "LocalSandboxProvider",
+      "members": [
+        "chainVerdict",
+        "confine",
+        "landlockLauncher",
+        "materializeAclGrant",
+        "probeRunner",
+        "removeTempDir",
+        "revokeAclGrants",
+        "runnerArgv",
+        "seatbeltExec",
+        "selectRunner",
+        "windowsAclRunnerArgv",
+        "windowsAclRunnerInvocation"
+      ],
+      "fields": [
+        "configuredRunnerFailureSignatures",
+        "cordis.tracker",
+        "ctx",
+        "internals",
+        "name",
+        "probeTimeoutMs",
+        "runnerCommand",
+        "selectedRunner",
+        "tempCapabilities",
+        "workspaceGrants"
+      ]
+    },
+    "sandboxPolicy": {
+      "type": "object",
+      "ctor": "SandboxPolicyService",
+      "members": [
+        "overrideOf",
+        "resolve"
+      ],
+      "fields": [
+        "additionalWritableRoots",
+        "cordis.tracker",
+        "ctx",
+        "defaultMode",
+        "name",
+        "sandboxModeProjectionHandle",
+        "workspaceRoot"
+      ]
+    },
+    "schedule": {
+      "type": "object",
+      "ctor": "ScheduleService",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "catalog",
+        "create",
+        "delete",
+        "deleteInactive",
+        "emitChanged",
+        "getDomain",
+        "history",
+        "list",
+        "reminderTargetRefusal",
+        "removeRows",
+        "serialize",
+        "stopSessionTasks",
+        "update"
+      ],
+      "fields": [
+        "chain",
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "ready",
+        "retention",
+        "runtime",
+        "stopping",
+        "typertRemote"
+      ]
+    },
+    "sessionController": {
+      "type": "object",
+      "ctor": "SessionController",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "attachment",
+        "canOpenWorkspacePath",
+        "cancel",
+        "control",
+        "create",
+        "events",
+        "follow",
+        "fork",
+        "initializeDefaultModel",
+        "list",
+        "modelCatalog",
+        "observeEvent",
+        "observeProjections",
+        "observeState",
+        "openWorkspacePath",
+        "page",
+        "projections",
+        "promote",
+        "prompt",
+        "rename",
+        "resolveAgent",
+        "search",
+        "selectModel",
+        "state",
+        "updateQueue",
+        "verifyDesktopPath",
+        "wait",
+        "workspaceDesktop",
+        "workspacePathApplications"
+      ],
+      "fields": [
+        "agents",
+        "commands",
+        "controlState",
+        "cordis.tracker",
+        "ctx",
+        "historyController",
+        "listState",
+        "listWorkSliceMs",
+        "name",
+        "promotions",
+        "stateController",
+        "typertRemote",
+        "webController"
+      ]
+    },
+    "sessionFeedback": {
+      "type": "object",
+      "ctor": "SessionFeedbackService",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "record"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "sessionFileReferences": {
+      "type": "object",
+      "ctor": "SessionFileReferences",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "list"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "sessionPersistence": {
+      "type": "object",
+      "ctor": "JsonlSessionPersistence",
+      "members": [
+        "acquireLease",
+        "acquireWriteLease",
+        "appendLines",
+        "assertLogParentAllowsAbsence",
+        "assertStoredIdentity",
+        "assertUsableRoot",
+        "checkRootEncoding",
+        "create",
+        "currentHeader",
+        "decodeStoredLog",
+        "encodeEventBatch",
+        "encodeMaterialization",
+        "encodingMismatch",
+        "ensureRootEncoding",
+        "exists",
+        "findLog",
+        "findOppositeGenerationInDirectory",
+        "flush",
+        "generationFailure",
+        "hasPendingSession",
+        "historicalCorpusRevision",
+        "legacyLayout",
+        "list",
+        "listArtifacts",
+        "listGenerations",
+        "listProjectDirs",
+        "listSessionDirs",
+        "loadStoredMigration",
+        "locate",
+        "mapSessionDirectories",
+        "materialize",
+        "materializePosix",
+        "materializeWin32",
+        "memoizeStoredLog",
+        "open",
+        "oppositeCompression",
+        "persistBatch",
+        "persistHeader",
+        "prepareStoredMigration",
+        "publishStoredMigration",
+        "readFirstLine",
+        "readFirstZstdLine",
+        "readGenerationHeader",
+        "readStoredLog",
+        "readZstdPrefix",
+        "rejectExistingLog",
+        "rejectLegacyFlatArtifact",
+        "rejectOppositeArtifact",
+        "releaseHandle",
+        "repair",
+        "requireStoredLog",
+        "resolveCurrentLog",
+        "resolveGenerationInDirectory",
+        "rollbackAppend",
+        "sameFile",
+        "stat",
+        "syncDirPosix",
+        "truncateTornTail",
+        "validateSourceIdentity",
+        "waitForPreparation",
+        "writeSyncedTempFile"
+      ],
+      "fields": [
+        "coldLogMemo",
+        "compression",
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "generationFormat",
+        "identity",
+        "migrationPreparations",
+        "name",
+        "root",
+        "rootEncodingCheck",
+        "tracker"
+      ]
+    },
+    "sessionProjectionCache": {
+      "type": "object",
+      "ctor": "SessionProjectionCache",
+      "members": [
+        "cachedPredecessorTitle",
+        "cachedSnapshot",
+        "coldSnapshot",
+        "flushSoft",
+        "hydratePrepared",
+        "installWritePath",
+        "markClean",
+        "put",
+        "recordFor",
+        "requireTable",
+        "viewRecord",
+        "write"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "dirty",
+        "name",
+        "table"
+      ]
+    },
+    "sessionProjections": {
+      "type": "object",
+      "ctor": "SessionProjectionRegistry",
+      "members": [
+        "acquire",
+        "advanceCell",
+        "buildCell",
+        "cachedSnapshot",
+        "cellFor",
+        "checkpoint",
+        "deriveSummaryKeys",
+        "drive",
+        "hydrate",
+        "materializeCells",
+        "onChanged",
+        "register",
+        "restore",
+        "restoreFloor",
+        "snapshot",
+        "stateOf",
+        "summaryKeys",
+        "viewCell",
+        "viewCheckpoint"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "deprecatedStateOfKeys",
+        "listeners",
+        "name",
+        "registrations",
+        "summaryKeySet"
+      ]
+    },
+    "sessionQuery": {
+      "type": "object",
+      "ctor": "SqliteSessionQueryEngine",
+      "members": [
+        "_assertSearchEnabled",
+        "_close",
+        "_deleteSession",
+        "_ensureReady",
+        "_eventHit",
+        "_isClosed",
+        "_mainGeneration",
+        "_observeStable",
+        "_open",
+        "_queryEvents",
+        "_querySessions",
+        "_reconcile",
+        "_replaceLiveSession",
+        "_replacePersistedSession",
+        "_requireDb",
+        "_serialized",
+        "_sessionHit",
+        "_targetObservation",
+        "close",
+        "searchEvents",
+        "searchSessions"
+      ],
+      "fields": [
+        "_closePromise",
+        "_closed",
+        "_corpus",
+        "_db",
+        "_globalGeneration",
+        "_instance",
+        "_lastPersistenceIdentity",
+        "_localGeneration",
+        "_observations",
+        "_optionalPersistenceFiber",
+        "_persistenceBinding",
+        "_persistenceEpoch",
+        "_readWindowMax",
+        "_ready",
+        "_tail",
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "name"
+      ]
+    },
+    "sessionReferenceResolver": {
+      "type": "object",
+      "ctor": "SessionReferenceResolver",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "listCandidates",
+        "prepare",
+        "prepareDirectMessages",
+        "projectedLabels",
+        "referenceBudget",
+        "remoteExportCandidates",
+        "renderSources"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "sessionSkillCatalog": {
+      "type": "object",
+      "ctor": "SessionSkillCatalog",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "list",
+        "scopeFor"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "sessionTelemetry": {
+      "type": "object",
+      "ctor": "OpenTelemetrySessionBackend",
+      "members": [
+        "emit",
+        "shutdown"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "provider",
+        "sharing",
+        "shutdownTimeoutMillis"
+      ]
+    },
+    "sessionTitle": {
+      "type": "object",
+      "ctor": "SessionTitleService",
+      "members": [
+        "activate",
+        "appendFallback",
+        "assertCurrent",
+        "assertServiceActive",
+        "defer",
+        "drain",
+        "ensureFallback",
+        "get",
+        "onMainRequest",
+        "onRequestHeader",
+        "onUserMessage",
+        "refresh",
+        "register",
+        "rename",
+        "runProvider",
+        "serviceActive",
+        "startPending",
+        "startProvider",
+        "stateFor",
+        "supersede",
+        "titleInputOf",
+        "track",
+        "validateProvider",
+        "validateResult"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "inFlight",
+        "lifetime",
+        "name",
+        "ownerFiber",
+        "registration",
+        "titleInputProjectionHandle",
+        "work"
+      ]
+    },
+    "sessionToolResults": {
+      "type": "object",
+      "ctor": "SessionToolResults",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "forRequest",
+        "forSession",
+        "watch"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "lifetime",
+        "name",
+        "results",
+        "typertRemote"
+      ]
+    },
+    "sessions": {
+      "type": "object",
+      "ctor": "SessionStore",
+      "members": [
+        "_forkBoundary",
+        "_resolveForkSource",
+        "announce",
+        "create",
+        "detachEntered",
+        "emitDisposed",
+        "enter",
+        "flush",
+        "fork",
+        "get",
+        "list",
+        "liveEntryFor",
+        "messageProjections",
+        "prepare",
+        "registerMessageProjection"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "counter",
+        "ctx",
+        "name",
+        "projections",
+        "store"
+      ]
+    },
+    "settings": {
+      "type": "object",
+      "ctor": "SettingsForms",
+      "members": [
+        "configure",
+        "describe",
+        "documentPath",
+        "importLegacyDocument",
+        "invalidate",
+        "mutate",
+        "prepareDocument",
+        "replace",
+        "schema",
+        "update",
+        "writable",
+        "write"
+      ],
+      "fields": [
+        "closed",
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "ownerContext",
+        "presentations",
+        "revisions",
+        "scheduled"
+      ]
+    },
+    "settingsController": {
+      "type": "object",
+      "ctor": "SettingsController",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "describe",
+        "mutate",
+        "openSettingsDocument",
+        "provider",
+        "replace",
+        "update",
+        "write"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "shell": {
+      "type": "object",
+      "ctor": "SandboxPwshExecutor",
+      "members": [
+        "confine",
+        "execute",
+        "onProcessDone",
+        "resolve",
+        "sandboxMode"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "declaredPwshPath",
+        "mode",
+        "name",
+        "processFacts",
+        "resolvedPwshPath"
+      ]
+    },
+    "shellEnv": {
+      "type": "object",
+      "ctor": "ShellEnvRegistry",
+      "members": [
+        "collect",
+        "list",
+        "register"
+      ],
+      "fields": [
+        "contributors",
+        "cordis.tracker",
+        "ctx",
+        "dshHome",
+        "keyOwners",
+        "name"
+      ]
+    },
+    "skills": {
+      "type": "object",
+      "ctor": "SkillRegistry",
+      "members": [
+        "collect",
+        "collectCacheKey",
+        "collectFresh",
+        "collectLayer",
+        "get",
+        "invalidateCache",
+        "invalidateEntry",
+        "list",
+        "listLayerCandidates",
+        "notifyChange",
+        "register",
+        "registerProvider",
+        "scopeId",
+        "snapshot"
+      ],
+      "fields": [
+        "collectCache",
+        "collectCacheMaxEntries",
+        "cordis.tracker",
+        "ctx",
+        "layers",
+        "name",
+        "nextProviderOrder",
+        "nextScopeId",
+        "revision",
+        "scopeIds"
+      ]
+    },
+    "speechController": {
+      "type": "object",
+      "ctor": "SpeechController",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "cancelPreparation",
+        "catalog",
+        "configure",
+        "follow",
+        "prepare",
+        "transcribe"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "speechToText": {
+      "type": "object",
+      "ctor": "SpeechToText",
+      "members": [
+        "cancelPreparation",
+        "changed",
+        "configure",
+        "follow",
+        "listProviders",
+        "prepare",
+        "register",
+        "remove",
+        "resolve",
+        "selectedProvider",
+        "snapshot",
+        "transcribe"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "entryId",
+        "lifetime",
+        "listeners",
+        "name",
+        "providers"
+      ]
+    },
+    "spillStore": {
+      "type": "object",
+      "ctor": "LocalSpillStore",
+      "members": [
+        "defaultRootsBase",
+        "gatherRoots",
+        "runCleanup",
+        "saveText"
+      ],
+      "fields": [
+        "cleanup",
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "root"
+      ]
+    },
+    "storage": {
+      "type": "object",
+      "ctor": "Storage",
+      "members": [
+        "domain",
+        "form",
+        "mount"
+      ],
+      "fields": [
+        "backend",
+        "cordis.tracker",
+        "ctx",
+        "forms",
+        "name"
+      ]
+    },
+    "storage.backend.json": {
+      "type": "object",
+      "ctor": "JsonStorageBackend",
+      "members": [
+        "close",
+        "openUnit"
+      ],
+      "fields": [
+        "closed",
+        "kv",
+        "open",
+        "opening",
+        "root"
+      ]
+    },
+    "storageDomain": {
+      "type": "object",
+      "ctor": "DomainFacility",
+      "members": [
+        "closeAll",
+        "get",
+        "open"
+      ],
+      "fields": [
+        "config",
+        "ctx",
+        "domains",
+        "reserved"
+      ]
+    },
+    "subagentModelSelection": {
+      "type": "object",
+      "ctor": "SubagentModelSelectionConfig",
+      "members": [
+        "current"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "name"
+      ]
+    },
+    "subagents": {
+      "type": "object",
+      "ctor": "SubagentRuntime",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "assertCapabilities",
+        "drainChildren",
+        "drainDescendants",
+        "expectProvider",
+        "getProvider",
+        "interrupt",
+        "interruptByParent",
+        "list",
+        "listChildren",
+        "listDescendants",
+        "observeActivation",
+        "prepareContinuable",
+        "prompt",
+        "registerProvider",
+        "requireManager",
+        "resolveMaxDepth",
+        "sendMessage",
+        "startActivation",
+        "waitForChildren"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "manager",
+        "name",
+        "providers",
+        "typertRemote"
+      ]
+    },
+    "subprocess": {
+      "type": "object",
+      "ctor": "LocalSubprocessRuntime",
+      "members": [
+        "disposeManagedProcesses",
+        "executableCandidates",
+        "resolveExecutable",
+        "selectContainmentMode",
+        "spawn",
+        "spawnTerminal",
+        "terminalEnvironment",
+        "terminateForHostExit",
+        "warnFallback",
+        "watchLinuxScopeStart"
+      ],
+      "fields": [
+        "controlChannels",
+        "cordis.tracker",
+        "ctx",
+        "fallbackWarningIssued",
+        "internals",
+        "linuxScope",
+        "linuxScopeDecision",
+        "live",
+        "name",
+        "terminalInspector",
+        "terminals"
+      ]
+    },
+    "systemPrompt": {
+      "type": "object",
+      "ctor": "SystemPrompt",
+      "members": [
+        "assemble",
+        "context",
+        "getContextOrder",
+        "getSectionOrder",
+        "refreshContext",
+        "section",
+        "suppressRuntimeContext",
+        "tools",
+        "variable"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "layers",
+        "name",
+        "toolOrder"
+      ]
+    },
+    "terminalController": {
+      "type": "object",
+      "ctor": "TerminalController",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "attach",
+        "close",
+        "create",
+        "dimensions",
+        "disposeOwner",
+        "environment",
+        "execution",
+        "list",
+        "owner",
+        "rename",
+        "requireOpen",
+        "retain",
+        "shells",
+        "spawn",
+        "terminal"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "lifetime",
+        "name",
+        "owners",
+        "typertRemote"
+      ]
+    },
+    "timer": {
+      "type": "object",
+      "ctor": "TimerService",
+      "members": [
+        "_schedule",
+        "debounce",
+        "interval",
+        "setInterval",
+        "setTimeout",
+        "throttle",
+        "timeout"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name"
+      ]
+    },
+    "tokenMeter": {
+      "type": "object",
+      "ctor": "TokenMeter",
+      "members": [
+        "_cachedHeader",
+        "_fileRequestText",
+        "_foldEvent",
+        "_routeImagePricing",
+        "_sync",
+        "contextPressure",
+        "estimateMessage",
+        "measure"
+      ],
+      "fields": [
+        "contextPressureProjectionHandle",
+        "cordis.tracker",
+        "ctx",
+        "measurementProjectionHandle",
+        "name",
+        "states"
+      ]
+    },
+    "tools": {
+      "type": "object",
+      "ctor": "ToolsService",
+      "members": [
+        "checkGuards",
+        "definitions",
+        "executable",
+        "execute",
+        "get",
+        "guard",
+        "register",
+        "resolve",
+        "restrict",
+        "schemas",
+        "selectExecutor",
+        "setExecutor",
+        "view"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "guards",
+        "layers",
+        "name",
+        "root",
+        "scoped"
+      ]
+    },
+    "typert": {
+      "type": "object",
+      "ctor": "TypertRegistry",
+      "members": [
+        "contexts",
+        "get",
+        "getPackage",
+        "list",
+        "listPackages",
+        "local",
+        "lookups",
+        "register",
+        "remotes",
+        "resolve",
+        "resources",
+        "toJSONSchema",
+        "validatePackage",
+        "validateSchemas"
+      ],
+      "fields": [
+        "contextStore",
+        "cordis.tracker",
+        "ctx",
+        "localStore",
+        "lookupStore",
+        "name",
+        "packages",
+        "remoteStore",
+        "resourceStore",
+        "schemas"
+      ]
+    },
+    "typertGateway": {
+      "type": "object",
+      "ctor": "TypertGatewayService",
+      "members": [
+        "broadcastRemoteEvent",
+        "cancelRemoteEvent",
+        "claimsEndpoint",
+        "closeRemoteEvents",
+        "collectSrcClaims",
+        "consumeRemoteEvents",
+        "deliverRemoteEvent",
+        "dispatchRpc",
+        "finishRemoteEvent",
+        "getPendingRemoteEvents",
+        "hasLiveClient",
+        "invoke",
+        "invokePrepared",
+        "invokeRpc",
+        "openRemoteEvents",
+        "openStream",
+        "openWireStream",
+        "prepareInvocation",
+        "receiveRemoteEventResult",
+        "registerRemoteEvents",
+        "removeRemoteEventClient",
+        "removeRemoteEventDelivery",
+        "resolveDescriptor",
+        "resolveParameter",
+        "resolveReceiverContext",
+        "resolveSrcDescriptor",
+        "resourceReaders",
+        "settleRemoteEvent",
+        "srcDescriptor",
+        "startRemoteEvent",
+        "stream"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "pendingRemoteEvents",
+        "remoteEventClients",
+        "remoteEvents",
+        "srcClaims",
+        "wireStream"
+      ]
+    },
+    "userQuestions": {
+      "type": "object",
+      "ctor": "UserQuestionService",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "answer",
+        "ask",
+        "askTimed",
+        "assertLiveRoot",
+        "attachWait",
+        "continued",
+        "releaseReply"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "name",
+        "queuedReplies",
+        "typertRemote",
+        "userQuestionProjectionHandle",
+        "waits"
+      ]
+    },
+    "web": {
+      "type": "object",
+      "ctor": "WebRuntime",
+      "members": [
+        "fetch",
+        "fetchReady",
+        "registerFetchProvider",
+        "registerProvider",
+        "registerSearchProvider",
+        "search",
+        "searchReady",
+        "selectFetchProvider",
+        "selectSearchProvider"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "fetchProviderEnv",
+        "fetchProviders",
+        "name",
+        "searchProviderEnv",
+        "searchProviders"
+      ]
+    },
+    "webApp": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": []
+    },
+    "webServer": {
+      "type": "object",
+      "ctor": "WebServer",
+      "members": [
+        "applyIndexTaps",
+        "collectIndexInjections",
+        "getOrigin",
+        "host",
+        "match",
+        "port",
+        "protocol",
+        "readResource",
+        "register",
+        "registerFallback",
+        "registerUpgrade",
+        "renderIndex",
+        "responderFor",
+        "serveResource",
+        "tapIndex"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "exact",
+        "fallback",
+        "gzip",
+        "indexTaps",
+        "listenedPort",
+        "name",
+        "prefixes",
+        "server",
+        "tlsConfig",
+        "tlsConnections",
+        "upgradedSockets",
+        "upgrades"
+      ]
+    },
+    "webStartup": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": [
+        "openBrowser",
+        "trustedHosts"
+      ]
+    },
+    "workingDirectory": {
+      "type": "object",
+      "ctor": "WorkingDirectoryService",
+      "members": [
+        "commit",
+        "contextText",
+        "directory",
+        "ensure",
+        "get",
+        "serialize",
+        "set"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "defaultDirectory",
+        "lifecycle",
+        "name",
+        "operations",
+        "pending",
+        "workingDirectoryProjectionHandle"
+      ]
+    },
+    "workspaceChanges": {
+      "type": "object",
+      "ctor": null,
+      "members": [],
+      "fields": []
+    },
+    "workspaceController": {
+      "type": "object",
+      "ctor": "WorkspaceController",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "archiveSession",
+        "create",
+        "delete",
+        "follow",
+        "initializeDefault",
+        "insertBefore",
+        "insertSessionBefore",
+        "pinSession",
+        "rename",
+        "unarchiveSession",
+        "unpinSession"
+      ],
+      "fields": [
+        "commands",
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "feed",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "workspaceFiles": {
+      "type": "object",
+      "ctor": "WorkspaceFiles",
+      "members": [
+        "@deepseek-ai/dsh-typert-protocol/remote-methods",
+        "changes",
+        "confine",
+        "cutPage",
+        "inspect",
+        "list",
+        "locateFile",
+        "read",
+        "readBytes",
+        "relativePath",
+        "resolvePage",
+        "resolveWindow",
+        "stat",
+        "statOf"
+      ],
+      "fields": [
+        "config",
+        "cordis.tracker",
+        "ctx",
+        "feed",
+        "name",
+        "typertRemote"
+      ]
+    },
+    "workspaceRegistry": {
+      "type": "object",
+      "ctor": "WorkspaceRegistry",
+      "members": [
+        "archiveSession",
+        "archivedSessionIds",
+        "bootstrap",
+        "create",
+        "createCanonical",
+        "delete",
+        "deleteKnown",
+        "enqueueOperation",
+        "get",
+        "indexHeader",
+        "indexHeaders",
+        "indexLiveSessions",
+        "initializeDefault",
+        "insertBefore",
+        "list",
+        "listStoredHeaders",
+        "pinSession",
+        "pinnedSessionIds",
+        "readSessionHeader",
+        "rebuildEntities",
+        "recoverPendingMutation",
+        "replaceHeaderIndex",
+        "reportFilteredCandidates",
+        "requireState",
+        "requireTable",
+        "resolveByPath",
+        "sessionKnown",
+        "setState",
+        "stopSessionActivity",
+        "unarchiveSession",
+        "unpinSession",
+        "validateStoredState"
+      ],
+      "fields": [
+        "cordis.tracker",
+        "ctx",
+        "entities",
+        "global",
+        "headers",
+        "host",
+        "invalidSessionPaths",
+        "missingSessionPaths",
+        "name",
+        "operationTail",
+        "sessionPaths",
+        "state",
+        "table"
+      ]
+    }
+  },
+  "events": [
+    "agent-preset/selected",
+    "agent/assistant-stream",
+    "agent/created",
+    "agent/disposed",
+    "agent/error",
+    "agent/inbox/claimed",
+    "agent/inbox/discarded",
+    "agent/inbox/inserted",
+    "agent/pre-step",
+    "agent/request",
+    "agent/request-error",
+    "agent/status",
+    "agent/turn-stopping",
+    "api-session/activity",
+    "api-session/added",
+    "api-session/error",
+    "api-session/removed",
+    "api-session/status",
+    "app-boot/config-reload",
+    "approval/request",
+    "commands/change",
+    "compaction/summary-error",
+    "cordis/dynamic-package",
+    "cordis/dynamic-retract",
+    "cordis/inspect-query",
+    "cordis/inspect-query-resolved",
+    "cordis/request-run",
+    "cordis/request-run-resolved",
+    "credentials/record-updated",
+    "credentials/reference-updated",
+    "deepseek-account/model-sign-in-required",
+    "deepseek-account/session-expired",
+    "deepseek-account/signed-out",
+    "domain/changed",
+    "feedback/committed",
+    "fs/edit-intent",
+    "fs/observed",
+    "fs/write-intent",
+    "goal/activation-changed",
+    "goal/changed",
+    "internal/config",
+    "internal/listener",
+    "internal/plugin",
+    "internal/service",
+    "internal/status",
+    "internal/update",
+    "llm/adapters-updated",
+    "llm/models-updated",
+    "llm/stream",
+    "loader/entry-init",
+    "loader/partial-dispose",
+    "loader/patch-context",
+    "loader/volatile-update",
+    "permission-presets/catalog-changed",
+    "plugin-manager/changed",
+    "plugin-manager/install-log",
+    "plugin-manager/install-state",
+    "plugin-manager/update-state",
+    "plugin-market/changed",
+    "schedule/changed",
+    "session/created",
+    "session/disposed",
+    "session/event",
+    "session/flush",
+    "settings/document-updated",
+    "subagent/provider-added",
+    "subagent/provider-removed",
+    "subagent/start",
+    "system-prompt/assemble",
+    "tools/execute",
+    "tools/post-execute",
+    "tools/pre-execute",
+    "tools/ptc-dispatch-log",
+    "tools/result",
+    "user-questions/request",
+    "webserver/index-inject",
+    "workflow/agent-end",
+    "workflow/agent-start",
+    "workflow/log",
+    "workflow/phase",
+    "workspace/session-activity",
+    "workspace/session-stop"
+  ],
+  "tools": {
+    "method": "schemas",
+    "scope": "global",
+    "count": 29,
+    "names": [
+      "browser_click",
+      "browser_close",
+      "browser_config",
+      "browser_controls",
+      "browser_goto",
+      "browser_hover",
+      "browser_key",
+      "browser_list",
+      "browser_open",
+      "browser_pick",
+      "browser_scroll",
+      "browser_shot",
+      "browser_status",
+      "browser_tab_activate",
+      "browser_tab_close",
+      "browser_tab_new",
+      "browser_tabs",
+      "browser_type",
+      "notes_add",
+      "notes_list",
+      "team_answer_merge",
+      "team_answer_peer",
+      "team_declare_capability",
+      "team_declare_subteam",
+      "team_heartbeat",
+      "team_reclaim_task",
+      "team_request_merge",
+      "team_request_peer",
+      "working_directory"
+    ],
+    "globalLayerAtBoot": 29,
+    "attempts": [
+      {
+        "method": "schemas",
+        "outcome": "returned 29 rows, 29 named"
+      }
+    ]
+  },
+  "exercise": null,
+  "wire": null,
+  "relay": {
+    "folded": 0,
+    "unknown": 0,
+    "tasks": 0,
+    "members": 0,
+    "teams": 0,
+    "unattributed": 0
+  },
+  "relayCounts": {
+    "folded": 0,
+    "unknown": 0,
+    "tasks": 0,
+    "members": 0,
+    "teams": 0,
+    "unattributed": 0
+  },
+  "relayRecords": [],
+  "relayWriters": []
+}

@@ -1,0 +1,32 @@
+{
+  "name": "dsh-delegation-model-choice",
+  "version": "0.1.0",
+  "requires": { "dsh": "^0.2.0" },
+  "private": true,
+  "description": "Let a DeepSeek Harness agent delegate on another model — Agent Teams teammates and subagents — with the session's own route as the default and explicit user approval for any other route.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "*"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "cordis.patch.yml"
+    }
+  }
+}

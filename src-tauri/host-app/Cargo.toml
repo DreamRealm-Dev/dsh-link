@@ -1,0 +1,18 @@
+[package]
+name = "host-app"
+version = "0.1.0"
+description = "A second Tauri APPLICATION that embeds DSH-LINK into a window it built itself (requirement D)"
+edition = "2021"
+publish = false
+
+[dependencies]
+# The embedding itself: the crate, its entry, and the plugins it asks for.
+dsh-link = { path = ".." }
+# A host is a Tauri application, so it names tauri for its own window. The feature list is DELIBERATELY the
+# shell's own list: cargo unifies features across a workspace, so a host asking for a different set makes the
+# whole Tauri graph rebuild (a measured cost, see docs/handoff/R309-host-app.md) instead of reusing what the
+# shell already built.
+tauri = { version = "2", features = ["devtools", "tray-icon", "image-png", "image-ico", "unstable"] }
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }

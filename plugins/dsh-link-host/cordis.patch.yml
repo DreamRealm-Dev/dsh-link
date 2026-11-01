@@ -1,0 +1,24 @@
+# dsh-link-host bundle layer.
+#
+# One host-plane row, and a small one: it owns no storage, injects no service and registers no tool.
+# It serves TWO read-only GET routes on the kernel's own web server -
+#
+#   GET /api/dsh-link-host/contract   the embed contract as DATA, so a host app reads the protocol
+#                                     instead of trusting a document; anything but GET is 405.
+#   GET /api/dsh-link-host/embed      the self-contained page a host's child webview loads; it reads
+#                                     ?mode=, listens for {type:'dsh-link:mode', mode}, and states its
+#                                     mode and the geometry it chose as document-level facts.
+#
+# The page is why this package exists (R195-contract.md section 2, P1). It is not the DSH shell: it
+# does not load the React bundle, does not read the kernel, and does not write anything. The switch
+# between the right sidebar and the full window is a MODE, not two windows - the shell's own mechanism
+# is one rect on one child webview (src-tauri/src/core/proxy.rs:234,332), and this row names that
+# protocol at GET /api/dsh-link-host/contract so a foreign host can make the same move in its own
+# runtime.
+#
+# The default sidebar width is machine state only in the sense that a host may want another one; the
+# row carries a default and a host that wants another passes ?sidebarWidth=. Nothing here reads a
+# directory, a port or a clock.
+- insert:
+    - id: link-host
+      name: dsh-link-host

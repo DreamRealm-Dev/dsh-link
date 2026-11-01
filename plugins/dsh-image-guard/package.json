@@ -1,0 +1,19 @@
+{
+  "name": "dsh-image-guard",
+  "version": "0.1.0",
+  "requires": { "dsh": "^0.2.0" },
+  "private": true,
+  "description": "图片上限护栏：模型请求的图片数量硬上限（默认 30 张），第 31 张读取即报错，避免上游 400 把会话烧死",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib"
+  ],
+  "license": "MIT"
+}

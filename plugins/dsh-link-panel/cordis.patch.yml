@@ -1,0 +1,31 @@
+# dsh-link-panel bundle: one host-plane row, and one item in the registry it serves.
+#
+# The floor of the unified "interconnection" panel: what is in the panel is DATA (config.entries),
+# the projection is a pure function, and an item the registry cannot place is refused BY NAME
+# (PANEL_DUP_ID / PANEL_UNKNOWN_KIND / PANEL_EMPTY_SOURCE) instead of being drawn somewhere close.
+#
+# `sinks: ['right-rail']` is the world from R189 on: this package ships a client half now (dsh.client
+# in package.json, the `client` entry in plugins/build.mjs), and that half IS the right rail's `pane`
+# -- so the rail is mounted and the route's `mounted` reading stops meaning "nothing can be shown".
+# `entries` carries the one item this round can honestly declare: the pane itself. Every other plugin
+# declares its own item here, by data in the composition rather than by code at run time.
+#
+#   GET /api/dsh-link-panel/state
+#     registry.sinksMounted  ['right-rail']   what the shell has mounted here
+#     declared               the registry     sorted visible items + named refusals
+#     mounted                today's screen   the items whose sink is the right rail
+#
+# The registry has no write verb. The one write in this package is the pane's note box, which goes to
+# the ledger's own narrow route (POST /api/dsh-link-notes/add), one note at a time.
+- insert:
+    - id: link-panel
+      name: dsh-link-panel
+      config:
+        sinks:
+          - right-rail
+        entries:
+          - id: link-panel
+            kind: pane
+            title: LINK panel
+            source: dsh-link-panel
+            order: 10

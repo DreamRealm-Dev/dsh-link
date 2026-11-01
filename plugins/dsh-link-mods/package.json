@@ -1,0 +1,23 @@
+{
+  "name": "dsh-link-mods",
+  "version": "0.1.0",
+  "requires": { "dsh": "^0.2.0" },
+  "private": true,
+  "description": "桌面版自制插件与调参的移植层：host 平面挂载行（护栏 + 停用的能力行）与两套自制 Agent 预设的 0.2.x 声明。",
+  "type": "module",
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": [
+        "./cordis.patch.yml",
+        "./presets.patch.yml"
+      ]
+    }
+  },
+  "files": [
+    "cordis.patch.yml",
+    "presets.patch.yml",
+    "patches",
+    "README.md"
+  ]
+}

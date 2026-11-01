@@ -1,0 +1,39 @@
+{
+  "name": "dsh-lan-bridge",
+  "version": "0.3.0",
+  "requires": { "dsh": "^0.2.0" },
+  "private": true,
+  "description": "DSH 局域网桥接插件：在同一局域网的两台 DSH 之间建立加密连接，让 Agent 侧获得对端（桥接侧）的文件编辑与 Shell 执行工具，连接时自动解锁、断连自动回收。零运行时依赖。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./current": {
+      "default": "./lib/current.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "docs"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  }
+}

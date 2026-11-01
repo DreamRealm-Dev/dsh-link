@@ -1,0 +1,22 @@
+{
+  "name": "dsh-link-upgrade",
+  "version": "0.1.0",
+  "requires": { "dsh": "^0.2.0" },
+  "private": true,
+  "description": "The LINK state-layout migration engine: plan, validate, apply atomically, prove survival, refuse to downgrade. Steps are data, not code branches.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "bin": { "dsh-link-resume": "bin/resume.mjs" },
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "migrations.json",
+    "bin"
+  ]
+}

@@ -1,0 +1,13 @@
+# dsh-link-interconnect bundle layer.
+#
+# One host-plane row. It owns the /link/v1 protocol surface, the Ed25519 identity, the
+# declarative adapter runtime (OFM is adapter 0), and the capability bindings that turn a
+# declared peer into a model provider or a tool group. The client half is the consent card
+# and the peers/settings surface.
+#
+# The protocol routes are NOT under /api: they are the software-facing surface, authenticated
+# by the protocol's own token (see src/protocol/tokens), and the shell forwards /link/* to
+# the kernel with the session cookie attached (src-tauri/src/core/proxy.rs).
+- insert:
+    - id: link-interconnect
+      name: dsh-link-interconnect

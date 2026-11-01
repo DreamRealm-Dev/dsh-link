@@ -1,0 +1,34 @@
+{
+  "name": "dsh-link-groups",
+  "version": "0.1.0",
+  "requires": {
+    "dsh": "^0.2.0"
+  },
+  "private": true,
+  "description": "Tool groups with a third state (on | off | auto): two always-open activation tools (tool_groups, tool_groups_declare) hide and reveal a named family of tools on the calling agent's own scope, gate user-disabled groups behind an approval, and report what every tool-surface slide costs.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "*"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "cordis.patch.yml"
+    }
+  }
+}

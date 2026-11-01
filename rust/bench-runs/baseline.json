@@ -1,0 +1,15 @@
+{
+  "label": "R503 (addon 0.3.0, sha256 c1e86c7cdce2f52e)",
+  "note": "The version immediately before R506. The ratio threshold (native/TS >=2x) is only meaningful within one code version and one shape; this baseline exists to catch an absolute native regression between versions.",
+  "addonSha256": "c1e86c7cdce2f52e",
+  "runIds": [
+    "20261027T134034Z-r503-run1",
+    "20261027T134047Z-r503-run2",
+    "20261027T134058Z-r503-run3"
+  ],
+  "files": [
+    "rust/bench-runs/bench-batched-20261027T134034Z-r503-run1.json",
+    "rust/bench-runs/bench-batched-20261027T134047Z-r503-run2.json",
+    "rust/bench-runs/bench-batched-20261027T134058Z-r503-run3.json"
+  ]
+}

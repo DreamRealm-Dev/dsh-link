@@ -1,0 +1,190 @@
+/* dsh-link-markdown: the right Sidebar's markdown tab body.
+ *
+ * The shell hands every tab body a `.tabBody`: display flex, column, height 100%, min-height 0, overflow hidden
+ * (ui-sidebar-right/src/client/shell/SidebarRight.module.css:168-175). R480: this pane shipped with no sheet at
+ * all, so the document was clipped by that hidden overflow (no scrollbar: only the wheel worked when it happened to
+ * be over the body) and the text ran into the pane's edges (no gutter). The rules below are this pane's own layout:
+ * the root claims the space, the head stays put, and the document gets its own scroller and a real gutter.
+ *
+ * Tokens only (the same --dsw-alias-* the shell carries), scoped under .dsh-link-markdown, mounted for this plugin's
+ * lifetime from apply().
+ */
+
+.dsh-link-markdown {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-xs-13, 13px/1.6 system-ui);
+}
+
+/* The head: the file name (ellipsized, it is the tab's own address), then the read-only / edit control and the
+   dirty mark. It is the one row that does not scroll. */
+.dsh-link-markdown-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  min-height: 0;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+  font: var(--dsw-font-xxs-12, 12px);
+}
+
+.dsh-link-markdown-path {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--dsw-alias-label-primary);
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dsh-link-markdown-mode {
+  flex: none;
+  padding: 3px 10px;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xxs-12, 12px);
+  background: transparent;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: var(--dsw-radius-sm);
+  cursor: default;
+}
+
+button.dsh-link-markdown-mode {
+  cursor: pointer;
+}
+
+button.dsh-link-markdown-mode:hover {
+  color: var(--dsw-alias-label-primary);
+  background: var(--dsw-alias-bg-l1);
+}
+
+.dsh-link-markdown-dirty {
+  flex: none;
+  color: var(--dsw-alias-label-tertiary);
+  font: var(--dsw-font-xxs-12, 12px);
+}
+
+/* The document: the pane's scroller. The gutter is the point of the report - 18px each side, and room at the bottom
+   so the last line is not glued to the pane's edge either. */
+.dsh-link-markdown-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 14px 18px 28px;
+  box-sizing: border-box;
+  scrollbar-gutter: stable;
+}
+
+/* The kernel's markdown renderer owns the typography; this only keeps wide material inside the gutter: code fences
+   and tables get their own horizontal scroller, media shrinks, and long unbroken tokens (hashes, paths) wrap. */
+.dsh-link-markdown-body :where(pre) {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.dsh-link-markdown-body :where(img, svg, video, table) {
+  max-width: 100%;
+}
+
+.dsh-link-markdown-body :where(p, li, td, th, h1, h2, h3, h4, h5, h6, blockquote) {
+  overflow-wrap: anywhere;
+}
+
+/* Editing keeps the same frame: the textarea takes the scroller's share, the toolbar stays visible under it. */
+.dsh-link-markdown-editor {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.dsh-link-markdown-area {
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 14px 18px;
+  color: var(--dsw-alias-label-primary);
+  font: 12px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  tab-size: 2;
+  background: transparent;
+  border: 0;
+  outline: none;
+  resize: none;
+}
+
+.dsh-link-markdown-toolbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--dsw-alias-border-l1);
+  font: var(--dsw-font-xxs-12, 12px);
+}
+
+.dsh-link-markdown-toolbar button {
+  padding: 4px 12px;
+  color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-xxs-12, 12px);
+  background: var(--dsw-alias-bg-l1);
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: var(--dsw-radius-sm);
+  cursor: pointer;
+}
+
+.dsh-link-markdown-toolbar button:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.dsh-link-markdown-toolbar button:disabled {
+  color: var(--dsw-alias-label-tertiary);
+  background: transparent;
+  cursor: default;
+}
+
+.dsh-link-markdown-status {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--dsw-alias-label-tertiary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Empty state and the named failure page: both are the whole body, so they carry the same gutter. */
+.dsh-link-markdown-empty,
+.dsh-link-markdown-failure {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  margin: 0;
+  padding: 16px 18px;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xxs-12, 12px);
+}
+
+.dsh-link-markdown-reason {
+  display: block;
+  color: var(--dsw-alias-label-primary);
+  font-weight: 600;
+}
+
+.dsh-link-markdown-detail {
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+  color: var(--dsw-alias-label-tertiary);
+}

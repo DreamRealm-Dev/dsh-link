@@ -1,0 +1,125 @@
+{
+  "format": "dsh-link.chat-window-live-calibration/1",
+  "measuredAt": null,
+  "source": "LINK shell page over CDP 9222 (React fiber + DOM + Performance.memory) and read-only kernel RPC through 127.0.0.1:31761; see tools/live-audit.mjs and R493 §3",
+  "kernel": {
+    "version": "0.2.1-rc.2",
+    "commit": "687f282e"
+  },
+  "sessions": {
+    "lead": "session-<example>",
+    "leadDurableEvents": 10650,
+    "small": "session-<example>",
+    "smallDurableEvents": 421
+  },
+  "window": {
+    "bytesPerEvent": 567,
+    "bytesPerEventSource": "R487 §2.8 retained-window model (567 B/event, serialized baseline 245 B/event)",
+    "serializedBytesPerEvent": 1836,
+    "serializedBytesPerEventSource": "live session/page answer: 5,970,960 B / 3,251 records",
+    "openingPageEvents": 3251,
+    "openingPageMessages": 502,
+    "openingPageBytes": 5970960,
+    "liveTailHistoryPageMessages": 500,
+    "liveTailMinMessages": 50,
+    "liveTailMinTurns": 2
+  },
+  "dom": {
+    "shellChromeElements": 843,
+    "elementsPerChatNode": 30,
+    "evidence": {
+      "homePageElements": 843,
+      "afterOpen": {
+        "totalElements": 5030,
+        "chatScrollElements": 4240,
+        "chatNodes": 149
+      },
+      "afterPage2": {
+        "totalElements": 13970,
+        "chatScrollElements": 13180,
+        "chatNodes": null
+      },
+      "afterPage3": {
+        "totalElements": 31953,
+        "chatScrollElements": 31386,
+        "chatNodes": 1045
+      },
+      "elementsPerChatNode": 30.03
+    }
+  },
+  "heap": {
+    "afterOpenBytes": 74086056,
+    "afterPage2Bytes": 83741000,
+    "afterPage3Bytes": 124641956,
+    "page1DeltaBytes": 9654944,
+    "page2DeltaBytes": 30878219,
+    "page1DomDelta": 8940,
+    "page2DomDelta": 18206,
+    "bytesPerAddedElement": 1403
+  },
+  "render": {
+    "msPerNode": 0.0657,
+    "source": "fold-toggle interaction on two live sessions: small 3,720 DOM / 145 nodes median 33.3 ms; large 31,953 DOM / 1,045 nodes median 92.4 ms; slope (92.4-33.3)/(1045-145)=0.0657 ms/node",
+    "samplesMs": {
+      "small": [
+        48.8,
+        33.3,
+        27.7
+      ],
+      "large": [
+        363.5,
+        92.4,
+        64.2
+      ]
+    }
+  },
+  "fold": {
+    "note": "aria-expanded toggles inside the chat scroller changed total DOM by 0..+35 elements and returned to the same count when closed: folding is display-only; nodes are never unmounted",
+    "toggles": [
+      {
+        "domBefore": 32176,
+        "domOpen": 32180,
+        "domClosed": 32180
+      },
+      {
+        "domBefore": 32180,
+        "domOpen": 32180,
+        "domClosed": 32180
+      },
+      {
+        "domBefore": 32180,
+        "domOpen": 32215,
+        "domClosed": 32192
+      }
+    ]
+  },
+  "pageTypes": {
+    "tool/ptc-dispatch-start": 425,
+    "tool/ptc-dispatch": 425,
+    "agent/inbox/spliced": 314,
+    "assistant/message": 290,
+    "step/end": 290,
+    "step/start": 289,
+    "tool/call": 274,
+    "tool/result": 274,
+    "user/message": 212,
+    "job/settled": 196,
+    "job/registered": 195,
+    "turn/end": 13,
+    "turn/start": 12,
+    "assistant/attempt": 6,
+    "llm/retry": 6,
+    "llm/retry-started": 6,
+    "workspace/changes": 5,
+    "request/header": 3,
+    "session/end-seed": 3,
+    "compaction/start": 2,
+    "compaction/summary": 2,
+    "compaction/end": 2,
+    "system/message": 2,
+    "team/member": 2,
+    "deliverables/presented": 1,
+    "command/run": 1,
+    "command/done": 1
+  }
+}

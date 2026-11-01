@@ -1,0 +1,6 @@
+# dsh-link-responsive bundle: one row. The client half is the whole point of this plugin —
+# it watches the viewport and writes the layout decisions onto the document root — so the row
+# exists to load it.
+- insert:
+    - id: link-responsive
+      name: dsh-link-responsive

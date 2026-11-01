@@ -1,0 +1,91 @@
+{
+  "generatedAt": "2026-10-27T13:58:46.304Z",
+  "node": "v24.18.1",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "addon": {
+    "bytes": 657920,
+    "sha256": "c1e86c7cdce2f52e078094fdab478053fec8ddb890111d7f4b7ec5251ed228d1",
+    "nativeVersion": "0.3.0",
+    "nativeApiVersion": 2,
+    "features": [
+      "foldCollabRecords",
+      "indexTeamStatus",
+      "collabFoldIndex",
+      "byteBatched",
+      "deltaCursor",
+      "probe"
+    ]
+  },
+  "pluginBundle": {
+    "bytes": 44026
+  },
+  "cargo": {
+    "fmtCheckExit": 0,
+    "clippyExit": 0,
+    "testPassed": 22,
+    "testFailed": 0
+  },
+  "smoke": {
+    "ok": 67,
+    "fail": 0,
+    "exit": 0
+  },
+  "pluginTests": {
+    "tests": 23,
+    "pass": 23,
+    "fail": 0,
+    "exit": 0
+  },
+  "gate": {
+    "exit": 0,
+    "verdict": "pass",
+    "totalErrors": 281,
+    "computeErrors": 0
+  },
+  "commands": {
+    "fmt": "cargo fmt --manifest-path rust/Cargo.toml -p dsh-compute-napi -- --check",
+    "clippy": "cargo clippy --manifest-path rust/Cargo.toml -p dsh-compute-napi --release --all-targets -- -D warnings",
+    "test": "cargo test --manifest-path rust/Cargo.toml -p dsh-compute-napi --release",
+    "smoke": "node rust/scripts/smoke.mjs",
+    "pluginTests": "node --test plugins/dsh-link-compute/test/binding.spec.mjs",
+    "gate": "node scripts/typecheck-plugins.mjs --allow-baseline"
+  },
+  "atomicOutTests": {
+    "tests": 2,
+    "pass": 2,
+    "fail": 0,
+    "exit": 0,
+    "concurrentProcesses": 4,
+    "winners": 1
+  },
+  "coverage": {
+    "claims": 155,
+    "sections": [
+      "3",
+      "4"
+    ],
+    "selfTestExit": 0,
+    "archivedRuns": 10
+  },
+  "regressionGate": {
+    "exit": 0,
+    "maxDropPct": 10,
+    "minRuns": 5,
+    "baselineRuns": 3,
+    "currentRuns": 5
+  },
+  "ratioThreshold": 2,
+  "research": {
+    "firstGateRuns": 3,
+    "firstGateDropPct": -10.4,
+    "fiveRunDropPct": 12.8,
+    "singleRunNoisePct": 20
+  },
+  "versionFacts": {
+    "oldBinaryApi": 1,
+    "newBinaryApi": 3,
+    "hostApi": 2,
+    "nativeVersion": "0.3.0",
+    "referenceVersion": "0.3.0"
+  }
+}

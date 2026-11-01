@@ -1,0 +1,6 @@
+# dsh-link-collab bundle: one row. The plugin adds a control channel beside the kernel's own
+# Agent Teams service; it never replaces or wraps ctx.agentTeams, so the official service stays
+# exactly as upstream shipped it.
+- insert:
+    - id: link-collab
+      name: dsh-link-collab

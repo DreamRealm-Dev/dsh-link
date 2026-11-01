@@ -1,0 +1,18 @@
+{
+  "name": "@dsh-lan-bridge/proto",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Protocol-independent wire layer for the DSH LAN bridge: framing, discovery, pairing/session crypto, bridge-side authorization policy. Zero runtime dependencies (node: builtins only). This package.json exists ONLY to mark these .js files as ESM; it declares no dependencies and is safe to nest inside a DSH plugin bundle.",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "exports": {
+    "./frame.js": "./frame.js",
+    "./crypto.js": "./crypto.js",
+    "./p256.js": "./p256.js",
+    "./link.js": "./link.js",
+    "./discovery.js": "./discovery.js",
+    "./policy.js": "./policy.js"
+  }
+}

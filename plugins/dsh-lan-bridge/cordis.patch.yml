@@ -1,0 +1,20 @@
+# dsh-lan-bridge bundle layer.
+#
+# One host-plane row. `name` MUST be the bare package name, for two independent
+# reasons that both point the same way:
+#   1. pnpm links the package under its true name, so a bare name resolves in the
+#      profile's node_modules.
+#   2. `dsh-client-modules` mounts a package's browser half ONLY on a row whose
+#      specifier is exactly the bare package name — `exactPackageSpecifier()`
+#      returns undefined for any specifier containing "/" or ":"
+#      (see @deepseek-ai/dsh-client-modules lib/index.js), so a subpath row such
+#      as `dsh-lan-bridge/current` would silently drop lib/client.js and the
+#      sidebar panel would never appear.
+#
+# Consequence to know when developing: Node's ESM cache is keyed by resolved file
+# URL, so editing lib/*.js in place does NOT affect a running host. Restart DSH
+# (or reinstall) after changing plugin code.
+- insert:
+    - id: lan-bridge
+      name: dsh-lan-bridge
+      config: {}

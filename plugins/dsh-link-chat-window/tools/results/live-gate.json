@@ -1,0 +1,624 @@
+{
+  "format": "dsh-link.chat-window-live-gate/1",
+  "startedAt": "2026-10-27T14:22:17.397Z",
+  "port": 9222,
+  "lead": "session-<example>",
+  "environment": {
+    "url": "http://127.0.0.1:31761/",
+    "viewport": {
+      "w": 1440,
+      "h": 900
+    },
+    "title": "不参考已有的任何文件，新建 — DSH 本地构建",
+    "dom": 3894,
+    "global": null
+  },
+  "wiring": {
+    "bootRev": "88039c76a89d",
+    "entryCount": 85,
+    "chatWindowEntries": [],
+    "hasGlobal": null
+  },
+  "pluginClientHalf": {
+    "registeredId": "dsh-link-chat-window",
+    "exports": [
+      "EVENT_WINDOW_LIMIT_GLOBAL",
+      "apply",
+      "eventWindowLimitPolicy",
+      "inject",
+      "name"
+    ],
+    "afterDisabled": null,
+    "afterEnabled": {
+      "maxEvents": 500,
+      "slackEvents": 125,
+      "trimOpeningPage": true,
+      "setBy": "dsh-link-chat-window",
+      "version": 1
+    },
+    "afterDispose": null
+  },
+  "enabled": {
+    "reload": {
+      "ready": true,
+      "injected": {
+        "installed": true,
+        "info": {
+          "sessionId": "session-<example>",
+          "binding": true,
+          "entries": 359,
+          "hasMore": true,
+          "sessionHasMore": true,
+          "sessionLoadingOlder": false,
+          "openState": "open",
+          "revision": 1,
+          "baseSeq": 62,
+          "windowLimit": null,
+          "contiguous": true,
+          "firstSeq": 62,
+          "lastSeq": 420,
+          "minSeq": 62,
+          "trimPrimitive": "function",
+          "maintain": "function"
+        },
+        "dom": {
+          "total": 3842,
+          "chatElements": 3093,
+          "scrollHeight": 3638,
+          "scrollTop": 2862,
+          "clientHeight": 776,
+          "distanceFromBottom": 0,
+          "followingTail": true,
+          "olderButton": true,
+          "heap": 106610351
+        },
+        "nodes": {
+          "flowEntries": 28,
+          "byKey": 145
+        }
+      }
+    },
+    "openAway": {
+      "ok": true,
+      "accepted": true
+    },
+    "beforePolicy": {
+      "global": null,
+      "info": {
+        "sessionId": "session-<example>",
+        "binding": true,
+        "entries": 359,
+        "hasMore": true,
+        "sessionHasMore": true,
+        "sessionLoadingOlder": false,
+        "openState": "open",
+        "revision": 1,
+        "baseSeq": 62,
+        "windowLimit": null,
+        "contiguous": true,
+        "firstSeq": 62,
+        "lastSeq": 420,
+        "minSeq": 62,
+        "trimPrimitive": "function",
+        "maintain": "function"
+      }
+    },
+    "gate": {
+      "policy": {
+        "maxEvents": 500,
+        "slackEvents": 125,
+        "trimOpeningPage": true,
+        "setBy": "r493-live-gate",
+        "version": 1
+      },
+      "targetAlreadyRetained": false,
+      "policyApplied": true,
+      "open": {
+        "ok": true,
+        "accepted": true
+      },
+      "openInfo": {
+        "sessionId": "session-<example>",
+        "binding": true,
+        "entries": 500,
+        "hasMore": true,
+        "sessionHasMore": true,
+        "sessionLoadingOlder": false,
+        "openState": "open",
+        "revision": 2,
+        "baseSeq": 10151,
+        "windowLimit": {
+          "maxEvents": 500,
+          "slackEvents": 125,
+          "trimOpeningPage": true
+        },
+        "contiguous": true,
+        "firstSeq": 10151,
+        "lastSeq": 10650,
+        "minSeq": 10151,
+        "trimPrimitive": "function",
+        "maintain": "function"
+      },
+      "openDom": {
+        "total": 4686,
+        "chatElements": 3980,
+        "scrollHeight": 3974,
+        "scrollTop": 3198,
+        "clientHeight": 776,
+        "distanceFromBottom": 0,
+        "followingTail": true,
+        "olderButton": true,
+        "heap": 87610226
+      },
+      "openNodes": {
+        "flowEntries": 46,
+        "byKey": 139
+      },
+      "foldScenario": {
+        "click": {
+          "foldKey": {
+            "label": "已完成",
+            "before": "false"
+          },
+          "domBefore": 4686
+        },
+        "domBefore": {
+          "total": 4686,
+          "chatElements": 3980,
+          "scrollHeight": 3974,
+          "scrollTop": 3198,
+          "clientHeight": 776,
+          "distanceFromBottom": 0,
+          "followingTail": true,
+          "olderButton": true,
+          "heap": 87610226
+        },
+        "domOpen": {
+          "total": 4690,
+          "chatElements": 3984,
+          "scrollHeight": 4114,
+          "scrollTop": 0,
+          "clientHeight": 776,
+          "distanceFromBottom": 3338,
+          "followingTail": false,
+          "olderButton": true,
+          "heap": 93964613
+        },
+        "trim": {
+          "before": {
+            "entries": 500,
+            "baseSeq": 10151,
+            "lastSeq": 10650
+          },
+          "after": {
+            "entries": 500,
+            "baseSeq": 10281,
+            "lastSeq": 10780,
+            "hasMore": true,
+            "sessionHasMore": true
+          },
+          "maintainedTrim": "void",
+          "appended": 130
+        },
+        "foldsAfterCount": 37,
+        "retainedCount": 36,
+        "retainedPreserved": true,
+        "sampleRetained": [
+          {
+            "label": "24 轮 829 步·162 tok/s",
+            "after": "false",
+            "open": "false"
+          },
+          {
+            "label": "234M tok·缓存命中 99%",
+            "after": "false",
+            "open": "false"
+          },
+          {
+            "label": "3%",
+            "after": "false",
+            "open": "false"
+          }
+        ],
+        "domAfterTrim": {
+          "total": 3782,
+          "chatElements": 3076,
+          "scrollHeight": 4114,
+          "scrollTop": 0,
+          "clientHeight": 776,
+          "distanceFromBottom": 3338,
+          "followingTail": false,
+          "olderButton": true,
+          "heap": 83982804
+        },
+        "foldStateAfter": [
+          {
+            "label": "24 轮 829 步·162 tok/s",
+            "expanded": "false"
+          },
+          {
+            "label": "234M tok·缓存命中 99%",
+            "expanded": "false"
+          },
+          {
+            "label": "3%",
+            "expanded": "false"
+          }
+        ]
+      },
+      "bottomScenario": {
+        "before": {
+          "distanceFromBottom": 0,
+          "followingTail": true,
+          "scrollTop": 3338
+        },
+        "trim": {
+          "before": {
+            "entries": 500,
+            "baseSeq": 10281,
+            "lastSeq": 10780
+          },
+          "after": {
+            "entries": 500,
+            "baseSeq": 10411,
+            "lastSeq": 10910,
+            "hasMore": true,
+            "sessionHasMore": true
+          },
+          "maintainedTrim": "void",
+          "appended": 130
+        },
+        "after": {
+          "distanceFromBottom": 0,
+          "followingTail": true,
+          "scrollTop": 3338,
+          "entries": 500,
+          "baseSeq": 10411,
+          "hasMore": true
+        },
+        "anchor": {
+          "before": {
+            "text": "发消息或创建任务, / 调用指令, @ 文件或对话完全权限DeepSeek V4.1 Flash最高24 轮 829 步·162 tok/s234M tok·缓存命中 99%3%",
+            "top": 760,
+            "height": 128
+          },
+          "after": {
+            "text": "发消息或创建任务, / 调用指令, @ 文件或对话完全权限DeepSeek V4.1 Flash最高24 轮 829 步·162 tok/s234M tok·缓存命中 99%3%",
+            "top": 760,
+            "height": 128
+          },
+          "sameText": true
+        }
+      },
+      "oldPageScenario": {
+        "loadOlder": {
+          "ms": 48,
+          "error": null,
+          "entries": 523,
+          "baseSeq": 10089,
+          "firstSeq": 10089,
+          "contiguous": false,
+          "hasMore": true
+        },
+        "boundaryContiguous": false,
+        "beforeReading": {
+          "scrollTop": 1563.3333740234375,
+          "scrollHeight": 4467,
+          "anchor": {
+            "text": "加载更早已完成已完成，用时 22秒运行了代码并执行了命令思考QA final submission ready. Need commit their docs changes (currently uncommitted). Check s",
+            "top": 0,
+            "height": 0
+          },
+          "entries": 523,
+          "baseSeq": 10089
+        },
+        "trim": {
+          "before": {
+            "entries": 523,
+            "baseSeq": 10089,
+            "lastSeq": 10910
+          },
+          "after": {
+            "entries": 500,
+            "baseSeq": 10541,
+            "lastSeq": 11040,
+            "hasMore": true,
+            "sessionHasMore": true
+          },
+          "maintainedTrim": "void",
+          "appended": 130
+        },
+        "afterTrim": {
+          "scrollTop": 1563.3333740234375,
+          "scrollHeight": 4005,
+          "anchor": {
+            "text": "加载更早已完成已完成运行了代码并执行了命令思考QA updated docs at 21:18/21:23 (new hash). Commit launcher docs. Then final answer.代码Verify QA su",
+            "top": 0,
+            "height": 0
+          },
+          "entries": 500,
+          "baseSeq": 10541
+        },
+        "anchorJumped": true,
+        "scrollHeightDelta": -462,
+        "scrollTopDelta": 0
+      },
+      "turnJumpScenario": {
+        "loadThrough": {
+          "ms": 638,
+          "error": null,
+          "entries": 10589,
+          "baseSeq": 0,
+          "firstSeq": 0,
+          "lastSeq": 11040,
+          "contiguous": false,
+          "hasMore": false
+        },
+        "trimAfterJump": {
+          "before": {
+            "entries": 10589,
+            "baseSeq": 0,
+            "lastSeq": 11040
+          },
+          "after": {
+            "entries": 500,
+            "baseSeq": 10671,
+            "lastSeq": 11170,
+            "hasMore": true,
+            "sessionHasMore": true
+          },
+          "maintainedTrim": "void",
+          "appended": 130
+        },
+        "race": {
+          "error": null,
+          "seq": 100,
+          "waitMs": 250,
+          "before": {
+            "entries": 500,
+            "baseSeq": 10671
+          },
+          "mid": {
+            "entries": 500,
+            "baseSeq": 10671,
+            "loadingOlder": true
+          },
+          "midAfter": {
+            "entries": 500,
+            "baseSeq": 10671
+          },
+          "after": {
+            "entries": 500,
+            "baseSeq": 10671,
+            "firstSeq": 10671,
+            "lastSeq": 11170,
+            "hasMore": true,
+            "contiguous": true
+          },
+          "trimDeferredDuringJump": false
+        },
+        "trimAfterRace": {
+          "before": {
+            "entries": 500,
+            "baseSeq": 10671,
+            "lastSeq": 11170
+          },
+          "after": {
+            "entries": 500,
+            "baseSeq": 10801,
+            "lastSeq": 11300,
+            "hasMore": true,
+            "sessionHasMore": true
+          },
+          "maintainedTrim": "void",
+          "appended": 130
+        },
+        "final": {
+          "sessionId": "session-<example>",
+          "binding": true,
+          "entries": 500,
+          "hasMore": true,
+          "sessionHasMore": true,
+          "sessionLoadingOlder": false,
+          "openState": "open",
+          "revision": 660,
+          "baseSeq": 10801,
+          "windowLimit": {
+            "maxEvents": 500,
+            "slackEvents": 125,
+            "trimOpeningPage": true
+          },
+          "contiguous": true,
+          "firstSeq": 10801,
+          "lastSeq": 11300,
+          "minSeq": 10801,
+          "trimPrimitive": "function",
+          "maintain": "function"
+        }
+      }
+    }
+  },
+  "defaultOff": {
+    "reload": {
+      "ready": true,
+      "injected": {
+        "installed": true,
+        "info": {
+          "sessionId": "session-<example>",
+          "binding": true,
+          "entries": 539,
+          "hasMore": true,
+          "sessionHasMore": true,
+          "sessionLoadingOlder": false,
+          "openState": "open",
+          "revision": 1,
+          "baseSeq": 10112,
+          "windowLimit": null,
+          "contiguous": true,
+          "firstSeq": 10112,
+          "lastSeq": 10650,
+          "minSeq": 10112,
+          "trimPrimitive": "function",
+          "maintain": "function"
+        },
+        "dom": {
+          "total": 4924,
+          "chatElements": 4240,
+          "scrollHeight": 4056,
+          "scrollTop": 3280,
+          "clientHeight": 776,
+          "distanceFromBottom": 0,
+          "followingTail": true,
+          "olderButton": true,
+          "heap": 58614506
+        },
+        "nodes": {
+          "flowEntries": 47,
+          "byKey": 149
+        }
+      }
+    },
+    "beforeOpen": {
+      "global": null,
+      "info": {
+        "sessionId": "session-<example>",
+        "binding": true,
+        "entries": 539,
+        "hasMore": true,
+        "sessionHasMore": true,
+        "sessionLoadingOlder": false,
+        "openState": "open",
+        "revision": 1,
+        "baseSeq": 10112,
+        "windowLimit": null,
+        "contiguous": true,
+        "firstSeq": 10112,
+        "lastSeq": 10650,
+        "minSeq": 10112,
+        "trimPrimitive": "function",
+        "maintain": "function"
+      }
+    },
+    "gate": {
+      "policy": null,
+      "open": {
+        "ok": true,
+        "accepted": true
+      },
+      "openInfo": {
+        "sessionId": "session-<example>",
+        "binding": true,
+        "entries": 539,
+        "hasMore": true,
+        "sessionHasMore": true,
+        "sessionLoadingOlder": false,
+        "openState": "open",
+        "revision": 1,
+        "baseSeq": 10112,
+        "windowLimit": null,
+        "contiguous": true,
+        "firstSeq": 10112,
+        "lastSeq": 10650,
+        "minSeq": 10112,
+        "trimPrimitive": "function",
+        "maintain": "function"
+      },
+      "openDom": {
+        "total": 4922,
+        "chatElements": 4240,
+        "scrollHeight": 4056,
+        "scrollTop": 3280,
+        "clientHeight": 776,
+        "distanceFromBottom": 0,
+        "followingTail": true,
+        "olderButton": true,
+        "heap": 58082959
+      },
+      "steps": [
+        {
+          "step": 1,
+          "ms": 347,
+          "error": null,
+          "entries": 1737,
+          "baseSeq": 8914,
+          "hasMore": true
+        },
+        {
+          "step": 2,
+          "ms": 639,
+          "error": null,
+          "entries": 4266,
+          "baseSeq": 6385,
+          "hasMore": true
+        },
+        {
+          "step": 3,
+          "ms": 389,
+          "error": null,
+          "entries": 4780,
+          "baseSeq": 5871,
+          "hasMore": true
+        },
+        {
+          "step": 4,
+          "ms": 808,
+          "error": null,
+          "entries": 6909,
+          "baseSeq": 3742,
+          "hasMore": true
+        },
+        {
+          "step": 5,
+          "ms": 497,
+          "error": null,
+          "entries": 7387,
+          "baseSeq": 3264,
+          "hasMore": true
+        },
+        {
+          "step": 6,
+          "ms": 1379,
+          "error": null,
+          "entries": 10645,
+          "baseSeq": 6,
+          "hasMore": true
+        }
+      ],
+      "finalInfo": {
+        "sessionId": "session-<example>",
+        "binding": true,
+        "entries": 10645,
+        "hasMore": true,
+        "sessionHasMore": true,
+        "sessionLoadingOlder": false,
+        "openState": "open",
+        "revision": 7,
+        "baseSeq": 6,
+        "windowLimit": null,
+        "contiguous": true,
+        "firstSeq": 6,
+        "lastSeq": 10650,
+        "minSeq": 6,
+        "trimPrimitive": "function",
+        "maintain": "function"
+      },
+      "finalDom": {
+        "total": 76976,
+        "chatElements": 76294,
+        "scrollHeight": 21992,
+        "scrollTop": 21216,
+        "clientHeight": 776,
+        "distanceFromBottom": 0,
+        "followingTail": true,
+        "olderButton": true,
+        "heap": 235778507
+      },
+      "nodes": {
+        "flowEntries": 198,
+        "byKey": 2433
+      }
+    }
+  },
+  "errors": [],
+  "finishedAt": "2026-10-27T14:28:19.938Z"
+}

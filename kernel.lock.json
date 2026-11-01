@@ -1,0 +1,21 @@
+{
+  "note": "The vendored kernel is a pinned upstream checkout and is never edited. This lock is what makes that auditable: verify-baseline.mjs refuses when the checkout is dirty or its HEAD is not this commit.",
+  "packageName": "@deepseek-ai/dsh-root",
+  "packageVersion": "0.2.2-alpha.2",
+  "tag": "dsh-v0.2.2-alpha.2",
+  "commit": "1ee84404fa",
+  "surface": {
+    "file": "compat/surface/0.2.2-alpha.2.json",
+    "sha256": "64e0cd0a7916fef5b59a4f6af8f9bcc985fedff7fb040334f97681d057944922",
+    "capturedAt": "2026-10-31T14:21:44.257Z"
+  },
+  "built": {
+    "roots": [
+      "packages/*/*/lib",
+      "apps/*/dist"
+    ],
+    "files": 13691,
+    "sha256": "7cd296854e2d1e3125eb2df6370a49b2b0d08d44920aece7483812705bfc84f3",
+    "note": "Built artifacts are what the application loads and are gitignored, so git cannot report a local edit to them. This digest is the guard: recompute it with --record only when a rebuild is intended, and review the diff."
+  }
+}

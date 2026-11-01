@@ -1,0 +1,38 @@
+{
+  "name": "dsh-link-interconnect",
+  "version": "0.1.0",
+  "requires": {
+    "dsh": "^0.2.0"
+  },
+  "private": true,
+  "description": "The software interconnect framework: /link/v1 protocol, Ed25519 identity, pairing handshake, invoke/events, declarative adapters (OFM is adapter 0), capability bindings (models/tools/embed/proxy) and the consent surface.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "adapters",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  }
+}

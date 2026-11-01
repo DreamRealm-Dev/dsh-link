@@ -1,0 +1,29 @@
+{
+  "format": "dsh-link.kernel-range-fixtures/1",
+  "note": "Inputs only. No expected value appears here: the judge's expectations are written independently, so the gate cannot grade its own product.",
+  "fixtures": [
+    { "id": "caret-satisfied", "range": "^0.2.1", "version": "0.2.5" },
+    { "id": "caret-mismatch", "range": "^0.2.1", "version": "0.3.0" },
+    { "id": "tilde-satisfied", "range": "~0.2.1", "version": "0.2.9" },
+    { "id": "tilde-mismatch", "range": "~0.2.1", "version": "0.3.0" },
+    { "id": "or-satisfied", "range": "^0.1.7 || ^0.2.0", "version": "0.2.1-alpha.1" },
+    { "id": "and-space-satisfied", "range": "^0.2.1 ^0.2.9", "version": "0.2.9" },
+    { "id": "partial-satisfied", "range": "0.2", "version": "0.2.7" },
+    { "id": "partial-x-satisfied", "range": "0.2.x", "version": "0.2.7" },
+    { "id": "any-satisfied", "range": "*", "version": "0.2.1-alpha.1" },
+    { "id": "prerelease-tolerant", "range": "^0.2.1", "version": "0.2.1-alpha.1" },
+    { "id": "prerelease-strict-mismatch", "range": "^0.2.1-rc.1", "version": "0.2.1-alpha.1" },
+    { "id": "unsupported-gte", "range": ">=0.1.7-0 || >=0.2.0-0", "version": "0.2.1-alpha.1" }
+  ],
+  "closures": {
+    "note": "Shape data for the fixture closure a checker may materialise; no versions are asserted here.",
+    "dirs": [
+      { "path": "root", "package": null },
+      { "path": "root/node_modules/@deepseek-ai/dsh", "package": { "name": "@deepseek-ai/dsh", "version": "<version>" } },
+      { "path": "root/node_modules/@deepseek-ai/dsh-client-runtime", "package": { "name": "@deepseek-ai/dsh-client-runtime", "version": "<version>" } },
+      { "path": "root/node_modules/dsh-repeat-guard", "package": { "name": "dsh-repeat-guard", "version": "0.2.2", "requires": { "dsh": "^0.2.0" } } },
+      { "path": "root/node_modules/dsh-repetition-guard", "package": { "name": "dsh-repetition-guard", "version": "0.1.0", "engines": { "dsh": ">=0.2.0" } } },
+      { "path": "root/node_modules/plugin-without-range", "package": { "name": "plugin-without-range", "version": "1.0.0" } }
+    ]
+  }
+}

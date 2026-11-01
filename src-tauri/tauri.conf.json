@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "DSH Link",
+  "version": "0.1.0",
+  "identifier": "dev.dshlink.client",
+  "build": {
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [],
+    "security": {
+      "csp": "default-src 'self' http://127.0.0.1:31761; connect-src 'self' ws://127.0.0.1:31761 http://127.0.0.1:31761; img-src 'self' data: blob: asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; frame-src 'self' blob: data:; worker-src 'self' blob:; object-src 'none'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico",
+      "icons/icon.icns"
+    ],
+    "resources": {
+      "resources/pnpm": "pnpm"
+    },
+    "shortDescription": "DSH Link desktop client",
+    "longDescription": "DSH Link is a Tauri desktop shell for the DeepSeek Harness: it supervises the kernel and serves the official DSH client, so frontend plugins keep working.",
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      },
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+Two licences, two works in this package:
+
+- The plugin CODE in this package is MIT. The full MIT text is kept once for the whole pack,
+  together with the list of packages it covers, in ../../pack/LICENSES.md.
+- The BRAND ARTWORK in assets/ (the mark, the wordmark, mono/white variants, PNG renders and the
+  plated application icons) is NOT MIT. It is licensed CC BY-NC-SA 4.0 in its canonical repository,
+  https://github.com/DreamRealm-Dev/dsh-link-brand (LICENSE, USAGE.md), and the copies here stay
+  under that licence.
+
+Copyright (c) 2026 DSH Link contributors
+
+Scope, attribution and trademark rules: ../../BRAND-ASSETS.md.

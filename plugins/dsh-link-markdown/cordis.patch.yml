@@ -1,0 +1,8 @@
+# dsh-link-markdown bundle layer.
+#
+# One host-plane row, and the row is the delivery: this package's work is its browser half (the right
+# Sidebar's `markdown` tab type), and the client module system only scans the manifest of a package a
+# Loader row belongs to. The host half itself does nothing the user can see.
+- insert:
+    - id: link-markdown
+      name: dsh-link-markdown

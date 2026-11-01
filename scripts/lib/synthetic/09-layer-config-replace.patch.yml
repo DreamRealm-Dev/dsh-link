@@ -1,0 +1,5 @@
+- id: layer-config
+  name: replace
+  config:
+    c: 3
+

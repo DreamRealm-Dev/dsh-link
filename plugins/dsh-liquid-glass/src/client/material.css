@@ -1,0 +1,1423 @@
+/*
+ * Apple Liquid Glass — the control material.
+ *
+ * Scope: controls and the surfaces that carry them, over the client's own
+ * background. Nothing is recoloured, no element is added to the interface, and
+ * no geometry changes beyond the gutter that makes the sidebar read as floating
+ * and the corner radii, which come from the two tokens the theme control moves
+ * (see "Geometry" below).
+ * iOS 18 -> iOS 26: the same interface, wearing the new material.
+ *
+ * Four rules decide this file, and each one is a correction of an earlier
+ * version that got it wrong:
+ *
+ *   1. The background stays the client's own near-black. Glass does not need a
+ *      colourful backdrop to be glass — it needs *structure* behind it, and the
+ *      structure here is the conversation and the panels themselves. A wallpaper
+ *      invented to make the material visible is a recoloured interface.
+ *   2. Glass is never nested inside glass. A control that sits on a glass surface
+ *      keeps its own plain treatment; only a control standing on content becomes
+ *      a glass capsule. A capsule inside a capsule reads as a box in a box.
+ *   3. A refracting rule declares its backdrop filter twice. `backdrop-filter:
+ *      url(#…)` is Chromium-only, and an engine that rejects it would otherwise
+ *      drop the whole declaration, frost included.
+ *   4. A surface owns the ground it sits on. A layer the client paints behind an
+ *      opaque surface to hide what is behind it — the composer seat's fade into
+ *      the page colour — is not a fade behind a translucent one; it is content,
+ *      and it draws the conversation to a stop a few pixels inside the pane. It
+ *      is replaced, and the fact the replacement needs (the lip under the card) is
+ *      measured rather than guessed.
+ *
+ * Selector basis, in order of preference, is noted per rule:
+ *   [data-slot=…]              official slot hooks (stable)
+ *   [data-composer-card]       official styling hook (stable)
+ *   [role=…]                   ARIA roles (stable)
+ *   [class*='_localName']      the official source's CSS-module local name
+ *   [data-lg-square]           tagged by the engine on a square control
+ *
+ * Parameter names follow the ones Icon Composer exposes for a Liquid Glass
+ * material — Specular, Blur, Translucency, Dark, Shadow.
+ */
+
+/* The room's light, registered so its derived values are *numbers* and *lengths* a probe
+ * can read, rather than the `calc()` source that produces them — `--lg-light-x` at a pointer
+ * due right is 1, not "calc(sin(90deg))". A browser without `@property` ignores these rules
+ * and keeps the material: the tokens then stay un-evaluated token streams, which is exactly
+ * what the box-shadow below resolves them as. The initial values are the light this material
+ * has always been lit by — above the surface — so a document the engine never writes to still
+ * wears the top-lit rim it wore before there was a pointer position to read. */
+@property --lg-light-a { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
+@property --lg-light-follow { syntax: '<number>'; inherits: true; initial-value: 1; }
+@property --lg-light-x { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --lg-light-y { syntax: '<number>'; inherits: true; initial-value: -1; }
+@property --lg-light-dx { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --lg-pointer-x { syntax: '<length>'; inherits: true; initial-value: -100000px; }
+@property --lg-pointer-y { syntax: '<length>'; inherits: true; initial-value: -100000px; }
+@property --lg-light-dy { syntax: '<length>'; inherits: true; initial-value: 1px; }
+@property --lg-occ-dx { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --lg-occ-dy { syntax: '<length>'; inherits: true; initial-value: -1px; }
+
+html[data-lg-style='liquid-glass'] {
+  /* Geometry. The gap is what makes a surface read as floating, and the radius is the
+   * corner the whole interface is cut from.
+   *
+   * The gap is 12px — the value this file has always shipped, measured as the panel's
+   * inset inside its own column (12px on each side). It is declared here, and both of its
+   * use sites below also carry it as a `var()` fallback: a layout that reads an undefined
+   * custom property loses the whole declaration at computed-value time and collapses
+   * silently, with no console error to point at it. That happened to this token once.
+   *
+   * Three radii, in CSS px: the window's, a panel's, and a control's. No rule in this
+   * file names a radius in px; every corner below reads one of these.
+   *
+   * The first two are the ones a person moves. Settings → Theme has a single slider, and
+   * it writes them as custom properties on `html` inline (window = r, panel = r + 6).
+   * That is why they are declared here and nowhere else, why nothing here is
+   * `!important`, and why no other rule in this file re-declares them: an inline value
+   * has to win outright and land on the next paint, with no transition in the way. The
+   * derived `--lg-radius-field` follows an inline write for the same reason a `var()`
+   * does — custom properties are substituted at computed-value time, per element, so a
+   * `var(--lg-radius-panel)` on `html` sees `html`'s own inline value. */
+  --lg-gap: 12px;
+  --lg-radius-window: 12px;
+  --lg-radius-panel: 18px;
+  --lg-radius-control: 999px;
+  /* A field is a well, not a capsule: rounded like the surface it is cut into rather than
+   * like a pill. It is not a fourth knob — it is the panel's radius at the proportion a
+   * field wants, which is exactly the 10px it has always been while the panel is 18px —
+   * so the one theme control moves it too. */
+  --lg-radius-field: calc(var(--lg-radius-panel) * 10 / 18);
+  /* The card is derived by offset rather than by proportion. The composer card has a
+   * radius of its own in the client's design — 28px — and a pane that came out 18px
+   * whenever the panel is 18px would be a change to a shape people already approved.
+   * +10px holds that 28px at the panel's default and still moves with the one control. */
+  --lg-radius-card: calc(var(--lg-radius-panel) + 10px);
+
+  /* Material.
+   *
+   * Each surface's own fill is the client's own token for that surface, at high
+   * opacity. That is not a compromise but the requirement: the client paints some
+   * of its own children with those same fills — the sidebar's list-fade, for
+   * instance — so any invented colour for the panel shows up as a band where a
+   * child paints the official one. Over a near-black backdrop the material then
+   * carries itself through the specular rim, the float, and the blur of whatever
+   * passes behind it, which is what dark-mode glass over black actually looks
+   * like. */
+  /* How much of the surface's own fill survives. The rest is the backdrop, blurred:
+   * legibility is the blur's job, not the fill's. */
+  --lg-translucency: 22%;
+  /* Blur is the one parameter that decides whether a backdrop survives. Measured on
+   * a content-free patch of the modal over the conversation, the detail reaching the
+   * surface was: 6px → 39 values of variation, 10px → 25, 14px → 21, 18px → 18,
+   * 26px → 13. The fill barely moves it by comparison (30% → 25, 8% → 33, at the
+   * cost of a much darker panel), so transparency is governed here and the fill is
+   * left alone. 10px keeps a frost while leaving the backdrop as shapes. */
+  --lg-blur: 4px;
+  --lg-saturate: 180%;
+  /* Refraction: the band a surface bends inside its own edge, how far it bends there, and
+   * how far the red and blue passes separate from each other. The engine reads these off
+   * the surface and bakes a lens for it — see "Refraction" below. A panel carries a wider
+   * band than a card, because it is a bigger pane of glass. */
+  --lg-refract-band: 32px;
+  --lg-refract-bend: 30px;
+  --lg-refract-chroma: 0.1;
+  /* Boldness belongs to the structure — the blur, the float, the shadow — not to
+   * white paint. A rim is an edge highlight, and a sheen is the light a surface
+   * catches along one side; pushed past that they read as a washed-out control,
+   * which is exactly what 34%/8% did to the composer card. */
+  --lg-specular: 22%;
+  --lg-hairline: 12%;
+  --lg-sheen: 3%;
+  /* The light a rim catches, as opposed to the hairline that draws it: a soft glow just
+   * inside the top edge, which is what makes a float read as a pane of glass with
+   * thickness rather than a rounded rectangle with an outline. */
+  --lg-glow: 34%;
+  /* The material's Dark component — Icon Composer exposes exactly this as a slider
+   * (42% in Apple's own light-mode panel). It is the layer that keeps a pane of
+   * glass reading as a surface over a bright backdrop instead of dissolving into
+   * it, which is what a white fill alone does on a white page. Dark mode leaves it
+   * at zero: there the surface is already darker than what it floats over. */
+  --lg-veil: 0%;
+  --lg-inspector-tint: 88%;
+  /* The fill a control standing on a surface gets. Palette-dependent, like the
+   * edge: white on a dark pane is elevation, white on a light pane is nothing. */
+  --lg-elevation: rgb(255 255 255 / 7%);
+  --lg-elevation-hover: rgb(255 255 255 / 12%);
+  --lg-elevation-active: rgb(255 255 255 / 16%);
+  --lg-shadow: 0 20px 48px -22px rgb(0 0 0 / 95%), 0 3px 10px rgb(0 0 0 / 45%);
+
+  /* The pointer, in three parts: one light, one lift, one dent.
+   *
+   * ONE LIGHT. `--lg-light-a` is the direction the room's light comes from, an angle where
+   * 0deg is above the surface, 90deg to its right and 180deg below it. The engine writes it on
+   * `html` while the pointer moves — one property, at most once per animation frame — and
+   * everything else here is derived from it, so the pointer's whole cost is that one write.
+   * `--lg-light-x`/`--lg-light-y` are the same direction on the unit circle: -1 is the left
+   * (or top) edge, +1 the right (or bottom) one. `--lg-light-dx`/`--lg-light-dy` are it as the
+   * box-shadow offsets that put the lit hairline on the edge the light is on, and
+   * `--lg-occ-dx`/`--lg-occ-dy` are its negation, because the occlusion line under a floating
+   * surface belongs on the edge the light is *not* on. They are offsets rather than opacities
+   * for a reason worth stating: an inset shadow with no offset and no spread paints nothing, so
+   * "no light" would be a rim that vanished rather than a rim that moved.
+   *
+   * `--lg-light-follow: 0` parks the light back above the surface whatever the angle says, and
+   * it is the one number the whole pointer response is switched off from: the derived tokens
+   * blend towards the material's historic top light rather than towards zero, so the rim stays
+   * a rim.
+   *
+   * ONE LIFT. `--lg-lift` is the only lever the pointer pulls on a rim: 1 is the material's own
+   * specular, and hovering a glass control raises it by `--lg-hover-lift`. The lift multiplies
+   * the surface's *own* `--lg-specular`/`--lg-glow`, so a panel that is brighter than a card
+   * stays proportionally brighter when the pointer is on it, and the value of the multiplier is
+   * a measurement (the rim's own luminance rise against the capture's noise floor), not a taste.
+   *
+   * ONE DENT. A control standing on glass is pressed *into* the material: `--lg-dent-on` gates
+   * the response, `--lg-dent-darken`/`--lg-dent-blur`/`--lg-dent-drop` are the short dark inset
+   * that spreads in from the lit edge, and `--lg-dent-rim` is the hairline the control's own
+   * rim drops to while it is held — the same convention this file's field rule already uses for
+   * a well, so a press reads as the same kind of recess. `--lg-dent-on: 0` removes the whole
+   * press response in one place. */
+  --lg-light-a: 0deg;
+  --lg-light-follow: 1;
+  --lg-light-x: calc(sin(var(--lg-light-a)) * var(--lg-light-follow));
+  --lg-light-y: calc(-1 * cos(var(--lg-light-a)) * var(--lg-light-follow) - (1 - var(--lg-light-follow)));
+  --lg-light-dx: calc(var(--lg-light-x) * -1px);
+  --lg-light-dy: calc(var(--lg-light-y) * -1px);
+  --lg-occ-dx: calc(var(--lg-light-x) * 1px);
+  --lg-occ-dy: calc(var(--lg-light-y) * 1px);
+  /* How far a glow is pushed towards the light, relative to the hairline: 1 for a control's
+   * tight glow, more for a panel's longer one (see the sidebar rule). */
+  --lg-rim-glow-blur: 5px;
+  --lg-rim-glow-spread: -2px;
+  --lg-rim-glow-drop: 1;
+  --lg-control-hairline: 9%;
+  --lg-lift: 1;
+  /* 1.5 is the measured crossing, not a preference. The sweep of this token on the composer card
+   * (rim band = its top 1 CSS px over the middle 30% of its width, dark palette, pointer really
+   * on the card) reads: 1.0 -> 87.9 luma, 1.1 -> +3.0, 1.2 -> +7.0, 1.3 -> +11.2, 1.4 -> +14.3,
+   * 1.5 -> +18.5, 1.7 -> +25.6, 2.0 -> +35.5, against a capture-to-capture noise of 0.00 luma at
+   * that surface. The sidebar panel's own resting rim — the strongest rim this material has at
+   * rest, 28% specular — measures 106.8 luma on the same band geometry, and 1.5 is where the
+   * hovered card's rim arrives there: 106.4 luma, 18% x 1.5 = 27% against the panel's 28%. So a
+   * hovering control catches exactly as much light as the biggest pane in the room at rest, and
+   * never more. */
+  --lg-hover-lift: 1.5;
+  --lg-dent-on: 1;
+  --lg-dent-darken: 34%;
+  --lg-dent-blur: 2px;
+  --lg-dent-drop: 1px;
+  --lg-dent-rim: 3%;
+}
+
+/* The fill the shared surface rule uses for anything that does not name its own —
+ * the modal dialog and any `data-lg-surface` opt-in. It is named on `body`, not on
+ * `html` with the rest of the parameters, because the client declares its
+ * `--dsw-*` tokens on `body` (design-platform.css) and custom properties only
+ * inherit downward: a `var(--dsw-…)` written on `html` cannot resolve, which makes
+ * the whole property the guaranteed-invalid value, and every surface inheriting it
+ * silently drops its background declaration — a dialog rendered as nothing but a
+ * blur. The surfaces that name their own fill (sidebar, inspector, composer) never
+ * showed it; only the ones that inherit did. */
+html[data-lg-style='liquid-glass'] body {
+  --lg-fill: var(--dsw-specific-bubble);
+}
+
+/* ---------------------------------------------------------------------------
+ * 1. Floating surfaces.
+ *
+ * The sidebar panel, the inspector pane, menus, listboxes and modal dialogs.
+ * Each is translucent, blurs what is behind it, and carries a specular rim: a
+ * hairline all round, brighter along the lit top edge, plus a thin occlusion
+ * line where the material meets what it floats over.
+ * ------------------------------------------------------------------------- */
+/* Menus and listboxes are absent from this list, and materialised by their own rule
+ * below: the client ships a material for them (`div._material_`) that is a translucent
+ * fill under `blur(40px) saturate(1.5)`, and repainting it *as a surface* — with this
+ * list's fill — replaced an official glass with an invented darker one. The exception is
+ * handled at the end of this section. */
+html[data-lg-style='liquid-glass'] :is(
+  [data-composer-card],
+  [role='dialog'][aria-modal='true'],
+  [data-lg-surface]
+) {
+  background-color: color-mix(in srgb, var(--lg-fill) var(--lg-tint, var(--lg-translucency)), transparent);
+  background-image: linear-gradient(rgb(0 0 0 / var(--lg-veil, 0%)), rgb(0 0 0 / var(--lg-veil, 0%))), linear-gradient(180deg, rgb(255 255 255 / var(--lg-sheen)) 0%, rgb(255 255 255 / 0%) 18%);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  /* The engine hands each surface its own lens, because a lens belongs to a shape. The
+   * fallback is deliberately *empty* rather than `none`: a filter list with `none` in it
+   * is invalid, and a declaration that is invalid *at computed-value time* does not fall
+   * back to the declaration above it — it throws the whole property away, which cost every
+   * surface its frost until the engine had dressed it. With an empty fallback the value is
+   * simply the plain pair, and the lens is appended once there is one. */
+  backdrop-filter: var(--lg-refraction, blur(var(--lg-blur)) saturate(var(--lg-saturate)));
+  /* No radius on this rule, because its three members are not cut from one term: the composer card
+   * and the modal dialog take the skin's card radius (`--lg-radius-card`) in their own rules below,
+   * and a `[data-lg-surface]` opt-in — the LAN bridge panel — is handed the panel's by its own
+   * inline `var(--lg-radius-panel)`. One number written here would have to be wrong for two of the
+   * three.
+   *
+   * The modal dialog is the surface this rule used to leave out on purpose. The client cuts it to
+   * its own radius (measured 28px on the settings dialog) so the controls set inside it stay
+   * concentric with the box they sit in — its navigation rows are 40px tall at their own 12px
+   * corner. A pane moved on its own leaves a step between the container's corner and everything in
+   * it, which is the mismatch Apple's concentricity rule exists to avoid. That is a fact about a
+   * *container*, though, and not a reason to keep its corner off the one control: the step is now
+   * closed from the inside, because the dialog's own chrome takes the same relation the menu rows
+   * take (see the concentric rule below). So the dialog follows the radius with every other
+   * surface, and every control inside it is still cut concentric with the corner it sits in.
+   *
+   * Every surface that wears this rule takes the skin's radius in its own rule: the sidebar and the
+   * inspector pane (`--lg-radius-panel`), the composer card and the modal dialog
+   * (`--lg-radius-card`), a `[data-lg-overlay]` or `[data-lg-popover]` panel, the client's own
+   * popup material, and an opt-in `[data-lg-surface]` such as the LAN bridge panel through its
+   * own inline `var(--lg-radius-panel)`. */
+  box-shadow:
+    /* The lit hairline and its glow, on the edge the room's light is on; the occlusion line is
+     * the same vector negated, so the two never share an edge (see the token group). */
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) 0 0 rgb(255 255 255 / calc(var(--lg-specular) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) var(--lg-rim-glow-blur, 5px) var(--lg-rim-glow-spread, -2px) rgb(255 255 255 / calc(var(--lg-glow) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset 0 0 0 1px color-mix(in srgb, var(--lg-edge, #fff) var(--lg-hairline), transparent),
+    inset var(--lg-occ-dx, 0px) var(--lg-occ-dy, -1px) 0 0 rgb(0 0 0 / 22%),
+    var(--lg-shadow);
+}
+
+/* The modal dialog's own corner: the skin's card term, because that is the shape the client
+ * already cut for it.
+ *
+ * Measured with the client's own stylesheet alone, the settings dialog (800x800) is cut to 28px —
+ * and `--lg-radius-card` is `--lg-radius-panel + 10px`, which is exactly 28px at the panel's own
+ * default of 18px. That is the same derivation the composer card already has, for the same reason:
+ * the client's 28px is a shape people approved, so the derived term holds it at the default and
+ * moves it with the one radius control from there, instead of replacing it. The panel term (18px)
+ * would instead cut the container *tighter* than the card it floats over and than the surfaces
+ * around it, which is the one direction a container must not move: concentricity is defined from the
+ * outside in, so the outermost corner of a stack is the one that has to be the widest.
+ *
+ * The hook is the semantic one the engine's own sweep mirrors (`COVERED_SURFACES`), and it is what
+ * tells this client's modal dialog apart from the 会话统计 popover, which is a `role="dialog"` with
+ * no `aria-modal` and is adapted by the popover rules instead. It carries no class hash, and it is
+ * the same hook the dialog's own controls are measured under. */
+html[data-lg-style='liquid-glass'] [role='dialog'][aria-modal='true'] {
+  border-radius: var(--lg-radius-card);
+}
+
+/* A popover is not the same piece of glass as a panel that sits in the layout.
+ *
+ * What floats over the conversation has a wallpaper *and* the composer's own hard-edged bar
+ * behind it, and it carries its own text on top. At the panel defaults — a 4px frost and a
+ * 30px bend — that reads wrong twice over: the bend drags the composer's edge into the
+ * popover as a grey smear several tens of pixels wide, and the frost is far too thin to stop
+ * the wallpaper's type from competing with the panel's own. Measured on the OpenCode Go usage
+ * panel (280x326 over the composer, light palette): the composer's edge is bent inward by up
+ * to 14px and lands as a smudge across the panel's lower third, while the wallpaper behind it
+ * stays legible through the pane. So a popover gets the material a popover wants: a deeper
+ * frost to separate its text from what is behind it, and a much shorter bend, because there
+ * is no wide, quiet backdrop here for a long lens to work on — only edges. */
+html[data-lg-style='liquid-glass'] :is([data-lg-overlay], [data-lg-popover], [role='dialog'][aria-modal='true']) {
+  /* The fill is the lever that matters here, and it is a *readability* lever rather than a
+   * taste one. A popover is where dense text sits, and what is behind it is not one texture:
+   * the OpenCode Go usage panel straddles the wallpaper and the composer's grey bar, whose
+   * top edge cuts across its lower third — so at a 20% fill the panel comes out half bright
+   * and half grey with a seam between, and its own rows have to be read against both. A
+   * deeper frost alone does not fix that: blurring a large grey area still leaves a large
+   * grey area, the step is in value rather than in sharpness. So a popover carries more of
+   * its own fill than a panel does, and the frost is deep enough that what shows through is
+   * a wash rather than an object. */
+  --lg-blur: 14px;
+  --lg-tint: 68%;
+  --lg-refract-band: 22px;
+  --lg-refract-bend: 12px;
+}
+
+/* The panels the engine's own detector tags (`data-lg-overlay`) and the ones a plugin marks as
+ * its own popover (`data-lg-popover`) are glass this material draws, so their corner is the
+ * skin's too. The modal dialog in the rule above is not in this list, because its corner is the
+ * card term rather than the panel's: its own rule writes it, and its own chrome is cut concentric
+ * with it. */
+html[data-lg-style='liquid-glass'] :is([data-lg-popover], [data-lg-overlay]) {
+  border-radius: var(--lg-radius-panel);
+}
+
+/* The client's own glass — a popover that arrived wearing a material of its own — is adapted
+ * to the skin, not repainted into it.
+ *
+ * The distinction is the one rule 1 of this file's four is about, and it was learned the
+ * expensive way: repainting the client's own popup material *as* one of our surfaces once
+ * replaced an official glass with an invented darker one. So what such a panel keeps is
+ * everything the client measured for itself — its own translucent fill family, the blur that
+ * separates its text from what is behind it, the shape it cut for the content inside it — and
+ * what it takes from the skin is the three things that made it read as a foreign surface
+ * beside the surfaces around it: the corner, the popover *shape* of the lens (the band and the
+ * bend, so the bend is a popover's rather than a card's), and one lens of its own from the
+ * engine, which it can only be given once the engine has tagged it — measured before this
+ * rule, the 会话统计 popover carried no `data-lg-*` at all: no fill of ours, no lens, and the
+ * client's 16px corner beside the sidebar's 18px.
+ *
+ * The fill is the one parameter deliberately *moved*, and it is moved to the number the user
+ * asked for rather than to a panel default. Measured by solving the two known backdrops
+ * (L(b) = aF + (1-a)b) on the pixel band of each surface that floats over the conversation:
+ * the composer input field renders at an effective opacity of **0.20** with its own fill at
+ * luma **45** (`--dsw-specific-bubble` at 20%), and this popover rendered at **0.455** with a
+ * fill luma of **69** (the client's `rgba(67,69,74,0.45)`) — half again as opaque as the field
+ * it floats over, which is the "透度不足" the request named. At `--lg-tint: 20%` over the same
+ * inherited `--lg-fill` the popover measures 0.20 / 45: the field's grade, to the number.
+ *
+ * The frost stays the popover's own 14px rather than the field's 6px, and that is the one
+ * place this rule departs from the benchmark. Translucency is the fill; the frost is what
+ * keeps a panel's dense rows legible over whatever passes behind it, and a popover is where
+ * dense text sits. Measured on the same band, the fill is what moves the mean luma; the blur
+ * moves only how much structure survives in it. */
+html[data-lg-style='liquid-glass'] [data-lg-overlay][data-lg-client-glass] {
+  --lg-tint: 20%;
+  --lg-blur: 14px;
+  --lg-refract-band: 22px;
+  --lg-refract-bend: 12px;
+}
+
+/* The sidebar: floats in its column's gutter, refracted because it is large
+ * enough for the bend to be visible at its edges.
+ *
+ * Both the float and its column's gutter apply to the EXPANDED layout only, which
+ * the engine marks as `data-lg-wide`. The 56px rail cannot host them: the client
+ * lays out 36px control boxes in it against 10px of side padding, so any gutter at
+ * all would clip them — the rail stays exactly as the client draws it. The panel's
+ * width is an inline style, so the narrower box comes from `max-width`; a
+ * stylesheet cannot beat an inline `width`, and `width: auto !important` would
+ * squash the panel while the column collapses instead of letting the column clip
+ * it. */
+html[data-lg-style='liquid-glass'] [data-lg-wide] > [data-slot='sidebar'] > * {
+  --lg-fill: var(--dsw-specific-sidebar-fill);
+  /* A panel carries a longer edge than a control, so its highlight can be a little
+   * stronger without reading as paint. */
+  --lg-specular: 28%;
+  --lg-sheen: 5%;
+  --lg-translucency: 22%;
+  /* What this panel actually renders over the frame. The client's session list
+   * fades its bottom edge by painting `--dsw-specific-sidebar-fill` — the opaque
+   * token — over the panel, so at any real translucency that child lands several
+   * values off and reads as a band across the panel. Publishing the composite to
+   * the subtree is what lets the panel be this thin at all. */
+  --lg-panel-composite: color-mix(in srgb,
+    rgb(0 0 0) var(--lg-veil, 0%),
+    color-mix(in srgb, var(--dsw-specific-sidebar-fill) var(--lg-translucency), var(--dsw-alias-bg-base)));
+  /* A panel is the biggest pane here, so its band is the widest and its bend is the
+   * longest: the same proportions on a 400px sheet read as a bevel rather than glass. */
+  --lg-refract-band: 36px;
+  --lg-refract-bend: 36px;
+  /* A panel's glow is the long one this file has always given it — 14px of blur pulled in by
+   * 7px — and it is pushed twice as far towards the light as a control's, because a longer
+   * glow reads its direction from a longer way off. */
+  --lg-rim-glow-blur: 14px;
+  --lg-rim-glow-spread: -7px;
+  --lg-rim-glow-drop: 2;
+  max-width: 100%;
+  border-radius: var(--lg-radius-panel);
+  /* The material is split across two layers, and which half goes where is a fact about
+   * backdrop roots rather than a preference about tidiness.
+   *
+   * A backdrop root is created by exactly one of the things this material needs: the
+   * backdrop filter. The client anchors its own popovers to this panel — the LAN bridge
+   * panel is one of them, and it is our plugin — so this element must never be their
+   * backdrop root: with a filter here they had nothing behind them but the panel's own
+   * uniform interior to blur. So the filter is the one thing that does NOT live on this
+   * element; it stays on the pane below, and the pane is stripped of everything else.
+   *
+   * The fill and the rim are the other half, and they are the half that has to live HERE:
+   * neither `background-*` nor `box-shadow` creates a backdrop root, so putting them on a
+   * `::before` at `z-index: -1` buys nothing and risks everything — measured on this very
+   * panel, with the fill and the rim on the pane the panel's own pixels did not move at all
+   * when the pane was deleted, i.e. the material the pane was supposed to carry was simply
+   * not reaching the screen. Painting them on the element makes the material independent of
+   * where a negative-z child happens to land. */
+  background-color: color-mix(in srgb, var(--lg-fill) var(--lg-translucency), transparent);
+  background-image: linear-gradient(rgb(0 0 0 / var(--lg-veil, 0%)), rgb(0 0 0 / var(--lg-veil, 0%))), linear-gradient(180deg, rgb(255 255 255 / var(--lg-sheen)) 0%, rgb(255 255 255 / 0%) 30%);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  /* Children carry their own fills, so the panel has to clip them for its radius
+   * to read at all. */
+  overflow: hidden;
+  /* The rim, on the element with the fill: a hairline all round, brighter along the lit top
+   * edge, a soft glow just inside it, and a thin occlusion line along the bottom, under the
+   * panel's own float. */
+  box-shadow:
+    /* The lit hairline and its glow, on the edge the room's light is on; the occlusion line is
+     * the same vector negated, so the two never share an edge (see the token group). */
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) 0 0 rgb(255 255 255 / calc(var(--lg-specular) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset var(--lg-light-dx, 0px) calc(var(--lg-light-dy, 1px) * var(--lg-rim-glow-drop, 1)) var(--lg-rim-glow-blur, 14px) var(--lg-rim-glow-spread, -7px) rgb(255 255 255 / calc(var(--lg-glow) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset 0 0 0 1px color-mix(in srgb, var(--lg-edge, #fff) var(--lg-hairline), transparent),
+    inset var(--lg-occ-dx, 0px) var(--lg-occ-dy, -1px) 0 0 rgb(0 0 0 / 22%),
+    var(--lg-shadow);
+}
+
+html[data-lg-style='liquid-glass'] [data-lg-wide] > [data-slot='sidebar'] > *::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  /* The filter, and nothing else. It is what has to leave the element (a filter on the panel
+   * would make the panel a backdrop root for every popover anchored to it), and it is also
+   * everything a layer of its own actually needs: the fill and the rim are on the element,
+   * and the pane's only job is to bend what is behind the panel. */
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: var(--lg-refraction, blur(var(--lg-blur)) saturate(var(--lg-saturate)));
+}
+
+/* Children of that panel inherit the composite, so anything painting the client's
+ * own sidebar fill paints what the panel renders instead. */
+html[data-lg-style='liquid-glass'] [data-lg-wide] > [data-slot='sidebar'] > * > * {
+  --dsw-specific-sidebar-fill: var(--lg-panel-composite);
+}
+
+/* Its column stops painting and gives the panel its gutter — the only geometry
+ * this material changes anywhere. */
+html[data-lg-style='liquid-glass'] div:has(> [data-slot='sidebar'])[data-lg-wide] {
+  background-color: transparent;
+  padding: var(--lg-gap, 12px);
+}
+
+/* The inspector column paints through a dockkit tab-host pane, not through the
+ * sidebar-right plugin's own wrapper, so the pane is the element to materialise.
+ * It is matched by the tab it hosts rather than by its generated class name. */
+html[data-lg-style='liquid-glass'] section:has([data-slot='sidebar.right.pane.tab']) {
+  --lg-fill: var(--dsw-alias-bg-base);
+  --lg-translucency: 22%;
+  margin: var(--lg-gap, 12px);
+  border-radius: var(--lg-radius-panel);
+  background-color: color-mix(in srgb, var(--lg-fill) var(--lg-inspector-tint), transparent);
+  background-image: linear-gradient(rgb(0 0 0 / var(--lg-veil, 0%)), rgb(0 0 0 / var(--lg-veil, 0%))), linear-gradient(180deg, rgb(255 255 255 / var(--lg-sheen)) 0%, rgb(255 255 255 / 0%) 30%);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: var(--lg-refraction, blur(var(--lg-blur)) saturate(var(--lg-saturate)));
+  box-shadow:
+    /* The lit hairline and its glow, on the edge the room's light is on; the occlusion line is
+     * the same vector negated, so the two never share an edge (see the token group). */
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) 0 0 rgb(255 255 255 / calc(var(--lg-specular) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) var(--lg-rim-glow-blur, 5px) var(--lg-rim-glow-spread, -2px) rgb(255 255 255 / calc(var(--lg-glow) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset 0 0 0 1px color-mix(in srgb, var(--lg-edge, #fff) var(--lg-hairline), transparent),
+    var(--lg-shadow);
+}
+
+/* The composer card floats over the conversation: the one surface whose blur has
+ * real content to work with, so it carries the refraction. Its corner is the skin's
+ * too — but on its own derived term (`--lg-radius-card`), because the 28px the client
+ * gives this card is the shape people already approved: keeping it at the default is
+ * not the same as keeping it out of the control's reach. */
+html[data-lg-style='liquid-glass'] [data-composer-card] {
+  --lg-fill: var(--dsw-specific-bubble);
+  /* The one surface with conversation to reveal: it carries the strongest blur of
+   * the set, because what passes behind it is text. */
+  --lg-tint: 20%;
+  --lg-blur: 6px;
+  /* A control gets a tight rim and almost no sheen: the client already draws its
+   * own 0.5px stroke, and anything more turns the card milky. */
+  --lg-specular: 18%;
+  --lg-sheen: 2%;
+  --lg-hairline: 10%;
+  --lg-glow: 26%;
+  /* The card is a control, so its pane is thinner than a panel's: a narrower band and a
+   * shorter bend, which is what a small piece of glass does. */
+  --lg-refract-band: 30px;
+  --lg-refract-bend: 30px;
+  /* Named again here, not only in the shared surface rule, because the card is a stack:
+   * its pane — the layer that carries the rim — is a pseudo-element that inherits this
+   * box's radius, so the pane and the box have to be told the same corner. This
+   * declaration is outranked by the shared surface rule; see the `[data-lg-refract]` rule
+   * below for where the card's radius actually lands, and why. The two are kept in step
+   * so they can never disagree. */
+  border-radius: var(--lg-radius-card);
+  /* Same split as the sidebar panel, for the same measured reason — and the card needs the
+   * filter off its own box for a second time, because the client anchors popovers here too
+   * (the OpenCode Go usage card, the token-usage card): a backdrop filter anywhere on an
+   * element makes it a backdrop root, and those cards would have nothing behind them but the
+   * composer's own uniform interior instead of the conversation.
+   *
+   * The filter is therefore the only thing that lives on the pane; the fill and the rim live
+   * here, where `background-*` and `box-shadow` cost nothing and cannot be promoted out of
+   * the panel by a negative `z-index`. */
+  background-color: color-mix(in srgb, var(--lg-fill) var(--lg-tint, var(--lg-translucency)), transparent);
+  background-image: linear-gradient(rgb(0 0 0 / var(--lg-veil, 0%)), rgb(0 0 0 / var(--lg-veil, 0%))), linear-gradient(180deg, rgb(255 255 255 / var(--lg-sheen)) 0%, rgb(255 255 255 / 0%) 18%);
+  box-shadow:
+    /* The lit hairline and its glow, on the edge the room's light is on; the occlusion line is
+     * the same vector negated, so the two never share an edge (see the token group). */
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) 0 0 rgb(255 255 255 / calc(var(--lg-specular) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) var(--lg-rim-glow-blur, 5px) var(--lg-rim-glow-spread, -2px) rgb(255 255 255 / calc(var(--lg-glow) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset 0 0 0 1px color-mix(in srgb, var(--lg-edge, #fff) var(--lg-hairline), transparent),
+    var(--lg-shadow);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* The specificity above is not decoration: the shared surface rule's `:is(…)` takes the
+ * specificity of its *most specific* argument — `[role="dialog"][aria-modal="true"]` — so it
+ * outranks a plain `[data-composer-card]` selector and kept handing the card its lens no
+ * matter what the rule above said. Measured with a rule audit against the live stylesheet:
+ * two rules matched the composer card and both set a backdrop filter, and the shared one won.
+ * `[data-lg-refract]` is the attribute the engine sets on every surface it has dressed, so
+ * requiring it raises this rule above the shared one without touching anything else. */
+html[data-lg-style='liquid-glass'] [data-composer-card][data-lg-refract] {
+  /* The card's radius, and the declaration that decides it: the shared surface rule's
+   * `:is(…)` takes the specificity of its most specific argument
+   * (`[role="dialog"][aria-modal="true"]`, two class-level parts), so it outranks a plain
+   * `[data-composer-card]`. Requiring `[data-lg-refract]` — the attribute the engine sets
+   * on every surface it has dressed — matches that specificity from later in the file,
+   * which is the same lever the backdrop filter below uses. */
+  border-radius: var(--lg-radius-card);
+  /* The fill and the rim, restated at the specificity that actually wins, and no stacking
+   * context: the card must not become a backdrop root, and its material must not depend on
+   * where a negative-z layer lands. */
+  background-color: color-mix(in srgb, var(--lg-fill) var(--lg-tint, var(--lg-translucency)), transparent);
+  background-image: linear-gradient(rgb(0 0 0 / var(--lg-veil, 0%)), rgb(0 0 0 / var(--lg-veil, 0%))), linear-gradient(180deg, rgb(255 255 255 / var(--lg-sheen)) 0%, rgb(255 255 255 / 0%) 18%);
+  box-shadow:
+    /* The lit hairline and its glow, on the edge the room's light is on; the occlusion line is
+     * the same vector negated, so the two never share an edge (see the token group). */
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) 0 0 rgb(255 255 255 / calc(var(--lg-specular) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) var(--lg-rim-glow-blur, 5px) var(--lg-rim-glow-spread, -2px) rgb(255 255 255 / calc(var(--lg-glow) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset 0 0 0 1px color-mix(in srgb, var(--lg-edge, #fff) var(--lg-hairline), transparent),
+    var(--lg-shadow);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+html[data-lg-style='liquid-glass'] [data-composer-card]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  /* The filter, and nothing else — the fill and the rim are on the card itself (see the rule
+   * above). A raster of the pane's own fill under its own blur was also the reason the rim had
+   * to be drawn here at all: with the pane carrying no paint, there is no second raster to keep
+   * the crisp 1px edge out of. */
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: var(--lg-refraction, blur(var(--lg-blur)) saturate(var(--lg-saturate)));
+}
+
+/* The client's own popup material — `_material_`, on menus, listboxes and anything else
+ * it puts in a portal — is a 45–58% fill under `blur(40px) saturate(1.5)`. Over the
+ * light palette's near-white page that is a white rectangle on white: the fill is almost
+ * exactly the backdrop, the blur has nothing it can show, and the menu reads as unstyled.
+ * So it is materialised like every other surface, with the client's own container colour as
+ * its fill, a deeper blur than a panel gets because a menu carries its own text, a rim, and
+ * a lens of its own — its band is narrow, because a menu is a small piece of glass. */
+html[data-lg-style='liquid-glass'] [class*='_material_'] {
+  /* The skin's corner, on this layer and on the surface around it at once.
+   *
+   * The client cuts this pane to `inherit` and the surface it sits in to `--dsw-radius-lg`
+   * (16px), so the two agree only while they are told the same thing. A radius here alone put
+   * the pane at 18px inside a surface still at 16px — the 2px mismatch this rule used to avoid
+   * by leaving both to the client. That trade-off is obsolete now the skin has one adjustable
+   * radius: one number has to reach both layers, which is why the surface's own rule
+   * (`[data-menu-material]`, below this one) moves with it. Measured after: both layers 18px
+   * at the panel default, both 24px when the token is 24px. */
+  border-radius: var(--lg-radius-panel);
+  --lg-fill: var(--dsw-alias-bg-layer-1);
+  --lg-tint: 28%;
+  --lg-blur: 8px;
+  /* The band is proportional to the pane, and a menu is short.
+   *
+   * At 24px/24px — a third of this pane's 76px — the lens did not bend the menu's own edge, it
+   * pulled the account row below it in. Measured on the open menu (pane 144x76 at (34,742), the
+   * account row's avatar band sitting 14..23px below the bottom edge, backdrop 66 luma against 35
+   * at 0..13px): the 14 CSS px above the bottom edge came out at 57.8 mean luma against 34.6 with
+   * the token at 0px — a +23 luma phantom row where the design has none. The two backdrops and the
+   * 28% fill account for the same number (0.28 * 35 + 0.72 * 66 = 57.3), so what arrives there is
+   * the neighbour displaced in, not paint. A sweep of the token on that pane, lift over the 0px
+   * capture in those same 14px: 24px -> +23.2, 20 -> +14.9, 16 -> +7.1, 12 -> +2.1, 10 -> +1.0,
+   * 8 -> +0.5, 6 -> +0.2, 4 -> +0.1. 8px is the widest band still inside the run's own noise
+   * (+-0.5 luma between two captures of one state), and it is 10.5% of the pane rather than 32% —
+   * a menu's band is about a tenth of its height, not a panel's constant carried down to a box a
+   * tenth the size. */
+  --lg-refract-band: 8px;
+  --lg-refract-bend: 8px;
+  --lg-glow: 30%;
+  background-color: color-mix(in srgb, var(--lg-fill) var(--lg-tint), transparent);
+  background-image: linear-gradient(rgb(0 0 0 / var(--lg-veil, 0%)), rgb(0 0 0 / var(--lg-veil, 0%))), linear-gradient(180deg, rgb(255 255 255 / var(--lg-sheen)) 0%, rgb(255 255 255 / 0%) 30%);
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+  backdrop-filter: var(--lg-refraction, blur(var(--lg-blur)) saturate(var(--lg-saturate)));
+  box-shadow:
+    /* The lit hairline and its glow, on the edge the room's light is on; the occlusion line is
+     * the same vector negated, so the two never share an edge (see the token group). */
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) 0 0 rgb(255 255 255 / calc(var(--lg-specular) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset var(--lg-light-dx, 0px) var(--lg-light-dy, 1px) var(--lg-rim-glow-blur, 5px) var(--lg-rim-glow-spread, -2px) rgb(255 255 255 / calc(var(--lg-glow) * var(--lg-lift) * var(--lg-near-edge, 1))),
+    inset 0 0 0 1px color-mix(in srgb, var(--lg-edge, #fff) var(--lg-hairline), transparent);
+}
+
+/* The surface the client's popup material is nested in is the layer that owns the corner.
+ *
+ * `data-menu-material="translucent"` is written by the client's own `MenuSurface`, on the same
+ * element that carries `role="menu"` and the generated `_surface_<hash>` class, and it is the
+ * hook the client's own palette rules key on — so the radius goes there rather than on a hash a
+ * rebuild would rename. The `_material_` pane inside it inherits this box's corner, which is
+ * exactly why the radius has to be written here as well as on that pane: told the same number,
+ * the two layers are concentric at any radius; told different ones, the pane sits inset by the
+ * difference (the 2px this file measured before). Measured on the account menu (144x76): both
+ * layers 18px at the panel default, both 24px with `--lg-radius-panel: 24px`.
+ *
+ * A `compact` surface, which the client cuts to `--dsw-radius-md` (12px), takes the panel radius
+ * too: one skin has one radius, which is what the control that moves it is for. */
+html[data-lg-style='liquid-glass'] [data-menu-material] {
+  border-radius: var(--lg-radius-panel);
+}
+
+/* A menu's rows are cut CONCENTRIC with the menu they sit in.
+ *
+ * A menu surface takes the skin's corner (`[data-menu-material]` above), but its rows kept the
+ * client's own 12px — measured on the account menu with the panel token at 6px: the surface and its
+ * `_material_` pane both 6px, and the two `button[role=menuitem]` rows 136x34, inset 4px, still at
+ * 12px. The inner corner was *larger* than the outer one, and a row's corner is where that shows:
+ * the rows are the elements that carry the hover and selected highlight, so the mismatch reads
+ * exactly at the corners — the reported "the corner adaptation is incomplete".
+ *
+ * Apple's concentricity rule is the fix: inner = max(0, outer − the row's own inset). The inset is
+ * the one number a stylesheet cannot read, because it is a child's box measured against its
+ * parent's, so the engine measures it per row and publishes it as `--lg-menu-inset` (index.ts,
+ * `markMenuRows`). What is left here is arithmetic: the corner is a `var()` of
+ * `--lg-radius-panel`, so the radius control drags the rows with the panel, frame for frame, with
+ * no engine pass in between — the engine only ever reports a *geometry*, never a radius.
+ *
+ * Written for menus in general rather than for the account menu, because a menu whose rows are not
+ * concentric is the same defect anywhere. The hook is semantic — `role="menu"`, the client's own
+ * `data-menu-material`, and the three menuitem roles — never a CSS-module hash. It comes before
+ * section 3b on purpose: a row the skin has already decided is a square control keeps that rule's
+ * round shape (equal specificity, later wins), and the shell's own surfaces and the dialog's own
+ * chrome are not touched by it — a dialog row is not a menu row, and it is cut by its own rule.
+ *
+ * The fallback inset is 4px, which is what every menu this client opens pads by — measured: the
+ * account menu and the sidebar's 更多 flyout both `padding: 4px` with rows inset 4px on every side
+ * — so a row whose inset the engine has not measured yet is still concentric.
+ */
+html[data-lg-style='liquid-glass'] :is([role='menu'], [data-menu-material]) :is(
+  [role='menuitem'],
+  [role='menuitemcheckbox'],
+  [role='menuitemradio']
+) {
+  border-radius: max(0px, calc(var(--lg-radius-panel) - var(--lg-menu-inset, 4px)));
+}
+
+/* A dialog's own chrome is cut CONCENTRIC with the dialog — the same relation the menu rows
+ * above take, with the same mechanism, because it is the same defect when it is missing.
+ *
+ * The dialog now follows the skin's corner (the card term, 28px at the panel default), so the
+ * controls the dialog lays out at its own edges have to be cut from that corner rather than from
+ * whatever number their own module happens to carry: measured on the settings dialog, the
+ * navigation rows sit 12px inside its left edge at their own 12px corner, the header's action
+ * button 20px inside its top edge at 8px, and the close button 14px inside its right edge. Cut
+ * concentric — inner = max(0, outer minus the control's own inset) — each of them stays inside
+ * the container's corner at every value of the token, which is the whole of Apple's rule; left to
+ * its own number, a control the radius control shrinks past its own corner becomes the *rounder*
+ * box in a squarer container, which is the defect the menu rows were fixed for.
+ *
+ * The inset is the one number a stylesheet cannot read (a child's box against its parent's), so
+ * the engine measures each control's ring inset — the smallest distance from its box to the
+ * dialog's — and tags the controls that sit in the dialog's own chrome ring with
+ * `data-lg-dialog-inset`, writing the measurement beside it as `--lg-dialog-inset` (index.ts,
+ * `markDialogControls`). What is left here is arithmetic on a `var()` of the theme token, so the
+ * radius control drags every one of them with the dialog in the same frame, with no engine pass
+ * in between: the engine only ever reports a *geometry*, never a radius.
+ *
+ * Membership is that measurement rather than a class name: a page's *content* is a different
+ * thing from the chrome that frames it. Measured across all nine settings pages, the chrome ring
+ * is exactly the rows (12px), the header's action button (20px) and the close button (14px),
+ * while the pages' content sits inside a scrolling column — its controls measure rings of
+ * 5..17px on three of the nine pages, and those rings move with the scroll offset rather than with
+ * the layout — so content keeps the shape its own design gives it.
+ *
+ * The fallback inset is 12px, the dialog's own chrome padding (measured on the navigation column),
+ * so a control whose inset the engine has not measured yet is still concentric. The rule comes
+ * before section 3b on purpose, exactly as the menu rule does: a control the skin has already
+ * decided is a square one keeps that rule's round shape (equal specificity, later wins) — the
+ * dialog's close button is one, and it stays a circle.
+ */
+html[data-lg-style='liquid-glass'] [role='dialog'][aria-modal='true'] [data-lg-dialog-inset] {
+  border-radius: max(0px, calc(var(--lg-radius-card) - var(--lg-dialog-inset, 12px)));
+}
+
+/* The card floats on the client's own seat, and that seat carries a fade of its
+ * own: a gradient from transparent to the opaque page colour across its first
+ * 36px, whose whole job is to dissolve the conversation before it reaches a card
+ * that does not let anything through. Behind a translucent card the same gradient
+ * stops being a fade and becomes *content*: the conversation is visible at the top
+ * of the glass and gone a few pixels lower, with the seam sitting right where the
+ * card's own first text line is, which reads as the input's background breaking in
+ * half — and, worse, gives away that the pane is not a pane. A floating surface
+ * does not dissolve what is behind it, it blurs it, so the fade is replaced by one
+ * that lives entirely *below* the card: transparent through the card's whole
+ * height, then opaque across the lip under it, which is what still keeps the
+ * scrolling conversation from running sharp into the window's bottom edge. The ramp
+ * starts one pixel below the card's bottom edge and reaches full opacity four pixels
+ * later, so both the seam and the ramp are covered by the card's own shadow instead
+ * of landing beside it, and no conversation is left sharp under the pane.
+ * The lip is measured rather than guessed — the engine publishes it as
+ * `--lg-composer-lip` from the card's own box, so a taller composer keeps the fade
+ * under itself.
+ *
+ * The selector mirrors the client's own `[data-phase='active'] …composerSeat` rule
+ * — it matches the same phase, and needs a third class-level part to outrank that
+ * rule. The element itself is tagged by the engine after locating it from the
+ * card's stable hook, so nothing here depends on which class name the client
+ * generated. */
+html[data-lg-style='liquid-glass'] [data-phase='active'] [data-lg-seat] {
+  background-image: linear-gradient(
+    180deg,
+    rgb(0 0 0 / 0) 0,
+    rgb(0 0 0 / 0) calc(100% - var(--lg-composer-lip, 30px) + 1px),
+    var(--dsw-alias-bg-base) calc(100% - var(--lg-composer-lip, 30px) + 5px),
+    var(--dsw-alias-bg-base) 100%
+  );
+}
+
+/* ---------------------------------------------------------------------------
+ * 2. Controls that stand on content.
+ *
+ * The header action seats and the assistant-action row sit on the conversation
+ * itself, with no glass surface under them, so each control is its own capsule.
+ * Controls inside a glass surface are deliberately absent from this list: a
+ * capsule inside a capsule is the nesting Apple's guidance rules out.
+ * ------------------------------------------------------------------------- */
+html[data-lg-style='liquid-glass'] :is(
+  [data-slot='conversation.session.header.actions'],
+  [data-slot='conversation.session.header.utilities'],
+  [data-slot='conversation.session.header.corner'],
+  [data-slot='conversation.chat.assistant-actions']
+) button {
+  border-radius: var(--lg-radius-control);
+}
+
+/* ---------------------------------------------------------------------------
+ * 3. One-to-one controls are round.
+ *
+ * The engine tags every control whose box is square; its shape is a fact about
+ * the rendered layout, not about a class name, so it is measured and tagged
+ * rather than matched.
+ * ------------------------------------------------------------------------- */
+html[data-lg-style='liquid-glass'] [data-lg-square] {
+  border-radius: var(--lg-radius-control);
+}
+
+/* ---------------------------------------------------------------------------
+ * 3b. Controls that stand ON a glass surface.
+ *
+ * Neither glass nor nothing. A capsule with a blur and a rim inside a pane of
+ * glass is glass nested in glass, which the guidance rules out; leaving them
+ * entirely to the client loses the one thing the surface owes them, which is to
+ * read as sitting *above* it. So they get elevation: a flat translucent fill one
+ * step up from the panel, a hairline, and the round shape of a control. No blur,
+ * no specular rim, no sheen — those belong to the surface, and repeating them here
+ * is what made the nested capsules look wrong.
+ * ------------------------------------------------------------------------- */
+html[data-lg-style='liquid-glass'] :is(
+  [data-slot='sidebar'],
+  [role='dialog'][aria-modal='true'],
+  [role='menu'],
+  [role='listbox']
+) :is([class*='_iconButton'], [class*='_toggle'], [class*='_searchButton'], [data-lg-square]) {
+  border-radius: var(--lg-radius-control);
+  background-color: var(--lg-elevation);
+  /* The control's hairline is the one rim it has, so it is the one the pointer pulls. `--lg-lift`
+   * is reset to the material's own value first, so a hovered panel above a control cannot raise
+   * every rim inside it — only the control the pointer is actually on. */
+  --lg-lift: 1;
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--lg-edge, #fff) calc(var(--lg-control-hairline) * var(--lg-lift)), transparent);
+}
+
+html[data-lg-style='liquid-glass'] :is(
+  [data-slot='sidebar'],
+  [role='dialog'][aria-modal='true'],
+  [role='menu'],
+  [role='listbox']
+) :is([class*='_iconButton'], [class*='_toggle'], [class*='_searchButton'], [data-lg-square]):hover {
+  --lg-lift: var(--lg-hover-lift);
+  background-color: var(--lg-elevation-hover);
+}
+
+/* The control's *pressed* state is in section 7, with the other two pointer responses, so the
+ * whole of the press — the lift, the dent and the light — is one block of the file. */
+
+/* ---------------------------------------------------------------------------
+ * 4. Fields.
+ *
+ * A control you type into is recessed rather than raised, in the client's
+ * language and Apple's alike. This is a well, not a glass surface, so it is safe
+ * inside one.
+ * ------------------------------------------------------------------------- */
+html[data-lg-style='liquid-glass'] :is(
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  textarea
+) {
+  background-color: color-mix(in srgb, var(--dsw-alias-bg-layer-1) 45%, transparent);
+  border-radius: var(--lg-radius-field);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 26%), inset 0 0 0 0.5px rgb(255 255 255 / 8%);
+}
+
+/* ---------------------------------------------------------------------------
+ * 5. Light palette.
+ *
+ * Same material, lit from the other side: the surface's own light is its own
+ * fill rather than a veil, and a small dark tint keeps text contrast.
+ * ------------------------------------------------------------------------- */
+html[data-lg-style='liquid-glass']:has(body:not([data-ds-dark-theme])) {
+  /* The fills are the client's own tokens, so they follow the palette on their
+   * own; only the opacities and the rim are per-palette — and they mirror the dark
+   * palette's structure rather than a second, older design. A pane of glass is as
+   * thin under a light backdrop as under a dark one; what changes is that a white
+   * rim is invisible on white, so the edge becomes a dark hairline instead. */
+  --lg-translucency: 24%;
+  --lg-specular: 52%;
+  --lg-hairline: 16%;
+  --lg-sheen: 12%;
+  /* Light from the other side is a shallower glow: a white one on a white pane is not an
+   * edge, it is a smudge. */
+  --lg-glow: 26%;
+  /* Enough to give the pane a body of its own, no more: the client's light sidebar
+   * fill is only six values darker than a white page, and the Dark component
+   * compounds with it. At 7% the panel landed twenty values off the client's own
+   * tone and read as a grey slab; at 2.5% it matches that tone while still being
+   * translucent. */
+  --lg-veil: 2.5%;
+  --lg-edge: rgb(15 23 42);
+  --lg-elevation: rgb(15 23 42 / 6%);
+  --lg-elevation-hover: rgb(15 23 42 / 10%);
+  --lg-elevation-active: rgb(15 23 42 / 14%);
+  --lg-inspector-tint: 32%;
+  --lg-shadow: 0 18px 40px -22px rgb(14 20 40 / 34%), 0 2px 8px rgb(14 20 40 / 12%);
+}
+
+/* ---------------------------------------------------------------------------
+ * 6. Scrollbars.
+ *
+ * Apple's scrollbars are an overlay: a rounded translucent thumb, no track, and
+ * no stepper buttons. The client's own sheet already consumes its
+ * `--dsh-scrollbar-*` tokens for the width and the thumb, but it never hides
+ * `::-webkit-scrollbar-button`, so the engine keeps drawing the platform's
+ * arrow buttons at both ends of every bar. This closes that gap; the thumb
+ * radius and colours stay the client's.
+ * ------------------------------------------------------------------------- */
+html[data-lg-style='liquid-glass'] ::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+html[data-lg-style='liquid-glass'] ::-webkit-scrollbar-corner,
+html[data-lg-style='liquid-glass'] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html[data-lg-style='liquid-glass'] ::-webkit-scrollbar-thumb {
+  border-radius: var(--lg-radius-control);
+  background-color: color-mix(in srgb, var(--dsh-scrollbar-thumb) 88%, transparent);
+  box-shadow: inset 0 0 0 0.5px rgb(255 255 255 / 8%);
+}
+
+html[data-lg-style='liquid-glass'] ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--dsh-scrollbar-thumb-hover);
+}
+
+/* ---------------------------------------------------------------------------
+ * 7. The pointer: hover, press, and the room's one light.
+ *
+ * Three responses, each one token, each reverting in one place:
+ *
+ * - **Hover** pulls `--lg-lift`, which multiplies a surface's *own* specular and glow, so a
+ *   control the pointer rests on catches more light while its own compositing — fill, frost,
+ *   lens — stays exactly what it was.
+ * - **Press** takes that lift away and adds the dent (`--lg-dent-*`), so the control is
+ *   recessed *into* the material instead of dimmed on top of it.
+ * - **The light** is the derived offsets in the token group, which every rim in this file
+ *   already reads: the shared surface rule, the sidebar panel, the inspector pane, the
+ *   composer card, the menu's own pane, and the control hairline in 3b.
+ *
+ * What is deliberately NOT here is as much a measurement as what is. A menu, a popover and
+ * the modal dialog all *open under the pointer*, so a hover lift on them is not a response to
+ * the pointer at all — it is the state the panel would be born in and then hold for as long as
+ * the pointer stayed on it. So the lift reaches the two glass surfaces a pointer can *arrive*
+ * on — the composer card and the sidebar panel — and the controls standing on glass.
+ *
+ * The shell's own window frame is out of reach of all three by construction rather than by an
+ * exception: `#dsh-shell-drag` is a plain div, and the three window buttons live in
+ * `#dsh-shell-chrome`, which is not inside any surface these rules are scoped to. No rule here
+ * matches an element the frame owns, so nothing about the frame's own hover, press or drag
+ * regions changes.
+ * ------------------------------------------------------------------------- */
+
+/* A glass surface a pointer can arrive on: the composer card, and the sidebar panel. */
+html[data-lg-style='liquid-glass'] :is(
+  [data-composer-card],
+  [data-lg-wide] > [data-slot='sidebar'] > *
+):hover {
+  --lg-lift: var(--lg-hover-lift);
+}
+
+/* A control standing on glass, pressed: the lift goes, and the material dents. The dark inset
+ * enters from the top — the same direction this file's field rule already recesses a well from
+ * (section 4) — and its offset, spread and opacity are all scaled by `--lg-dent-on`, so the one
+ * token removes the response outright: at 0 the inset is a zero-offset, zero-alpha shadow, which
+ * paints nothing at all, and the hairline behind it is the material's own 9%. */
+html[data-lg-style='liquid-glass'] :is(
+  [data-slot='sidebar'],
+  [role='dialog'][aria-modal='true'],
+  [role='menu'],
+  [role='listbox']
+) :is([class*='_iconButton'], [class*='_toggle'], [class*='_searchButton'], [data-lg-square]):active {
+  --lg-lift: 1;
+  background-color: var(--lg-elevation-active);
+  box-shadow:
+    inset 0 calc(var(--lg-dent-drop) * var(--lg-dent-on)) var(--lg-dent-blur) 0 rgb(0 0 0 / calc(var(--lg-dent-darken) * var(--lg-dent-on))),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--lg-edge, #fff) calc(var(--lg-control-hairline) * (1 - var(--lg-dent-on)) + var(--lg-dent-rim) * var(--lg-dent-on)), transparent);
+}
+
+/* The press, and the drag that follows it.
+ *
+ * The one part of this material that *moves*, ported from 液态玻璃.html — its button module
+ * (lines 661-712: the lift of 4/48, the tanh follow, the critical springs) and the velocity
+ * squash the switch, the slider and the tab lens all share (lines 509-512). The engine runs
+ * the springs and publishes the frame's own numbers; every declaration here is one of them.
+ *
+ * Three terms, and the reason each is a *proportion* rather than a size: a control lifts by a
+ * share of itself (a 48px button and a 28px icon grow by the same amount *of themselves*), it
+ * follows the pointer through the reference's `size * tanh(0.05 * travel / size)` — so a drag
+ * is answered for its first few pixels and then refused, which is what makes a long drag read
+ * as the material holding its seat rather than as the control sliding away — and it stretches
+ * along the drag by the velocity it is carrying, up to the reference's own fifth either way.
+ *
+ * The engine attaches this to a control only when its computed `transform` is `none`, so the
+ * rule cannot overwrite a centring translate or the client's own animation; `data-lg-pressing`
+ * is therefore also the statement "this control was still when the press began".
+ *
+ * Revert: one line in the engine — the `PressResponse` effect in `apply()`. With nothing
+ * writing the attribute, every declaration here is inert. */
+html[data-lg-style='liquid-glass'] [data-lg-pressing]:not([role='switch']) {
+  transform:
+    translate3d(var(--lg-press-x, 0px), var(--lg-press-y, 0px), 0)
+    scale(var(--lg-press-sx, 1), var(--lg-press-sy, 1));
+  will-change: transform;
+}
+
+/* The switch: the one control whose thumb *is* the control.
+ *
+ * Ported from 液态玻璃.html, which builds its toggle out of the same parts the client already
+ * draws (a track and a thumb) but proportioned as Apple's own: track 64x28, thumb 40x24 with
+ * the track's inner height and a pill radius, travel 20 — the whole of the thumb's travel is
+ * the track's inner width less the thumb's own (line 42's note on the source's metrics, and
+ * lines 63-67 and 508-517 for the parts). The proportions are what is taken, on the client's
+ * own box: the thumb is 22px wide in the client's 36px track (0.61, against the reference's
+ * 0.625) and 16px tall in its 20px track, so the travel falls from the client's 16px to 10px
+ * and the thumb still lands inside its own track.
+ *
+ * The pressed state is where the two designs differ most, and it is the reference's idea that
+ * is kept: pressing a switch is a statement about its *thumb*, not about the control. The
+ * reference scales the thumb 1.5x and lets it overhang; here the thumb takes the same lift
+ * every other control takes — {@link PRESS_LIFT}, 4/48 — so a 16px thumb grows 1.3px and stays
+ * inside its track, and it is the thumb that follows the drag while the track stays put. The
+ * rim the reference's thumb wears at 0.5px while pressed is here the control's own hairline
+ * and the material's own dent, because a switch in a settings dialog stands *on* glass: this
+ * file's own rule is that a control there is elevation, not a second pane of glass.
+ *
+ * A *drag* on a switch is a statement about its value, and the thumb answers it: past the first
+ * 3px of travel the engine publishes the pointer's own horizontal travel - clamped to the track,
+ * the reference's `downF + dx / travel` (line 567) - as `--lg-drag-x`, and the thumb is painted
+ * there instead of the tanh follow every other control gets. The token is written while the
+ * gesture lasts and removed with it, so the painted thumb is always a function of the control's
+ * own state plus one number on the element. The state itself is not written here, or anywhere
+ * else, by this material: the release runs the reference's half-way test (lines 573-577) and
+ * dispatches the control's own click, so `aria-checked` - and with it `--lg-switch-on` - stays
+ * the client's business (engine: PressResponse.dragEnds).
+ *
+ * The drag term falls back to the press follow when it is absent, so the engine's own revert
+ * (one line: the `dragEnds` call in `release`) leaves the thumb moving exactly as it did before
+ * this rule changed - the follow simply becomes the fallback, which is still there.
+ *
+ * Revert: delete this block, and drop '[role="switch"]' from the engine's PRESS_CONTROLS list
+ * for the motion — the client's own 16px circle and its 16px travel come back untouched. */
+html[data-lg-style='liquid-glass'] [role='switch'] {
+  --lg-switch-on: 0;
+  --lg-switch-thumb: 22px;
+  --lg-switch-travel: 10px;
+}
+html[data-lg-style='liquid-glass'] [role='switch'][aria-checked='true'] { --lg-switch-on: 1; }
+
+/* The specificity here is load-bearing twice over: the client's own `.switch[aria-checked='true']
+ * .thumb` is three classes deep, and `[aria-checked]` on the switch is what outranks it whatever
+ * the thumb's generated class is called. */
+html[data-lg-style='liquid-glass'] [role='switch'][aria-checked] > span {
+  width: var(--lg-switch-thumb);
+  height: 16px;
+  border-radius: 8px;
+  corner-shape: round;
+  transform: translateX(calc(var(--lg-switch-travel) * var(--lg-switch-on)));
+}
+
+/* A dragged thumb is under the pointer, so the client's own 0.12s ease on its transform is off
+ * for as long as the gesture lasts: with it on, the painted thumb trails the travel by most of
+ * the drag (measured before this rule: 3.00px asked, 1.80px painted). The engine's spring is
+ * the whole of the motion instead — it carries the thumb home after a release that did not
+ * cross, and finishes the travel after one that did. `data-lg-dragged` is worn only past the
+ * 3px slop, so a tap keeps the client's own easing exactly as it was. */
+html[data-lg-style='liquid-glass'] [role='switch'][aria-checked][data-lg-dragged] > span {
+  transition: none;
+}
+
+html[data-lg-style='liquid-glass'] [role='switch'][aria-checked][data-lg-pressing] > span {
+  transform:
+    translateX(calc(var(--lg-switch-travel) * var(--lg-switch-on) + var(--lg-drag-x, var(--lg-press-x, 0px))))
+    scale(var(--lg-press-sx, 1), var(--lg-press-sy, 1));
+  box-shadow:
+    inset 0 calc(var(--lg-dent-drop) * var(--lg-dent-on)) var(--lg-dent-blur) rgb(0 0 0 / calc(var(--lg-dent-darken) * var(--lg-dent-on) * var(--lg-press, 1))),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--lg-edge, #fff) calc(var(--lg-control-hairline) * var(--lg-press, 1)), transparent);
+}
+
+/* ---------------------------------------------------------------------------
+ * 7. Skin presets: two arrangements of the same material.
+ *
+ * A preset is not a second material. It is the same glass in two arrangements
+ * Apple shipped two years apart, and every value below is a token this file
+ * already had:
+ *
+ *   Tahoe       macOS 26. The sidebar is a floating glass layer, separated from
+ *               the content by its own gutter and carrying its own shadow, and
+ *               the material is the one this file has always shipped — so the
+ *               preset is the identity: an unset document and `tahoe` are the
+ *               same interface, token for token.
+ *   Golden Gate macOS 27. In Apple's own words "sidebars are no longer floating
+ *               and are instead edge-to-edge … no unnecessary sidebar shadowing",
+ *               framed as *readability*. So the gutter is closed, the panel brings
+ *               no corner of its own, the float shadow is gone, and the fill and
+ *               frost are deepened — the refraction keeps working right up to the
+ *               boundary with the content instead of stopping a gutter short of it.
+ *
+ * The two attributes are written by dsh-theme-settings on the root element, the
+ * same way the radius row writes its two custom properties, and nothing here
+ * knows that plugin exists.
+ *
+ * What a preset does NOT move is the unified radius: the window's corner and the
+ * floating layer's corner are the radius row's to set (`--lg-radius-*`), and a
+ * preset that fought that control would make one of the two unusable. So Tahoe's
+ * panel is cut from `--lg-radius-panel` — the value the row writes — and Golden
+ * Gate's is square, because an edge-to-edge pane has no corner of its own: the
+ * only corner left on its side of the window is the window's.
+ *
+ * The fills, frosts and lens shapes below are the dark palette's, and they are
+ * palette-independent tokens on purpose: every token the light palette retunes
+ * (specular, hairline, sheen, glow, veil, edge, elevation, shadow, translucency)
+ * is deliberately absent, so a preset cannot flatten the other palette's rim.
+ * ------------------------------------------------------------------------- */
+
+/* Tahoe: the floating glass layer. Every value is this file's own default, so
+ * this block documents the arrangement rather than changing it. */
+html[data-lg-style='liquid-glass'][data-lg-preset='tahoe'] {
+  /* The float, on each side of the panel's column. */
+  --lg-gap: 12px;
+  --lg-preset-sidebar-radius: var(--lg-radius-panel);
+  /* More show: the panel's own fill stays as thin as it ships, and the lens is the
+   * long one a large pane was always given. */
+  --lg-preset-fill: 22%;
+  --lg-preset-blur: 4px;
+  --lg-preset-band: 36px;
+  --lg-preset-bend: 36px;
+  /* The glass the surfaces that inherit their material wear (an opt-in
+   * `data-lg-surface` and anything else that names no values of its own). */
+  --lg-blur: 4px;
+  --lg-saturate: 180%;
+  --lg-refract-band: 32px;
+  --lg-refract-bend: 30px;
+}
+
+/* Golden Gate: edge-to-edge and unified with the content. */
+html[data-lg-style='liquid-glass'][data-lg-preset='golden-gate'] {
+  /* The gutter is closed. Both of this token's use sites were written with a
+   * `var()` fallback precisely so that a zero here cannot collapse the layout
+   * silently: the column's padding and the inspector's margin both read it. */
+  --lg-gap: 0px;
+  /* No corner of its own: the panel fills its column and meets the content, so the
+   * only corner on screen is the window's. */
+  --lg-preset-sidebar-radius: 0px;
+  /* Readability, which is Apple's own framing for this arrangement: a denser fill
+   * and a deeper frost, because the pane now sits against content rather than
+   * against a gutter. */
+  --lg-preset-fill: 34%;
+  --lg-preset-blur: 12px;
+  /* The lens runs to the boundary rather than being cut off a gutter short of it,
+   * and is a little shorter than the floating layer's because the content's own
+   * edge is now immediately beside it. */
+  --lg-preset-band: 28px;
+  --lg-preset-bend: 24px;
+  --lg-blur: 10px;
+  /* One standardised, less dramatic material: the backdrop keeps less of its own
+   * saturation, so the pane reads as one surface with the content instead of as a
+   * second, louder one beside it. Saturation is the one material parameter no
+   * palette retunes, which is what makes it the right place for a document-wide
+   * change of character — and it is baked into a lens, so switching presets
+   * re-dresses every surface that is already on screen. */
+  --lg-saturate: 140%;
+  --lg-refract-band: 26px;
+  --lg-refract-bend: 22px;
+}
+
+/* The transparency axis is Golden Gate's: Apple shipped two fixed presets in
+ * 26.1 and one continuous slider in 27, whose default is the middle of the range.
+ * Three steps, and they move the fill and the frost only — a geometric token is
+ * never among them, so 清晰 and 加浓 are the same pane at two depths rather than
+ * two layouts. The middle step is the default. */
+html[data-lg-style='liquid-glass'][data-lg-preset='golden-gate'][data-lg-transparency='clear'] {
+  --lg-preset-fill: 22%;
+  --lg-preset-blur: 6px;
+}
+
+html[data-lg-style='liquid-glass'][data-lg-preset='golden-gate'][data-lg-transparency='default'] {
+  --lg-preset-fill: 34%;
+  --lg-preset-blur: 12px;
+}
+
+html[data-lg-style='liquid-glass'][data-lg-preset='golden-gate'][data-lg-transparency='tinted'] {
+  --lg-preset-fill: 52%;
+  --lg-preset-blur: 16px;
+}
+
+/* The one consumer of the pair: the sidebar panel, whose own rule above names its
+ * tokens as literals (it is the surface the presets are about). Only the tokens
+ * the preset owns are re-declared, and each carries the shipped value as its
+ * fallback, so an attribute this build does not know leaves the panel exactly as
+ * it was rather than resolving a var() to nothing. */
+html[data-lg-style='liquid-glass'][data-lg-preset] [data-lg-wide] > [data-slot='sidebar'] > * {
+  --lg-translucency: var(--lg-preset-fill, 22%);
+  --lg-blur: var(--lg-preset-blur, 4px);
+  --lg-refract-band: var(--lg-preset-band, 36px);
+  --lg-refract-bend: var(--lg-preset-bend, 36px);
+  border-radius: var(--lg-preset-sidebar-radius, var(--lg-radius-panel));
+  /* The boundary an eye reads is the one the browser draws: the preset names the radius
+   * through `border-radius` above, and the engine reads that radius and the element's own
+   * computed `corner-shape` when it bakes the lens, so boundary and lens stay one curve.
+   * There is no separate corner token to keep in step. */
+}
+
+/* Golden Gate keeps the rim — it is the material's own edge — and gives up the
+ * float. The shadow is neutralised through the token the panel's shadow list
+ * already ends with rather than by restating the list: the rim above carries the
+ * pointer's lift and the room's light direction, and a second copy of it here
+ * would be a copy that drifts. A zero-offset, zero-alpha shadow is a valid shadow
+ * that paints nothing, which is what "no unnecessary sidebar shadowing" has to be
+ * in a list that cannot drop one of its terms. */
+html[data-lg-style='liquid-glass'][data-lg-preset='golden-gate'] [data-lg-wide] > [data-slot='sidebar'] > * {
+  --lg-shadow: 0 0 0 0 rgb(0 0 0 / 0%);
+}
+
+/* The inspector column is the skin's other pane, so the same arrangement applies
+ * to it: at a zero gap its gutter is already closed, and it must not keep a
+ * rounded corner flush against the window's edge. */
+html[data-lg-style='liquid-glass'][data-lg-preset='golden-gate'] section:has([data-slot='sidebar.right.pane.tab']) {
+  border-radius: 0;
+}
+
+/* ---------------------------------------------------------------------------
+ * 5b. The corner, defined once.
+ *
+ * Every corner in this stack is one shape, and this client already declares it
+ * — once, for the whole application:
+ *
+ *     @supports (corner-shape: superellipse(1.5)) {
+ *       :root { --dsw-corner-shape: superellipse(1.5); }
+ *       *, ::before, ::after { corner-shape: var(--dsw-corner-shape); }
+ *     }
+ *
+ * `corner-shape` is the modern CSS property (Chrome 139+) that turns a
+ * border-radius corner into a *continuous* curve: superellipse(k) is
+ * |x/a|^(2k) + |y/b|^(2k) = 1, so the client's k = 1.5 is the exponent n = 3 of the
+ * family the material's own distance field uses, and n = 2 is the circular arc
+ * `corner-shape: round` (and plain `border-radius`) draws. Measured in this
+ * renderer, not taken from the spec: a plain border-radius box follows n = 2.95…3.02
+ * at its nominal radius (rms 0.08px) where the best circular fit is 4.25px rms and
+ * 25% off in radius, and the painted area of its corner is 801px² against 795
+ * predicted at n = 3 and 707 for a circle.
+ *
+ * So the shape is not this stylesheet's to invent — it is the shape every surface is
+ * *already* cut from. What the skin has to do is stop disagreeing with it, and the
+ * disagreement was in the two places that are not border-radius at all:
+ *
+ *   1. the lens. The refraction map was baked from a circular rounded-rectangle
+ *      distance field, so the glass bent as if the corner were round while the box
+ *      had left the corner point 0.202·r ago instead of 0.414·r. The map now bakes
+ *      the exponent it reads from the surface's own computed `corner-shape`
+ *      (displacement.ts, cornerExponentOf) — one number, read from the declaration
+ *      above, so a page that changes its corner shape moves every lens with it;
+ *   2. the window frame, which clipped with `inset(0 round …)` — explicitly round, i.e.
+ *      circular, i.e. a different corner from every surface inside it. That one lives
+ *      in the shell (src-tauri/src/core/frame.rs), and it now declares the shape
+ *      itself (`--dsh-shell-corner-shape`) and clips with a `path()` the frame script
+ *      builds from the same token, so the window's edge and every surface inside it are
+ *      one curve rather than two.
+ *
+ * The token is the shell's, and this file reads it rather than declaring a second one:
+ * `--lg-corner-shape: var(--dsh-shell-corner-shape, superellipse(1.5))` on the skin's
+ * root, guarded by @supports, with the shipped shape as the fallback for a document
+ * that has the skin without the frame. One token, so the window and the surfaces
+ * cannot drift apart; the fallback keeps the skin's own corners right in a host that
+ * never loaded the shell's stylesheet. On an engine without the property nothing is
+ * declared, the corners really are circular, and the engine bakes n = 2 to match — the
+ * lens follows the boundary on both, which is the invariant that matters.
+ *
+ * Nothing else in this file changes: no clip-path, no mask, no stand-down of
+ * border-radius. The drawn boundary already follows the shape (the client declares
+ * it for every element), and a per-geometry clip or a baked alpha corner mask would
+ * have been the two ways to *fight* that — a clip-path cuts an element's own float
+ * shadow off at the box, and a mask from the map's canvas would cut the corner in
+ * 512-texel steps (1.6px on an 800px dialog).
+ * ------------------------------------------------------------------------- */
+@supports (corner-shape: superellipse(1.5)) {
+  html[data-lg-style='liquid-glass'] {
+    /* The shell's token, not a second copy of its value: the window's corner and every
+     * corner in here are one shape because they are one declaration. The literal is the
+     * fallback for a document that runs the skin without the shell's frame. */
+    --lg-corner-shape: var(--dsh-shell-corner-shape, superellipse(1.5));
+  }
+  /* On the surfaces the skin draws, the shape is named rather than inherited, and it is
+   * named on the *value* the engine bakes from: the engine reads this computed property
+   * off each surface it dresses, so this line and the lens cannot drift apart. */
+  html[data-lg-style='liquid-glass'] :is(
+    [data-composer-card],
+    [role='dialog'][aria-modal='true'],
+    [data-lg-surface],
+    [data-lg-overlay],
+    [data-lg-popover],
+    [data-menu-material],
+    [class*='_material_'],
+    [data-lg-wide] > [data-slot='sidebar'] > *,
+    section:has([data-slot='sidebar.right.pane.tab'])
+  ) {
+    corner-shape: var(--lg-corner-shape, superellipse(1.5));
+  }
+}
+
+/* R468: the pointer light is a page-level overlay (PointerGlow in index.ts), not a per-surface gradient: every surface
+ * carries backdrop-filter, and a filter turns its element into the containing block for fixed-attachment backgrounds, so
+ * the gradient centre was resolved in the surface's own box and the effect never appeared. */
+
+/* R469 - the edge light, masked to the cursor.
+ *
+ * A glass surface may only show light on its RIM: the interior never glows ("非边缘地区永不发光才对"). The paint is an
+ * inset hairline plus a 1px top highlight, so it can only ever appear within a pixel of the boundary; a radial mask
+ * centred on the pointer (in the surface's own coordinates, written by PointerRimLight) fades it out away from the
+ * cursor, so the highlight travels along the edge as the mouse moves instead of lighting the whole rim at once.
+ * --lg-near is the proximity weight (1 when the pointer is on the box, 0 one radius away).
+ */
+/* inherits: true matters: the values are written on the SURFACE, and the ::after that paints the rim is a child -
+ * with inheritance off the pseudo read the initial value (measured: the element carried 394.1px while the mask stayed
+ * at -100000px). */
+@property --lg-near { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --lg-pointer-lx { syntax: '<length>'; inherits: true; initial-value: -100000px; }
+@property --lg-pointer-ly { syntax: '<length>'; inherits: true; initial-value: -100000px; }
+
+/* R474: position LESS, not more. Two selectors were wrong in one rule each, and both were
+ * measured live:
+ *
+ *  - data-lg-overlay is the report flag the engine KEEPS on a popover it classified and then
+ *    covers (it also adds data-lg-surface). Forcing position:relative on that element made the
+ *    OpenCode Go usage panel flow INSIDE the composer, so the composer grew around it ("输入框
+ *    被挤压") and a bottom-anchored menu landed outside the window.
+ *  - data-lg-refract is not a surface marker: the engine also writes it on the client's own
+ *    popup pane (div._material_, which is position:absolute; inset:0 behind every menu). Forcing
+ *    position:relative on it collapsed the pane to height 0, so menus lost their fill and frost
+ *    (the reported "框背景没了").
+ *
+ * What actually needs a containing block for the pointer rim is the flow surfaces: the composer
+ * card, a named surface, and the two structural panes. Floating panels keep their own anchoring,
+ * and the material pane keeps inset:0. */
+html[data-lg-style='liquid-glass'] :is(
+  [data-composer-card],
+  [data-lg-surface],
+  [data-lg-wide] > [data-slot='sidebar'] > *,
+  section:has([data-slot='sidebar.right.pane.tab'])
+):not([data-lg-overlay]):not([role='dialog']) {
+  position: relative;
+}
+html[data-lg-style='liquid-glass'] :is(
+  [data-composer-card],
+  [data-lg-surface],
+  [role='dialog'][aria-modal='true']
+)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / calc(0.5 * var(--lg-near, 0))),
+    inset 0 1px 0 rgb(255 255 255 / calc(0.72 * var(--lg-near, 0)));
+  -webkit-mask-image: radial-gradient(
+    circle var(--lg-pointer-radius, 220px) at var(--lg-pointer-lx, -100000px) var(--lg-pointer-ly, -100000px),
+    #000 0%,
+    rgb(0 0 0 / 55%) 58%,
+    transparent 82%
+  );
+  mask-image: radial-gradient(
+    circle var(--lg-pointer-radius, 220px) at var(--lg-pointer-lx, -100000px) var(--lg-pointer-ly, -100000px),
+    #000 0%,
+    rgb(0 0 0 / 55%) 58%,
+    transparent 82%
+  );
+}
+
+
+/* R470 - ONE rim, and it is the masked one.
+ *
+ * The shared surface rules paint a rim from the ROOM light (--lg-light-dx/dy): every edge of every panel glows no matter
+ * how far the pointer is - measured on the left sidebar, which kept a lit hairline while the pointer sat in the middle of
+ * the conversation. That rim is now multiplied by --lg-near-edge, and every surface the engine has dressed (the
+ * [data-lg-refract] attribute) turns that multiplier OFF: its only rim is the ::after band below, masked around the
+ * cursor. A larger radius with a smooth falloff is what keeps this from looking like a hard cutoff.
+ */
+html[data-lg-style='liquid-glass'] [data-lg-refract] {
+  --lg-near-edge: 0;
+}
+html[data-lg-style='liquid-glass'] [data-lg-surface] {
+  --lg-near-edge: 0;
+}
+/* The R470 rim's containing block, on the same explicit surface list as the block above: never
+ * data-lg-refract (it marks the client's popup material pane too), never an overlay, never a
+ * dialog. See that block's note for the two measured failures this avoids. */
+html[data-lg-style='liquid-glass'] :is(
+  [data-composer-card],
+  [data-lg-surface],
+  [data-lg-wide] > [data-slot='sidebar'] > *,
+  section:has([data-slot='sidebar.right.pane.tab'])
+):not([data-lg-overlay]):not([role='dialog']) {
+  position: relative;
+}
+html[data-lg-style='liquid-glass'] :is(
+  [data-composer-card],
+  [data-lg-surface],
+  [data-lg-refract],
+  [role='dialog'][aria-modal='true']
+)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / calc(0.55 * var(--lg-near, 0))),
+    inset 0 1px 0 rgb(255 255 255 / calc(0.8 * var(--lg-near, 0)));
+  -webkit-mask-image: radial-gradient(
+    circle var(--lg-pointer-radius, 520px) at var(--lg-pointer-lx, -100000px) var(--lg-pointer-ly, -100000px),
+    #000 0%,
+    rgb(0 0 0 / 82%) 30%,
+    rgb(0 0 0 / 45%) 62%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--lg-pointer-radius, 520px) at var(--lg-pointer-lx, -100000px) var(--lg-pointer-ly, -100000px),
+    #000 0%,
+    rgb(0 0 0 / 82%) 30%,
+    rgb(0 0 0 / 45%) 62%,
+    transparent 100%
+  );
+}
+

@@ -1,0 +1,245 @@
+# dsh-link-mods bundle 的预设声明：桌面版的两套自制 Agent 预设，0.2.1 声明制移植。
+#
+# 0.1.x 的预设是 $DSH_HOME/.agent-presets/<id>/ 目录（preset.yml + agent.cordis.yml）；
+# 0.2.x 废除了目录发现，预设是普通的 @deepseek-ai/dsh-agent-preset 声明行，由 bundle
+# 补丁携带（官方 standard/ptc/minimal/cordis 四套就是这么装的）。本文件即两套自制
+# 预设的声明，组合内容逐字来自桌面版，仅两处结构性差异：
+#   1. preset.yml 的 name/description/order 提升为声明的 config 字段；
+#   2. minimal-tuned 里的相对路径行 `./anchored-lite.mjs` 改为包名
+#      `dsh-anchored-lite`（plugins/dsh-anchored-lite，内容同文件）。
+#
+# 预设元数据与组合的原文出处：
+#   chat-mode      —— H:\mod\dsh-chat-mode（桌面版 .agent-presets/chat.disabled 里的副本）
+#   minimal-tuned  —— 桌面版 $DSH_HOME/.agent-presets/minimal-tuned/
+- insert:
+    # ── 聊天模式（chat-mode）：零工具纯对话 ──────────────────────────────────
+    - id: preset-chat-mode
+      name: '@deepseek-ai/dsh-agent-preset'
+      config:
+        id: chat-mode
+        name: 聊天模式
+        description: 无工具的纯对话 Agent：不加载任何工具、不注入工具提示词与运行时上下文；系统提示词可在 preset 文件内设置，默认直接依靠云端模型 API 作答。
+        order: 5
+        plugins:
+          # 聊天模式（chat）—— 一个没有任何工具的纯对话 Agent。
+          #
+          # 与 standard / minimal 不同，本 preset 不挂载任何 tool 行：模型的工具列表为空
+          # （请求里不会出现 tools 字段），也不注册任何工具说明或工具使用提示词。
+          #
+          # 系统提示词完全来自下面 persona 行的 prefix：
+          #   complete: true               prefix 即完整系统提示词，其余全局 section
+          #                                （身份、工具指引、runtime 上下文等）全部被抑制
+          #   includeRuntimeContext: false 不注入运行时上下文快照（工作目录、文件策略、技能目录等）
+          #
+          # 提示词怎么设置（任选其一）：
+          #   1) 直接修改下面反引号之间的默认文本（最直接）；
+          #   2) 启动 DSH 前设置环境变量 DSH_CHAT_PERSONA，它会整体替换默认文本；
+          #   3) 文本中可使用 {{model}} / {{provider}} / {{cwd}} 变量（严格插值：写错变量名会让会话无法启动）。
+          # 默认文本刻意保持极简：不做任何工具调用，直接依靠云端模型 API 自身的知识与推理作答。
+          - id: persona
+            name: '@deepseek-ai/dsh-persona'
+            config:
+              prefix: !!js |-
+                process.env.DSH_CHAT_PERSONA || `你是 {{model}}，一个纯粹的对话助手，运行在 DeepSeek Harness 的“聊天模式”下。
+
+                - 你没有工具：不能读写文件、执行命令、联网检索，也没有工作目录。
+                - 所有回答都由你自身的知识与推理直接产生（云端模型 API），不要声称调用过工具或读过文件。
+                - 直接、自然地回答；不确定就说不确定，不要编造事实或来源。
+                - 使用与用户相同的语言回复。`
+              complete: true
+              includeRuntimeContext: false
+
+          # ── 长对话自动压缩（可选）────────────────────────────────────────────
+          # 删掉整段即为「只有 persona」的最极简形态。它不注册任何模型工具，也不产生系统提示词
+          # 文本（已被 complete: true 抑制），只让超长对话在接近上下文上限时自动摘要，
+          # 避免聊到一半因上下文溢出而硬失败。
+          - id: compaction
+            name: cordis:group
+            group: true
+            isolate:
+              compaction: true
+              toolResultPruner: true
+            config:
+              - id: compaction-basic
+                name: '@deepseek-ai/dsh-compaction-basic'
+
+              - id: command-compact
+                name: '@deepseek-ai/dsh-command-compact'
+
+              - id: tool-result-pruner
+                name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+                config:
+                  thresholdChars: 8192
+                  headChars: 4096
+                  tailChars: 1024
+
+    # ── 极简调优（minimal-tuned）：极简模式 + Git Bash 终端 ──────────────────
+    - id: preset-minimal-tuned
+      name: '@deepseek-ai/dsh-agent-preset'
+      config:
+        id: minimal-tuned
+        name: 极简调优
+        description: 极简模式 + Git Bash 终端。系统提示词最短、运行时上下文最轻，把 token 预算全留给任务本身；shell 走 Git Bash（bash 方言），不用 PowerShell。定位：单步工具调用 / 长文档流转 / 创作改写这类容错较高的场景。Qwen3.8-27B 三元档建议用standard（思考更长更聪明），本预设主要为 DeepSeek V4/V4.1 准备。
+        order: 6
+        plugins:
+          # 极简调优（minimal-tuned）—— 极简模式 + Git Bash 终端。
+          #
+          # 与 standard 的差异只有两处，其余刻意保持一致（复制自 preset-plus 的
+          # agent 平面，它自称"具备标准模式所有的能力"，即 standard 的翻版）：
+          #   1. shell 反过来：standard 在 Windows 上禁用 bash / 启用 pwsh；
+          #      本预设禁用 pwsh / 启用 bash，并把可执行文件钉到 Git Bash。
+          #   2. persona 用 complete: true 最短系统提示词。
+          #
+          # ── 为什么 shellPath 要写全路径 ──────────────────────────────────────
+          # @deepseek-ai/dsh-terminal-bash 的默认值是：
+          #     shellDialect: z.union(["bash","pwsh"]).default("bash")
+          #     DEFAULT_BASH_SHELL = "/bin/bash"
+          #     DEFAULT_BASH_ARGS  = ["--noprofile", "--norc", "-i"]
+          # "/bin/bash" 是类 Unix 路径，在 Windows 上不存在，所以必须显式给 shellPath。
+          # 优先级（源码 lib/index.js:32）：
+          #     config.shellPath 非空  >  shellDialect === "pwsh" ? resolvePwshPath() : DEFAULT_BASH_SHELL
+          # 即配置了 shellPath 就压过 dialect 判定。
+          #
+          # 已实测：C:/Program Files/Git/bin/bash.exe -c "uname -s" -> MINGW64_NT-10.0-26300
+          #        C:/ 正斜杠写法在 Windows 上可用（本机已验证）。
+          #
+          # ── 工具开关说明 ──────────────────────────────────────────────────────
+          # 这个预设不做"按需工具"的开关面板。要在某个模式启用/禁用某类工具，
+          # 改下面这些行的 disabled，或用 settings.yaml 的 llm-pi-ai 配置。
+
+          # ── 工具按需申请（必须排第一行）──────────────────────────────────────
+          # anchored-lite：阶段1 只给 bash + str_replace_editor 且剥离 AGENTS.md/skill 注入；
+          # 阶段2（首次 tool/call 或 assistant/message 之后）才放开常驻集 + 申请入口。
+          #
+          # ★ 必须第一个挂载：它只监听事件（inject: []），因此先于 dsh-agent-instructions /
+          #   dsh-tool-skill 注册；而 waterfall 的 after-next 变换按注册顺序**倒序**生效，
+          #   所以它的"剥离注入"成为最后一道变换，才能真正移除后续监听器注入的内容。
+          #   顺序反了，注入会重新出现在被剥离的位置。
+          #
+          # 不设 bootstrapMaxTokens：NInfer 的 KV 池只有 8192 token，客户端 max_tokens
+          # 远超池会触发 worker crash（引擎包 docs/04 §1 第 11 条，且 /v1/models 仍 200）。
+          # 改由 --default-max-tokens 4096 兜底。
+          # （0.2.x 移植注：桌面版这里写的是相对路径 './anchored-lite.mjs'；声明制预设
+          #   下相对路径不再指向预设目录，改为包名 dsh-anchored-lite。）
+          - id: anchored-lite
+            name: dsh-anchored-lite
+            config:
+              bootstrapTools: [bash, str_replace_editor]
+              residentTools: [cordis_inspect_list, skill_search]
+              suppressedContextSources: [skill-catalog, agent-instructions]
+
+          # ── shell ──────────────────────────────────────────────────────────────
+          # shell-env 留在 HOST 合成里，不进本agent 平面。
+          # pwsh 禁用：这是本预设存在的理由—— DeepSeek V4/V4.1 在 PowerShell 上
+          # 的命令生成实测正常但执行/回传环节不稳，Git Bash 的 POSIX 语义更可预测。
+          - id: tool-bash
+            name: '@deepseek-ai/dsh-tool-bash'
+
+          # str_replace_editor 必须挂：anchored-lite 的冷启动工具对是
+          # bash + str_replace_editor（参考实现的 5/5 锚定 schema）。缺了它，
+          # 插件会在 system-prompt/assemble 判定 missing 并降级暴露完整目录——
+          # 也就是按需申请整个失效，退回standard 行为。
+          - id: tool-str-replace-editor
+            name: '@deepseek-ai/dsh-tool-str-replace-editor'
+
+          - id: tool-pwsh
+            name: '@deepseek-ai/dsh-tool-pwsh'
+            disabled: true
+
+          # ── filesystem ─────────────────────────────────────────────────────────
+          - id: tool-fs
+            name: '@deepseek-ai/dsh-tool-fs'
+
+          - id: tool-fs-search
+            name: '@deepseek-ai/dsh-tool-fs-search'
+            config:
+              sampleOverCapGlobResults: false
+
+          # ── background jobs ────────────────────────────────────────────────────
+          - id: tool-jobs
+            name: '@deepseek-ai/dsh-tool-jobs'
+
+          # ── skills ─────────────────────────────────────────────────────────────
+          - id: skill-filesystem
+            name: '@deepseek-ai/dsh-skill-filesystem'
+
+          - id: tool-skill
+            name: '@deepseek-ai/dsh-tool-skill'
+
+          # ── goals ──────────────────────────────────────────────────────────────
+          - id: tool-goal
+            name: '@deepseek-ai/dsh-tool-goal'
+
+          # ── compaction ─────────────────────────────────────────────────────────
+          # toolResultPruner 必须和 compaction-basic 同realm，否则后者 ctx.get 不到。
+          - id: compaction
+            name: cordis:group
+            group: true
+            isolate:
+              compaction: true
+              toolResultPruner: true
+            config:
+              - id: compaction-basic
+                name: '@deepseek-ai/dsh-compaction-basic'
+
+              - id: command-compact
+                name: '@deepseek-ai/dsh-command-compact'
+
+              - id: tool-result-pruner
+                name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+                config:
+                  thresholdChars: 8192
+                  headChars: 4096
+                  tailChars: 1024
+
+          # ── delegation ─────────────────────────────────────────────────────────
+          # 极简 = 不需要 subagent / workflow / ralph 那一套编排工具。
+          # 8 GB 显存 + 27B 三元的单路解码下，每多一个工具描述都是 prefill 预算
+          # （实测 571 tok/s，38k 上下文时掉到 382，50k 掉到 271）。
+          # 下面 subagent / workflow / ralph 全部 disabled；要开就删 disabled 行。
+
+          - id: tool-subagent-control
+            name: '@deepseek-ai/dsh-tool-subagent-control'
+            disabled: true
+
+          - id: tool-subagent
+            name: '@deepseek-ai/dsh-tool-subagent'
+            disabled: true
+            config:
+              provider: spawn
+              toolName: subagent
+              backgroundMode: continuable
+
+          - id: tool-subagent-fork
+            name: '@deepseek-ai/dsh-tool-subagent'
+            disabled: true
+            config:
+              provider: fork
+              toolName: subagent_fork
+              backgroundMode: continuable
+
+          - id: tool-workflow
+            name: '@deepseek-ai/dsh-tool-workflow'
+            disabled: true
+
+          - id: tool-ralph
+            name: '@deepseek-ai/dsh-tool-ralph'
+            disabled: true
+            config:
+              subagentProvider: spawn
+              maxRounds: 64
+
+          # ── remaining model-facing rows ────────────────────────────────────────
+          - id: tool-ask-user
+            name: '@deepseek-ai/dsh-tool-ask-user'
+
+          - id: tool-todo
+            name: '@deepseek-ai/dsh-tool-todo'
+            config:
+              allowParallelInProgress: true
+
+          - id: tool-web
+            name: '@deepseek-ai/dsh-tool-web'
+            config:
+              fetch: false
+              searchTimeoutMs: 60000

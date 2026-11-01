@@ -1,0 +1,5 @@
+# dsh-link-toolbar bundle: one row. The client half is the delivery — it registers the LINK
+# entry into the conversation header's action slot — so the row exists to load it.
+- insert:
+    - id: link-toolbar
+      name: dsh-link-toolbar

@@ -1,0 +1,46 @@
+/* The toolbar entry's own styles. Tokens only: no literal colour, no literal radius. */
+.dsh-link-toolbar-button {
+  border: 1px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-md);
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+  font: inherit;
+  padding: 2px 8px;
+}
+
+.dsh-link-toolbar-button:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.dsh-link-toolbar-menu {
+  background: var(--dsw-alias-bg-module-platform);
+  border: 1px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-md);
+}
+
+.dsh-link-toolbar-item {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--dsw-alias-label-primary);
+  display: flex;
+  font: inherit;
+  gap: var(--dsw-radius-md);
+  justify-content: space-between;
+  padding: 4px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.dsh-link-toolbar-item[data-enabled="true"]:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.dsh-link-toolbar-item[data-enabled="false"] {
+  color: var(--dsw-alias-label-secondary);
+}
+
+.dsh-link-toolbar-detail {
+  color: var(--dsw-alias-label-secondary);
+}

@@ -1,0 +1,280 @@
+{
+  "format": "dsh-link.chat-window-p1-scenarios/4",
+  "recordedAt": "2026-10-27T14:44:50.421Z",
+  "batch1": {
+    "policy": {
+      "maxEvents": 500,
+      "slackEvents": 125,
+      "trimOpeningPage": false,
+      "setBy": "r493-live-gate",
+      "version": 1
+    },
+    "open": {
+      "ok": true,
+      "accepted": true
+    },
+    "openInfo": {
+      "sessionId": "session-<example>",
+      "binding": true,
+      "entries": 539,
+      "hasMore": true,
+      "sessionHasMore": true,
+      "sessionLoadingOlder": false,
+      "openState": "open",
+      "revision": 1,
+      "baseSeq": 10112,
+      "windowLimit": {
+        "maxEvents": 500,
+        "slackEvents": 125,
+        "trimOpeningPage": false
+      },
+      "contiguous": true,
+      "firstSeq": 10112,
+      "lastSeq": 10650,
+      "minSeq": 10112,
+      "trimPrimitive": "function",
+      "maintain": "function"
+    },
+    "openDump": {
+      "count": 539,
+      "first": 10112,
+      "last": 10650,
+      "gaps": [],
+      "gapTotal": 0,
+      "contiguous": true,
+      "baseSeq": 10112,
+      "hasMore": true
+    },
+    "loadOlder": {
+      "sessionId": "session-<example>",
+      "binding": true,
+      "entries": 539,
+      "hasMore": true,
+      "sessionHasMore": true,
+      "sessionLoadingOlder": false,
+      "openState": "open",
+      "revision": 1,
+      "baseSeq": 10112,
+      "windowLimit": {
+        "maxEvents": 500,
+        "slackEvents": 125,
+        "trimOpeningPage": false
+      },
+      "contiguous": true,
+      "firstSeq": 10112,
+      "lastSeq": 10650,
+      "minSeq": 10112,
+      "trimPrimitive": "function",
+      "maintain": "function"
+    },
+    "afterLoadOlder": {
+      "count": 1737,
+      "first": 8914,
+      "last": 10650,
+      "gaps": [],
+      "gapTotal": 0,
+      "contiguous": true,
+      "baseSeq": 8914,
+      "hasMore": true
+    },
+    "appendOne": {
+      "sessionId": "session-<example>",
+      "binding": true,
+      "entries": 500,
+      "hasMore": true,
+      "sessionHasMore": true,
+      "sessionLoadingOlder": false,
+      "openState": "open",
+      "revision": 4,
+      "baseSeq": 10152,
+      "windowLimit": {
+        "maxEvents": 500,
+        "slackEvents": 125,
+        "trimOpeningPage": false
+      },
+      "contiguous": true,
+      "firstSeq": 10152,
+      "lastSeq": 10651,
+      "minSeq": 10152,
+      "trimPrimitive": "function",
+      "maintain": "function"
+    },
+    "afterTrimDump": {
+      "count": 500,
+      "first": 10152,
+      "last": 10651,
+      "gaps": [],
+      "gapTotal": 0,
+      "contiguous": true,
+      "baseSeq": 10152,
+      "hasMore": true
+    },
+    "afterTrimLoadOlder": {
+      "count": 500,
+      "first": 10152,
+      "last": 10651,
+      "gaps": [],
+      "gapTotal": 0,
+      "contiguous": true,
+      "baseSeq": 10152,
+      "hasMore": true
+    }
+  },
+  "batch2": {
+    "policy": {
+      "maxEvents": 500,
+      "slackEvents": 125,
+      "trimOpeningPage": false,
+      "setBy": "r493-live-gate",
+      "version": 1
+    },
+    "open": {
+      "ok": true,
+      "accepted": true
+    },
+    "openInfo": {
+      "sessionId": "session-<example>",
+      "binding": true,
+      "entries": 539,
+      "hasMore": true,
+      "sessionHasMore": true,
+      "sessionLoadingOlder": false,
+      "openState": "open",
+      "revision": 1,
+      "baseSeq": 10112,
+      "windowLimit": {
+        "maxEvents": 500,
+        "slackEvents": 125,
+        "trimOpeningPage": false
+      },
+      "contiguous": true,
+      "firstSeq": 10112,
+      "lastSeq": 10650,
+      "minSeq": 10112,
+      "trimPrimitive": "function",
+      "maintain": "function"
+    },
+    "loaded": {
+      "count": 1737,
+      "first": 8914,
+      "last": 10650,
+      "gaps": [],
+      "gapTotal": 0,
+      "contiguous": true,
+      "baseSeq": 8914,
+      "hasMore": true
+    },
+    "before": {
+      "anchor": {
+        "text": "加载更早基于软件互联和RCS课件架构（有题目无互动）搞出一个视频 \"<local-file>" \"<local-file>" \"Q:\\Gam",
+        "top": 0,
+        "height": 0
+      },
+      "dom": {
+        "total": 13890,
+        "chatElements": 13184,
+        "scrollHeight": 9063,
+        "scrollTop": 3806,
+        "clientHeight": 776,
+        "distanceFromBottom": 4481,
+        "followingTail": false,
+        "olderButton": true,
+        "heap": 106919384
+      },
+      "info": {
+        "sessionId": "session-<example>",
+        "binding": true,
+        "entries": 1737,
+        "hasMore": true,
+        "sessionHasMore": true,
+        "sessionLoadingOlder": false,
+        "openState": "open",
+        "revision": 2,
+        "baseSeq": 8914,
+        "windowLimit": {
+          "maxEvents": 500,
+          "slackEvents": 125,
+          "trimOpeningPage": false
+        },
+        "contiguous": true,
+        "firstSeq": 8914,
+        "lastSeq": 10650,
+        "minSeq": 8914,
+        "trimPrimitive": "function",
+        "maintain": "function"
+      },
+      "foldCount": 57
+    },
+    "append": {
+      "sessionId": "session-<example>",
+      "binding": true,
+      "entries": 500,
+      "hasMore": true,
+      "sessionHasMore": true,
+      "sessionLoadingOlder": false,
+      "openState": "open",
+      "revision": 4,
+      "baseSeq": 10152,
+      "windowLimit": {
+        "maxEvents": 500,
+        "slackEvents": 125,
+        "trimOpeningPage": false
+      },
+      "contiguous": true,
+      "firstSeq": 10152,
+      "lastSeq": 10651,
+      "minSeq": 10152,
+      "trimPrimitive": "function",
+      "maintain": "function"
+    },
+    "after": {
+      "anchor": {
+        "text": "加载更早已完成已完成运行了代码，已读取图片，执行了命令等思考Check crops visually (q10, q13, q16, q22).代码View cropped question samples读取图片<workspace>\\\\",
+        "top": 0,
+        "height": 0
+      },
+      "dom": {
+        "total": 4686,
+        "chatElements": 3980,
+        "scrollHeight": 3974,
+        "scrollTop": 3198,
+        "clientHeight": 776,
+        "distanceFromBottom": 0,
+        "followingTail": true,
+        "olderButton": true,
+        "heap": 87928188
+      },
+      "info": {
+        "sessionId": "session-<example>",
+        "binding": true,
+        "entries": 500,
+        "hasMore": true,
+        "sessionHasMore": true,
+        "sessionLoadingOlder": false,
+        "openState": "open",
+        "revision": 4,
+        "baseSeq": 10152,
+        "windowLimit": {
+          "maxEvents": 500,
+          "slackEvents": 125,
+          "trimOpeningPage": false
+        },
+        "contiguous": true,
+        "firstSeq": 10152,
+        "lastSeq": 10651,
+        "minSeq": 10152,
+        "trimPrimitive": "function",
+        "maintain": "function"
+      },
+      "foldCount": 37
+    },
+    "anchorJumped": true,
+    "scrollHeightDelta": -5089,
+    "scrollTopBefore": 3806,
+    "scrollTopAfter": 3198,
+    "entriesBefore": 1737,
+    "entriesAfter": 500,
+    "baseSeqBefore": 8914,
+    "baseSeqAfter": 10152
+  }
+}

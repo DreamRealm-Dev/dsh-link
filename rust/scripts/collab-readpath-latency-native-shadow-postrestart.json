@@ -1,0 +1,355 @@
+{
+  "measuredAt": "2026-10-27T15:31:16.054Z",
+  "host": "native-shadow phase on the real kernel after the second restart (compute row enabled, link-collab engine=native-shadow; response path still collab TS fold)",
+  "method": "10 rounds x 60 GET /api/dsh-link-teams/state; diagnostics read before/after over GET /api/dsh-link-collab/status; ts baseline from the previous boot (same host) collab-readpath-latency-ts-postrestart.json",
+  "rounds": [
+    {
+      "round": 1,
+      "httpGetStateRoute": {
+        "p50Ms": 3.2941,
+        "p99Ms": 9.0021,
+        "repeats": 60
+      },
+      "projectTeamState": {
+        "p50Ms": 1.942,
+        "p99Ms": 11.9541,
+        "repeats": 10
+      },
+      "shadowObservePerCallUs": 0.061675,
+      "shadowBackgroundSample": {
+        "runs": 8,
+        "p50Ms": 0,
+        "p99Ms": 6,
+        "maxMs": 6,
+        "lastMs": 0,
+        "failures": 0,
+        "lastError": null
+      }
+    },
+    {
+      "round": 2,
+      "httpGetStateRoute": {
+        "p50Ms": 4.0057,
+        "p99Ms": 30.9017,
+        "repeats": 60
+      },
+      "projectTeamState": {
+        "p50Ms": 2.1676,
+        "p99Ms": 13.4051,
+        "repeats": 10
+      },
+      "shadowObservePerCallUs": 0.090365,
+      "shadowBackgroundSample": {
+        "runs": 8,
+        "p50Ms": 1,
+        "p99Ms": 7,
+        "maxMs": 7,
+        "lastMs": 1,
+        "failures": 0,
+        "lastError": null
+      }
+    },
+    {
+      "round": 3,
+      "httpGetStateRoute": {
+        "p50Ms": 3.7406,
+        "p99Ms": 6.4028,
+        "repeats": 60
+      },
+      "projectTeamState": {
+        "p50Ms": 2.1322,
+        "p99Ms": 12.9256,
+        "repeats": 10
+      },
+      "shadowObservePerCallUs": 0.086235,
+      "shadowBackgroundSample": {
+        "runs": 8,
+        "p50Ms": 0,
+        "p99Ms": 6,
+        "maxMs": 6,
+        "lastMs": 1,
+        "failures": 0,
+        "lastError": null
+      }
+    },
+    {
+      "round": 4,
+      "httpGetStateRoute": {
+        "p50Ms": 4.131,
+        "p99Ms": 7.8335,
+        "repeats": 60
+      },
+      "projectTeamState": {
+        "p50Ms": 2.1238,
+        "p99Ms": 13.4761,
+        "repeats": 10
+      },
+      "shadowObservePerCallUs": 0.088685,
+      "shadowBackgroundSample": {
+        "runs": 8,
+        "p50Ms": 0,
+        "p99Ms": 6,
+        "maxMs": 6,
+        "lastMs": 0,
+        "failures": 0,
+        "lastError": null
+      }
+    },
+    {
+      "round": 5,
+      "httpGetStateRoute": {
+        "p50Ms": 3.6634,
+        "p99Ms": 17.5548,
+        "repeats": 60
+      },
+      "projectTeamState": {
+        "p50Ms": 2.5226,
+        "p99Ms": 13.2159,
+        "repeats": 10
+      },
+      "shadowObservePerCallUs": 0.17497000000000001,
+      "shadowBackgroundSample": {
+        "runs": 8,
+        "p50Ms": 1,
+        "p99Ms": 7,
+        "maxMs": 7,
+        "lastMs": 0,
+        "failures": 0,
+        "lastError": null
+      }
+    },
+    {
+      "round": 6,
+      "httpGetStateRoute": {
+        "p50Ms": 3.5721,
+        "p99Ms": 7.663,
+        "repeats": 60
+      },
+      "projectTeamState": {
+        "p50Ms": 2.1802,
+        "p99Ms": 10.9212,
+        "repeats": 10
+      },
+      "shadowObservePerCallUs": 0.07076,
+      "shadowBackgroundSample": {
+        "runs": 8,
+        "p50Ms": 0,
+        "p99Ms": 7,
+        "maxMs": 7,
+        "lastMs": 1,
+        "failures": 0,
+        "lastError": null
+      }
+    },
+    {
+      "round": 7,
+      "httpGetStateRoute": {
+        "p50Ms": 3.7395,
+        "p99Ms": 6.2289,
+        "repeats": 60
+      },
+      "projectTeamState": {
+        "p50Ms": 1.8831,
+        "p99Ms": 13.3628,
+        "repeats": 10
+      },
+      "shadowObservePerCallUs": 0.0857,
+      "shadowBackgroundSample": {
+        "runs": 8,
+        "p50Ms": 0,
+        "p99Ms": 7,
+        "maxMs": 7,
+        "lastMs": 0,
+        "failures": 0,
+        "lastError": null
+      }
+    },
+    {
+      "round": 8,
+      "httpGetStateRoute": {
+        "p50Ms": 3.9223,
+        "p99Ms": 16.0854,
+        "repeats": 60
+      },
+      "projectTeamState": {
+        "p50Ms": 2.2981,
+        "p99Ms": 13.315,
+        "repeats": 10
+      },
+      "shadowObservePerCallUs": 0.101625,
+      "shadowBackgroundSample": {
+        "runs": 8,
+        "p50Ms": 1,
+        "p99Ms": 9,
+        "maxMs": 9,
+        "lastMs": 1,
+        "failures": 0,
+        "lastError": null
+      }
+    },
+    {
+      "round": 9,
+      "httpGetStateRoute": {
+        "p50Ms": 4.0307,
+        "p99Ms": 6.2206,
+        "repeats": 60
+      },
+      "projectTeamState": {
+        "p50Ms": 3.0093,
+        "p99Ms": 24.4478,
+        "repeats": 10
+      },
+      "shadowObservePerCallUs": 0.075745,
+      "shadowBackgroundSample": {
+        "runs": 8,
+        "p50Ms": 1,
+        "p99Ms": 8,
+        "maxMs": 8,
+        "lastMs": 1,
+        "failures": 0,
+        "lastError": null
+      }
+    },
+    {
+      "round": 10,
+      "httpGetStateRoute": {
+        "p50Ms": 3.6594,
+        "p99Ms": 6.8836,
+        "repeats": 60
+      },
+      "projectTeamState": {
+        "p50Ms": 2.2148,
+        "p99Ms": 10.8069,
+        "repeats": 10
+      },
+      "shadowObservePerCallUs": 0.114325,
+      "shadowBackgroundSample": {
+        "runs": 8,
+        "p50Ms": 1,
+        "p99Ms": 6,
+        "maxMs": 6,
+        "lastMs": 1,
+        "failures": 0,
+        "lastError": null
+      }
+    }
+  ],
+  "summary": {
+    "p50Ms": {
+      "median": 3.74005,
+      "min": 3.2941,
+      "max": 4.131
+    },
+    "p99Ms": {
+      "median": 7.7482500000000005,
+      "min": 6.2206,
+      "max": 30.9017
+    }
+  },
+  "halves": {
+    "firstFive": {
+      "p50Ms": {
+        "median": 3.7406,
+        "min": 3.2941,
+        "max": 4.131
+      },
+      "p99Ms": {
+        "median": 9.0021,
+        "min": 6.4028,
+        "max": 30.9017
+      }
+    },
+    "lastFive": {
+      "p50Ms": {
+        "median": 3.7395,
+        "min": 3.5721,
+        "max": 4.0307
+      },
+      "p99Ms": {
+        "median": 6.8836,
+        "min": 6.2206,
+        "max": 16.0854
+      }
+    }
+  },
+  "tsBaseline": {
+    "p50Ms": {
+      "median": 2.8388,
+      "min": 2.6958,
+      "max": 2.9873
+    },
+    "p99Ms": {
+      "median": 5.5219,
+      "min": 4.684,
+      "max": 19.1018
+    },
+    "source": "rust/scripts/collab-readpath-latency-ts-postrestart.json"
+  },
+  "deltaVsTs": {
+    "p50MedianMs": 0.901,
+    "p50Pct": 31.7,
+    "p99MedianMs": 2.226,
+    "p99Pct": 40.3
+  },
+  "diagnostics": {
+    "before": {
+      "mode": "native-shadow",
+      "enabled": true,
+      "runs": 1,
+      "calls": 3,
+      "skipped": 2,
+      "overlapped": 0,
+      "oversizeSkips": 0,
+      "cacheHits": 0,
+      "diffs": 141,
+      "firstDiff": {
+        "entity": "member",
+        "id": "e7f22afb-e36e-4fd7-803e-c896be9fd362",
+        "field": "team"
+      },
+      "lastMs": 7,
+      "failures": 0,
+      "lastError": null,
+      "disabledReason": null,
+      "computeKind": "native",
+      "sampleP50Ms": 7,
+      "sampleP99Ms": 7,
+      "sampleMaxMs": 7
+    },
+    "after": {
+      "mode": "native-shadow",
+      "enabled": true,
+      "runs": 5,
+      "calls": 673,
+      "skipped": 668,
+      "overlapped": 0,
+      "oversizeSkips": 0,
+      "cacheHits": 4,
+      "diffs": 141,
+      "firstDiff": {
+        "entity": "member",
+        "id": "e7f22afb-e36e-4fd7-803e-c896be9fd362",
+        "field": "team"
+      },
+      "lastMs": 0,
+      "failures": 0,
+      "lastError": null,
+      "disabledReason": null,
+      "computeKind": "native",
+      "sampleP50Ms": 0,
+      "sampleP99Ms": 7,
+      "sampleMaxMs": 7
+    },
+    "callsDelta": 670,
+    "runsDelta": 4,
+    "skippedDelta": 666,
+    "overlappedDelta": 0,
+    "oversizeSkipsDelta": 0,
+    "failuresDelta": 0,
+    "cacheHitsDelta": 4
+  },
+  "interpretation": {
+    "expectedObserveOverheadMs": 0.067,
+    "note": "observe() measured at 0.05-0.12 us/call, so the shadow can add at most ~0.02-0.04 ms over 300 calls; background samples run off the response path. Deltas of ~1 ms are host/boot environment effects, not shadowness."
+  }
+}

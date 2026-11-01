@@ -1,0 +1,1923 @@
+{
+ "format": "dsh-link.client-surface/1",
+ "kernel": "0.2.1-rc.2",
+ "method": "reads 'declare module <cordis>' Context/Events augmentations under core/deepseek-harness/packages/client/*/src",
+ "packages": 85,
+ "counts": {
+  "services": 40,
+  "events": 10,
+  "slots": 112,
+  "servicesWithMembers": 29,
+  "servicesWithMembersPartial": 2,
+  "servicesWithoutMembers": 9
+ },
+ "services": {
+  "chatFileMentions": {
+   "name": "chatFileMentions",
+   "type": "ChatFileMentions",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:145"
+   ],
+   "members": [
+    "forClosing"
+   ],
+   "properties": [],
+   "membersComplete": true,
+   "membersReason": "interface ChatFileMentions @ core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:132"
+  },
+  "clientModules": {
+   "name": "clientModules",
+   "type": "ClientModuleRegistry",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/modules/src/index.ts:48"
+   ],
+   "members": [
+    "artifactBaseline",
+    "bundleResource",
+    "captureArtifactBaseline",
+    "chunkRequest",
+    "chunkResponse",
+    "clientPath",
+    "compose",
+    "fetchBundle",
+    "flush",
+    "graph",
+    "initialBundleSnapshot",
+    "locatePkgJson",
+    "nearestPackage",
+    "notifyGraphChanged",
+    "onGraphChanged",
+    "onRebuilt",
+    "processOne",
+    "rebuilt",
+    "reconcilePackage",
+    "resolveMeta",
+    "resolveSource",
+    "sourceKey"
+   ],
+   "properties": [
+    "check",
+    "composed",
+    "config",
+    "expectedPackageName",
+    "extend",
+    "init",
+    "invoke",
+    "moduleUrl",
+    "release",
+    "resolveConfig",
+    "tracker"
+   ],
+   "membersComplete": true,
+   "membersReason": "class ClientModuleRegistry @ core/deepseek-harness/packages/client/modules/src/index.ts:603; base class Service @ core/deepseek-harness/vendor/cordis/src/service.ts:11"
+  },
+  "commandUi": {
+   "name": "commandUi",
+   "type": "CommandUiRuntime",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-commands/src/client/index.ts:37"
+   ],
+   "members": [
+    "candidates",
+    "claimOf",
+    "consumeVia",
+    "decorate",
+    "dismiss",
+    "dispatch",
+    "execute",
+    "invoke",
+    "leadingClaim",
+    "matchClaim",
+    "matchEnter",
+    "matchSpace",
+    "noticeFor",
+    "notifyExecuted",
+    "popupFor",
+    "register",
+    "runDetached",
+    "scopeFor",
+    "sessions",
+    "warnExecutedListenerFailure"
+   ],
+   "properties": [
+    "attachments",
+    "directory",
+    "envelope",
+    "line",
+    "live",
+    "name",
+    "segment",
+    "session",
+    "signal",
+    "t",
+    "ui"
+   ],
+   "membersComplete": true,
+   "membersReason": "class CommandUiRuntime @ core/deepseek-harness/packages/client/ui-commands/src/client/service.ts:76"
+  },
+  "configForms": {
+   "name": "configForms",
+   "type": "ConfigForms",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/config-form.ts:225"
+   ],
+   "members": [
+    "describe",
+    "get",
+    "whileServed"
+   ],
+   "properties": [
+    "check",
+    "config",
+    "developerTools",
+    "extend",
+    "init",
+    "invoke",
+    "mirror",
+    "owner",
+    "resolveConfig",
+    "schema",
+    "tracker"
+   ],
+   "membersComplete": true,
+   "membersReason": "class ConfigForms @ core/deepseek-harness/packages/client/ui-settings/src/client/config-form.ts:236; base class Service @ core/deepseek-harness/vendor/cordis/src/service.ts:11"
+  },
+  "connection": {
+   "name": "connection",
+   "type": "HostConnectionHandle",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/connection/src/rpc-host.ts:65"
+   ],
+   "members": [
+    "admit",
+    "admitConnection",
+    "authenticatedUrl",
+    "authorizeIndex",
+    "createPeer",
+    "createSharedFetchHandler",
+    "requestRejection"
+   ],
+   "properties": [
+    "allowsRemoteAuthorities",
+    "browserPeer",
+    "fetch",
+    "rpc"
+   ],
+   "membersComplete": true,
+   "membersReason": "interface HostConnectionHandle @ core/deepseek-harness/packages/client/connection/src/rpc.ts:206"
+  },
+  "conversation": {
+   "name": "conversation",
+   "type": "import('./service.ts').IConversation",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/index.ts:110"
+   ],
+   "members": null,
+   "properties": null,
+   "membersComplete": false,
+   "membersReason": "type is not a bare name: import('./service.ts').IConversation"
+  },
+  "cordisInspect": {
+   "name": "cordisInspect",
+   "type": "ClientCordisInspectRegistry",
+   "declaredIn": [
+    "core/deepseek-harness/packages/extensions/cordis-client-runner/src/client/inspect-registry.ts:139"
+   ],
+   "members": [
+    "close",
+    "publish",
+    "query",
+    "register"
+   ],
+   "properties": [],
+   "membersComplete": true,
+   "membersReason": "class ClientCordisInspectRegistry @ core/deepseek-harness/packages/extensions/cordis-client-runner/src/client/inspect-registry.ts:39"
+  },
+  "documentPreviews": {
+   "name": "documentPreviews",
+   "type": "DocumentPreviewRegistry",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/index.ts:57"
+   ],
+   "members": [
+    "candidates",
+    "publish",
+    "register"
+   ],
+   "properties": [
+    "snapshot"
+   ],
+   "membersComplete": true,
+   "membersReason": "class DocumentPreviewRegistry @ core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/registry.ts:66"
+  },
+  "dynamicCordisRunner": {
+   "name": "dynamicCordisRunner",
+   "type": "CordisRunnerFace",
+   "declaredIn": [
+    "core/deepseek-harness/packages/extensions/cordis-client-runner/src/client/index.ts:129"
+   ],
+   "members": [
+    "approve",
+    "decline",
+    "getSnapshot",
+    "isLoaded",
+    "reconcileApprovals",
+    "startUserRun",
+    "subscribe"
+   ],
+   "properties": [
+    "activeRuns",
+    "lastRunError",
+    "renderFailures"
+   ],
+   "membersComplete": true,
+   "membersReason": "interface CordisRunnerFace @ core/deepseek-harness/packages/extensions/cordis-client-runner/src/client/index.ts:66"
+  },
+  "feedbackUi": {
+   "name": "feedbackUi",
+   "type": "FeedbackUi",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-message-feedback/src/client/index.ts:52"
+   ],
+   "members": [
+    "openSession"
+   ],
+   "properties": [],
+   "membersComplete": true,
+   "membersReason": "interface FeedbackUi @ core/deepseek-harness/packages/client/ui-message-feedback/src/client/index.ts:42"
+  },
+  "fileUpload": {
+   "name": "fileUpload",
+   "type": "FileUploadService",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/file-upload/src/client/index.ts:13"
+   ],
+   "members": [
+    "upload"
+   ],
+   "properties": [
+    "data",
+    "name",
+    "onProgress",
+    "sessionId",
+    "signal"
+   ],
+   "membersComplete": true,
+   "membersReason": "interface FileUploadService @ core/deepseek-harness/packages/client/file-upload/src/client/contract.ts:15"
+  },
+  "fileUploads": {
+   "name": "fileUploads",
+   "type": "FileUploads",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/file-upload/src/index.ts:20"
+   ],
+   "members": [
+    "assertOrdinaryAgent",
+    "bindPrompt",
+    "commit",
+    "observeSessionEvent",
+    "registerAgentResolver",
+    "resolve",
+    "resolveAgent",
+    "retire",
+    "retirePrompt",
+    "upload",
+    "uploadStream"
+   ],
+   "properties": [
+    "agent",
+    "agentResolver",
+    "receiptIds",
+    "requestId"
+   ],
+   "membersComplete": false,
+   "membersReason": "class FileUploads @ core/deepseek-harness/packages/client/file-upload/src/index.ts:56; base TypertRemoteService not enumerable: ambiguous: 2 declarations of TypertRemoteService"
+  },
+  "inputTriggers": {
+   "name": "inputTriggers",
+   "type": "import('./contract.ts').InputTriggerServiceContract",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-input-trigger/src/client/index.ts:37"
+   ],
+   "members": null,
+   "properties": null,
+   "membersComplete": false,
+   "membersReason": "type is not a bare name: import('./contract.ts').InputTriggerServiceContract"
+  },
+  "inspector": {
+   "name": "inspector",
+   "type": "InspectorService",
+   "declaredIn": [
+    "core/deepseek-harness/packages/experimental/inspector/src/client/plugin.ts:35"
+   ],
+   "members": null,
+   "properties": null,
+   "membersComplete": false,
+   "membersReason": "ambiguous: 3 declarations of InspectorService"
+  },
+  "jobs": {
+   "name": "jobs",
+   "type": "IJobs",
+   "declaredIn": [
+    "core/deepseek-harness/packages/api/job-controller/src/client/service.ts:88"
+   ],
+   "members": [
+    "kill",
+    "observe",
+    "watchRows"
+   ],
+   "properties": [
+    "state"
+   ],
+   "membersComplete": true,
+   "membersReason": "interface IJobs @ core/deepseek-harness/packages/api/job-controller/src/client/service.ts:49"
+  },
+  "layout": {
+   "name": "layout",
+   "type": "import('./service.ts').ILayout",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-layout/src/client/index.ts:38"
+   ],
+   "members": null,
+   "properties": null,
+   "membersComplete": false,
+   "membersReason": "type is not a bare name: import('./service.ts').ILayout"
+  },
+  "locale": {
+   "name": "locale",
+   "type": "LocaleRuntime",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/locale/src/client/index.ts:85"
+   ],
+   "members": [
+    "addLanguage",
+    "adopt",
+    "assertFallbackChain",
+    "bind",
+    "fallbackChain",
+    "getLocale",
+    "getSnapshot",
+    "localeList",
+    "lookup",
+    "publish",
+    "publishCatalog",
+    "register",
+    "resolveActive",
+    "resolveText",
+    "setLocale",
+    "subscribe",
+    "translate"
+   ],
+   "properties": [
+    "active",
+    "ctx",
+    "host",
+    "localeChanged",
+    "locales",
+    "preference",
+    "provisional",
+    "snapshot"
+   ],
+   "membersComplete": true,
+   "membersReason": "class LocaleRuntime @ core/deepseek-harness/packages/client/locale/src/client/index.ts:165"
+  },
+  "modelDirectories": {
+   "name": "modelDirectories",
+   "type": "ModelDirectoryResolver",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-model-selection/src/client/service.ts:26"
+   ],
+   "members": [
+    "directoryFor"
+   ],
+   "properties": [
+    "catalog",
+    "check",
+    "config",
+    "extend",
+    "init",
+    "invoke",
+    "live",
+    "resolveConfig",
+    "tracker"
+   ],
+   "membersComplete": true,
+   "membersReason": "class ModelDirectoryResolver @ core/deepseek-harness/packages/client/ui-model-selection/src/client/service.ts:37; base class Service @ core/deepseek-harness/vendor/cordis/src/service.ts:11"
+  },
+  "modules": {
+   "name": "modules",
+   "type": "ClientModuleLoader",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/modules/src/client/manifest.ts:40"
+   ],
+   "members": [
+    "import",
+    "importError",
+    "invalidate",
+    "prefetch"
+   ],
+   "properties": [
+    "entries",
+    "loadCache",
+    "manifest",
+    "version"
+   ],
+   "membersComplete": true,
+   "membersReason": "interface ClientModuleLoader @ core/deepseek-harness/packages/client/modules/src/client/manifest.ts:425"
+  },
+  "pluginNavigation": {
+   "name": "pluginNavigation",
+   "type": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/index.ts:36"
+   ],
+   "members": null,
+   "properties": null,
+   "membersComplete": false,
+   "membersReason": "type is not a bare name: {"
+  },
+  "pluginRegistryProbe": {
+   "name": "pluginRegistryProbe",
+   "type": "PluginRegistryProbe",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/index.ts:10"
+   ],
+   "members": null,
+   "properties": null,
+   "membersComplete": false,
+   "membersReason": "no declaration found for PluginRegistryProbe"
+  },
+  "productAnalytics": {
+   "name": "productAnalytics",
+   "type": "DesktopAnalytics",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/product-analytics/src/client/index.ts:10",
+    "core/deepseek-harness/packages/client/product-analytics/src/index.ts:28"
+   ],
+   "members": [
+    "track"
+   ],
+   "properties": [
+    "check",
+    "config",
+    "enabled",
+    "extend",
+    "init",
+    "invoke",
+    "resolveConfig",
+    "submit",
+    "tracker"
+   ],
+   "membersComplete": true,
+   "membersReason": "class DesktopAnalytics @ core/deepseek-harness/packages/client/product-analytics/src/client/index.ts:14; base class Service @ core/deepseek-harness/vendor/cordis/src/service.ts:11"
+  },
+  "remote": {
+   "name": "remote",
+   "type": "ClientRemote",
+   "declaredIn": [
+    "core/deepseek-harness/packages/api/gateway/src/client/index.ts:130",
+    "core/deepseek-harness/packages/api/remotes/src/client/index.ts:173"
+   ],
+   "members": [
+    "$mount",
+    "$on",
+    "$stream"
+   ],
+   "properties": [
+    "$host"
+   ],
+   "membersComplete": false,
+   "membersReason": "interface ClientRemote @ core/deepseek-harness/packages/api/gateway/src/client/index.ts:103; base interface TypertClientRemote @ core/deepseek-harness/packages/typert/protocol/src/types.ts:620; base interface TypertRemoteNamespaceMap @ core/deepseek-harness/packages/typert/protocol/src/types.ts:318 (empty body here: names this interface carries may be added by declaration merging)"
+  },
+  "remoteAccess": {
+   "name": "remoteAccess",
+   "type": "ClientRemoteAccess",
+   "declaredIn": [
+    "core/deepseek-harness/packages/api/remote-access/src/client/mount.ts:43"
+   ],
+   "members": [
+    "source"
+   ],
+   "properties": [],
+   "membersComplete": true,
+   "membersReason": "interface ClientRemoteAccess @ core/deepseek-harness/packages/api/remote-access/src/client/mount.ts:27"
+  },
+  "resources": {
+   "name": "resources",
+   "type": "Resources",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/resources/src/client/contract.ts:31"
+   ],
+   "members": [
+    "pin",
+    "register",
+    "source"
+   ],
+   "properties": [],
+   "membersComplete": true,
+   "membersReason": "interface Resources @ core/deepseek-harness/packages/client/resources/src/client/contract.ts:93"
+  },
+  "sessionLogDownload": {
+   "name": "sessionLogDownload",
+   "type": "SessionLogDownloadController",
+   "declaredIn": [
+    "core/deepseek-harness/packages/session-query/session-log-export/src/client/index.ts:18"
+   ],
+   "members": [
+    "dismiss",
+    "dispose",
+    "download",
+    "publish",
+    "run"
+   ],
+   "properties": [
+    "fetcher",
+    "save",
+    "store"
+   ],
+   "membersComplete": true,
+   "membersReason": "class SessionLogDownloadController @ core/deepseek-harness/packages/session-query/session-log-export/src/client/controller.ts:55"
+  },
+  "sessions": {
+   "name": "sessions",
+   "type": "import('./contract/sessions.ts').ISessions",
+   "declaredIn": [
+    "core/deepseek-harness/packages/api/session-controller/src/client/index.ts:93"
+   ],
+   "members": null,
+   "properties": null,
+   "membersComplete": false,
+   "membersReason": "type is not a bare name: import('./contract/sessions.ts').ISessions"
+  },
+  "settingsSchema": {
+   "name": "settingsSchema",
+   "type": "SettingsSchemaService",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/schema.ts:156"
+   ],
+   "members": [
+    "deletePath",
+    "getPath",
+    "hasPath",
+    "nodeAtPath",
+    "rehydrate",
+    "setPath",
+    "validate"
+   ],
+   "properties": [
+    "check",
+    "config",
+    "extend",
+    "init",
+    "invoke",
+    "resolveConfig",
+    "tracker"
+   ],
+   "membersComplete": true,
+   "membersReason": "class SettingsSchemaService @ core/deepseek-harness/packages/client/ui-settings/src/client/schema.ts:39; base class Service @ core/deepseek-harness/vendor/cordis/src/service.ts:11"
+  },
+  "shortcuts": {
+   "name": "shortcuts",
+   "type": "Shortcuts",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/shortcuts/src/client/index.ts:22"
+   ],
+   "members": [
+    "closeWindow",
+    "describeBinding",
+    "edit",
+    "observeFixedInput",
+    "recording",
+    "register",
+    "registerFixed"
+   ],
+   "properties": [
+    "catalog",
+    "config",
+    "fixedCatalog",
+    "platform",
+    "runtime",
+    "stopSequenceMs"
+   ],
+   "membersComplete": true,
+   "membersReason": "interface Shortcuts @ core/deepseek-harness/packages/client/shortcuts/src/client/types.ts:83"
+  },
+  "sidebarRight": {
+   "name": "sidebarRight",
+   "type": "SidebarRightController",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/index.ts:88"
+   ],
+   "members": [
+    "_redo",
+    "_undo",
+    "actionsFor",
+    "active",
+    "canCloseTarget",
+    "canSplitPane",
+    "close",
+    "closeIn",
+    "closeTarget",
+    "commandTarget",
+    "dock",
+    "float",
+    "focus",
+    "focusedTarget",
+    "isExpanded",
+    "isTargetCurrent",
+    "mountedSurface",
+    "openResource",
+    "openResourceIn",
+    "openTab",
+    "openTabFromTarget",
+    "openTabIn",
+    "place",
+    "placeResource",
+    "placeTab",
+    "registerCloseHandler",
+    "removeAfterCleanup",
+    "require",
+    "screen",
+    "split",
+    "splitBlock",
+    "tabsIn",
+    "toggleExpanded",
+    "toggleFullscreen"
+   ],
+   "properties": [
+    "actions",
+    "address",
+    "adopted",
+    "claim",
+    "host",
+    "kind",
+    "mounted",
+    "openTabs",
+    "options",
+    "params",
+    "pin",
+    "placement",
+    "rooms",
+    "sessionId",
+    "sessions",
+    "tabDomain",
+    "tabs"
+   ],
+   "membersComplete": true,
+   "membersReason": "class SidebarRightController @ core/deepseek-harness/packages/client/ui-sidebar-right/src/client/service.ts:262"
+  },
+  "sidebarRightTabs": {
+   "name": "sidebarRightTabs",
+   "type": "SidebarRightTabRegistry",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/index.ts:90"
+   ],
+   "members": [
+    "active",
+    "candidates",
+    "claim",
+    "enter",
+    "entries",
+    "get",
+    "guide",
+    "leave",
+    "refresh",
+    "register",
+    "subscribe"
+   ],
+   "properties": [
+    "cached",
+    "guideEntries"
+   ],
+   "membersComplete": true,
+   "membersReason": "class SidebarRightTabRegistry @ core/deepseek-harness/packages/client/ui-sidebar-right/src/client/tab-registry.ts:229"
+  },
+  "slots": {
+   "name": "slots",
+   "type": "SlotRegistry",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-renderer/src/client/index.ts:45"
+   ],
+   "members": [
+    "_acquire",
+    "_register",
+    "_registerFactory",
+    "_release",
+    "bindStoreScope",
+    "entries",
+    "entriesOfSlot",
+    "getVersion",
+    "hostFace",
+    "inject",
+    "install",
+    "installLocale",
+    "installScope",
+    "onEntryError",
+    "provideRoot",
+    "publishScopeRevision",
+    "rebuildRootBinding",
+    "releaseStoreScope",
+    "renderSlot",
+    "resolveFactoryStore",
+    "resolveStore",
+    "retainFactoryOccurrence",
+    "snapshot",
+    "spec",
+    "subscribe"
+   ],
+   "properties": [
+    "_host",
+    "_locale",
+    "_renderer",
+    "_rootBinding",
+    "_rootContributions",
+    "_scopeRevisionSource",
+    "adapter",
+    "check",
+    "config",
+    "definition",
+    "error",
+    "extend",
+    "handle",
+    "info",
+    "init",
+    "invoke",
+    "key",
+    "occurrence",
+    "register",
+    "registerFactory",
+    "registration",
+    "resolveConfig",
+    "scope",
+    "scopeBinding",
+    "tracker"
+   ],
+   "membersComplete": true,
+   "membersReason": "class SlotRegistry @ core/deepseek-harness/packages/client/ui-renderer/src/client/registry.ts:120; base class Service @ core/deepseek-harness/vendor/cordis/src/service.ts:11"
+  },
+  "theme": {
+   "name": "theme",
+   "type": "ThemeRuntime",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/client/index.ts:119"
+   ],
+   "members": [
+    "adjustFontSizes",
+    "adopt",
+    "buildSnapshot",
+    "composeActive",
+    "exportInspectTokens",
+    "getTheme",
+    "overrideTokens",
+    "publish",
+    "register",
+    "setFontFamily",
+    "setFontSize",
+    "setTheme",
+    "write"
+   ],
+   "properties": [
+    "ctx",
+    "fontFamilies",
+    "fontSizes",
+    "host",
+    "media",
+    "preference",
+    "snapshot",
+    "themes"
+   ],
+   "membersComplete": true,
+   "membersReason": "class ThemeRuntime @ core/deepseek-harness/packages/client/ui-theme/src/client/index.ts:165"
+  },
+  "uiConversation": {
+   "name": "uiConversation",
+   "type": "import('./conversation/assembly.ts').UiConversation",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/index.ts:112"
+   ],
+   "members": null,
+   "properties": null,
+   "membersComplete": false,
+   "membersReason": "type is not a bare name: import('./conversation/assembly.ts').UiConversation"
+  },
+  "uiRenderer": {
+   "name": "uiRenderer",
+   "type": "UiRendererService",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-renderer/src/client/index.ts:47"
+   ],
+   "members": [],
+   "properties": [
+    "mount"
+   ],
+   "membersComplete": true,
+   "membersReason": "interface UiRendererService @ core/deepseek-harness/packages/client/ui-renderer/src/client/index.ts:24"
+  },
+  "uiSession": {
+   "name": "uiSession",
+   "type": "UiSession",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-session/src/client/index.ts:198"
+   ],
+   "members": [
+    "bindingSource",
+    "createMaterializedBinding",
+    "isMain",
+    "materialize",
+    "materializeAbsent",
+    "observeRunning",
+    "publishMain",
+    "publishPendingInteractions",
+    "publishStatus",
+    "rebuildBindings",
+    "reconcileStatus",
+    "registerPendingInteraction",
+    "sourceFor",
+    "watchMainRetention"
+   ],
+   "properties": [
+    "absent",
+    "adapter",
+    "check",
+    "config",
+    "ctx",
+    "current",
+    "descriptors",
+    "extend",
+    "init",
+    "invoke",
+    "mainRetainId",
+    "pendingDomains",
+    "pendingSnapshot",
+    "precedence",
+    "resolveConfig",
+    "sessionStatus",
+    "sessions",
+    "statusSnapshot",
+    "tracker"
+   ],
+   "membersComplete": true,
+   "membersReason": "class UiSession @ core/deepseek-harness/packages/client/ui-session/src/client/index.ts:282; base class Service @ core/deepseek-harness/vendor/cordis/src/service.ts:11"
+  },
+  "uiWorkspace": {
+   "name": "uiWorkspace",
+   "type": "UiWorkspace",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/navigation.ts:137"
+   ],
+   "members": [
+    "archiveSession",
+    "connectWorkspace",
+    "createDirectory",
+    "forkSession",
+    "listDirectory",
+    "openSession",
+    "openWorkspace",
+    "pickDirectory",
+    "pinSession",
+    "startSession",
+    "unarchiveSession",
+    "unpinSession"
+   ],
+   "properties": [
+    "beforeOpen",
+    "onCreated",
+    "options",
+    "sessionId",
+    "workspaceId"
+   ],
+   "membersComplete": true,
+   "membersReason": "interface UiWorkspace @ core/deepseek-harness/packages/client/ui-workspace/src/client/navigation.ts:39"
+  },
+  "userQuestionPanels": {
+   "name": "userQuestionPanels",
+   "type": "UserQuestionPanels",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-tool/src/client/contract/slots.ts:136"
+   ],
+   "members": [
+    "reveal",
+    "review"
+   ],
+   "properties": [],
+   "membersComplete": true,
+   "membersReason": "interface UserQuestionPanels @ core/deepseek-harness/packages/client/ui-tool/src/client/contract/slots.ts:112"
+  },
+  "webTerminals": {
+   "name": "webTerminals",
+   "type": "ClientTerminals",
+   "declaredIn": [
+    "core/deepseek-harness/packages/api/terminal-controller/src/client/index.ts:22"
+   ],
+   "members": [
+    "cleanup",
+    "close",
+    "hold",
+    "inventory",
+    "launchShells",
+    "reconcileHolds",
+    "recover",
+    "release",
+    "retainTabs",
+    "retryClose",
+    "selectShell",
+    "view"
+   ],
+   "properties": [
+    "check",
+    "closeFailures",
+    "config",
+    "extend",
+    "init",
+    "invoke",
+    "openTabs",
+    "resolveConfig",
+    "tracker"
+   ],
+   "membersComplete": true,
+   "membersReason": "class ClientTerminals @ core/deepseek-harness/packages/api/terminal-controller/src/client/index.ts:40; base class Service @ core/deepseek-harness/vendor/cordis/src/service.ts:11"
+  },
+  "workspaces": {
+   "name": "workspaces",
+   "type": "import('./service.ts').IWorkspaces",
+   "declaredIn": [
+    "core/deepseek-harness/packages/api/workspace-controller/src/client/index.ts:36"
+   ],
+   "members": null,
+   "properties": null,
+   "membersComplete": false,
+   "membersReason": "type is not a bare name: import('./service.ts').IWorkspaces"
+  }
+ },
+ "events": {
+  "command/executed": {
+   "name": "command/executed",
+   "type": null,
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-commands/src/client/service.ts:57"
+   ]
+  },
+  "connection/request": {
+   "name": "connection/request",
+   "type": null,
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/connection/src/index.ts:71"
+   ]
+  },
+  "connection/reset": {
+   "name": "connection/reset",
+   "type": null,
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/connection/src/client/index.ts:28"
+   ]
+  },
+  "locale/change": {
+   "name": "locale/change",
+   "type": null,
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/locale/src/client/index.ts:96"
+   ]
+  },
+  "slash/input-begin-command": {
+   "name": "slash/input-begin-command",
+   "type": null,
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/input.ts:146"
+   ]
+  },
+  "slash/input-consume-token": {
+   "name": "slash/input-consume-token",
+   "type": null,
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/input.ts:158"
+   ]
+  },
+  "slash/input-insert-reference": {
+   "name": "slash/input-insert-reference",
+   "type": null,
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/input.ts:152"
+   ]
+  },
+  "slash/input-insert-text": {
+   "name": "slash/input-insert-text",
+   "type": null,
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/input.ts:164"
+   ]
+  },
+  "slots/changed": {
+   "name": "slots/changed",
+   "type": null,
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-renderer/src/client/index.ts:41"
+   ]
+  },
+  "theme/change": {
+   "name": "theme/change",
+   "type": null,
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/client/index.ts:128"
+   ]
+  }
+ },
+ "slots": {
+  "conversation.approval.detail": {
+   "name": "conversation.approval.detail",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-approval/src/client/contract/slots.ts:37"
+   ]
+  },
+  "conversation.chat.assistant-actions": {
+   "name": "conversation.chat.assistant-actions",
+   "specifier": "{ kind: 'list'; scope: 'session'; owner: AssistantActionOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:441"
+   ]
+  },
+  "conversation.chat.commandview": {
+   "name": "conversation.chat.commandview",
+   "specifier": "{ kind: 'keyed'; scope: 'session'; owner: CommandRowOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:423"
+   ]
+  },
+  "conversation.chat.flow": {
+   "name": "conversation.chat.flow",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:390"
+   ]
+  },
+  "conversation.chat.message.images": {
+   "name": "conversation.chat.message.images",
+   "specifier": "{ kind: 'single'; scope: 'session'; owner: MessageImagesOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:415"
+   ]
+  },
+  "conversation.chat.node": {
+   "name": "conversation.chat.node",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:402"
+   ]
+  },
+  "conversation.chat.reasoning.body": {
+   "name": "conversation.chat.reasoning.body",
+   "specifier": "{ kind: 'single'; scope: 'session'; owner: ReasoningBodyOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:429"
+   ]
+  },
+  "conversation.chat.turnTail": {
+   "name": "conversation.chat.turnTail",
+   "specifier": "{ kind: 'list'; scope: 'session'; owner: TurnTailOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:435"
+   ]
+  },
+  "conversation.chat.user.images": {
+   "name": "conversation.chat.user.images",
+   "specifier": "{ kind: 'single'; scope: 'session'; owner: MessageImagesOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:417"
+   ]
+  },
+  "conversation.composer": {
+   "name": "conversation.composer",
+   "specifier": "{ kind: 'chain'; scope: 'session'; owner: ComposerChainProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:260"
+   ]
+  },
+  "conversation.composer.bar": {
+   "name": "conversation.composer.bar",
+   "specifier": "{ kind: 'single'; scope: 'session-maybe'; owner: ComposerBarOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:282"
+   ]
+  },
+  "conversation.composer.dock": {
+   "name": "conversation.composer.dock",
+   "specifier": "{ kind: 'list'; scope: 'session' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:274"
+   ]
+  },
+  "conversation.header": {
+   "name": "conversation.header",
+   "specifier": "{ kind: 'single'; scope: 'session-maybe' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:212"
+   ]
+  },
+  "conversation.header.leading": {
+   "name": "conversation.header.leading",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:241"
+   ]
+  },
+  "conversation.hero.agentPreset": {
+   "name": "conversation.hero.agentPreset",
+   "specifier": "{ kind: 'single'; scope: 'session-maybe'; owner: HeroAgentPresetOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:266"
+   ]
+  },
+  "conversation.hero.brand.mark": {
+   "name": "conversation.hero.brand.mark",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: HeroBrandMarkOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:264"
+   ]
+  },
+  "conversation.hero.options": {
+   "name": "conversation.hero.options",
+   "specifier": "{ kind: 'list'; scope: 'session' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:268"
+   ]
+  },
+  "conversation.hero.workspace": {
+   "name": "conversation.hero.workspace",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: EmptyWorkspaceOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:262"
+   ]
+  },
+  "conversation.hero.workspace.directoryFlow": {
+   "name": "conversation.hero.workspace.directoryFlow",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: DirectoryFlowOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:119"
+   ]
+  },
+  "conversation.input.activity": {
+   "name": "conversation.input.activity",
+   "specifier": "{ kind: 'single'; scope: 'session'; owner: InputActivityOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:280"
+   ]
+  },
+  "conversation.input.attachments": {
+   "name": "conversation.input.attachments",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:284"
+   ]
+  },
+  "conversation.input.dock": {
+   "name": "conversation.input.dock",
+   "specifier": "{ kind: 'list'; scope: 'session'; owner: InputZone }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:270"
+   ]
+  },
+  "conversation.input.left": {
+   "name": "conversation.input.left",
+   "specifier": "{ kind: 'list'; scope: 'session' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:276"
+   ]
+  },
+  "conversation.input.model": {
+   "name": "conversation.input.model",
+   "specifier": "{ kind: 'single'; scope: 'session'; owner: InputControlOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:298"
+   ]
+  },
+  "conversation.input.model.label": {
+   "name": "conversation.input.model.label",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-model-selection/src/client/slots.ts:36"
+   ]
+  },
+  "conversation.input.overlay": {
+   "name": "conversation.input.overlay",
+   "specifier": "{ kind: 'list'; scope: 'session' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:272"
+   ]
+  },
+  "conversation.input.permission": {
+   "name": "conversation.input.permission",
+   "specifier": "{ kind: 'single'; scope: 'session'; owner: InputControlOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:292"
+   ]
+  },
+  "conversation.input.plan": {
+   "name": "conversation.input.plan",
+   "specifier": "{ kind: 'single'; scope: 'session'; owner: InputControlOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:290"
+   ]
+  },
+  "conversation.input.right": {
+   "name": "conversation.input.right",
+   "specifier": "{ kind: 'list'; scope: 'session' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:278"
+   ]
+  },
+  "conversation.plan-review.actions": {
+   "name": "conversation.plan-review.actions",
+   "specifier": "{ kind: 'list'; scope: 'session'; owner: { review: PlanReview; requestKey: PendingQuestion['key'] } }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-user-questions/src/client/contract/slots.ts:21"
+   ]
+  },
+  "conversation.session": {
+   "name": "conversation.session",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:206"
+   ]
+  },
+  "conversation.session.header": {
+   "name": "conversation.session.header",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:214"
+   ]
+  },
+  "conversation.session.header.actions": {
+   "name": "conversation.session.header.actions",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:229"
+   ]
+  },
+  "conversation.session.header.corner": {
+   "name": "conversation.session.header.corner",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:252"
+   ]
+  },
+  "conversation.session.header.lineage": {
+   "name": "conversation.session.header.lineage",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:223"
+   ]
+  },
+  "conversation.session.header.utilities": {
+   "name": "conversation.session.header.utilities",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:235"
+   ]
+  },
+  "conversation.trajectory.images": {
+   "name": "conversation.trajectory.images",
+   "specifier": "{ kind: 'single'; scope: 'session'; owner: MessageImagesOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-trajectory/src/client/trajectory-contract.ts:103"
+   ]
+  },
+  "conversation.user.text.node": {
+   "name": "conversation.user.text.node",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:196"
+   ]
+  },
+  "conversation.view": {
+   "name": "conversation.view",
+   "specifier": "{ kind: 'list'; scope: 'session'; owner: ConvViewOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:258"
+   ]
+  },
+  "deliverables.file.actions": {
+   "name": "deliverables.file.actions",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-deliverables/src/client/file-actions.ts:8"
+   ]
+  },
+  "deliverables.review.file.actions": {
+   "name": "deliverables.review.file.actions",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-deliverables/src/client/file-actions.ts:21"
+   ]
+  },
+  "hideChrome": {
+   "name": "hideChrome",
+   "specifier": "boolean",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:219"
+   ]
+  },
+  "hookContext": {
+   "name": "hookContext",
+   "specifier": "ChatFlowHookContext",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:394",
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:407",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:55",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:91",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/office/OfficeBody.tsx:23",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:62",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:76",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:87",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:95",
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:175"
+   ]
+  },
+  "hooks": {
+   "name": "hooks",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:57"
+   ]
+  },
+  "inject": {
+   "name": "inject",
+   "specifier": "ChatFlowInjected",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:395",
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:408",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:56",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:92",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/office/OfficeBody.tsx:24",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:63",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:77",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:88",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:96",
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:176"
+   ]
+  },
+  "inline": {
+   "name": "inline",
+   "specifier": "true",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:199",
+    "core/deepseek-harness/packages/client/ui-model-selection/src/client/slots.ts:39"
+   ]
+  },
+  "keyProps": {
+   "name": "keyProps",
+   "specifier": "{ [Kind in ChatNodeKind]: { node: ChatNode<Kind> } }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:406",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:201",
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/toast.ts:57"
+   ]
+  },
+  "kind": {
+   "name": "kind",
+   "specifier": "'single'",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-approval/src/client/contract/slots.ts:38",
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:391",
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:403",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:197",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:207",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:215",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:224",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:230",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:236",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:242",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:253",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:285",
+    "core/deepseek-harness/packages/client/ui-deliverables/src/client/file-actions.ts:9",
+    "core/deepseek-harness/packages/client/ui-deliverables/src/client/file-actions.ts:22",
+    "core/deepseek-harness/packages/client/ui-model-selection/src/client/slots.ts:37",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:52",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:67",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:79",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:88",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/office/OfficeBody.tsx:20",
+    "core/deepseek-harness/packages/client/ui-sidebar-files/src/client/index.ts:35",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:44",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:60",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:74",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:85",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:92",
+    "core/deepseek-harness/packages/client/ui-tool/src/client/contract/slots.ts:27",
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:172",
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/toast.ts:54",
+    "core/deepseek-harness/packages/extensions/ui-cordis/src/client/slots.ts:32"
+   ]
+  },
+  "main": {
+   "name": "main",
+   "specifier": "{ kind: 'keyed'; scope: 'root' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-layout/src/client/index.ts:73"
+   ]
+  },
+  "main.conversation": {
+   "name": "main.conversation",
+   "specifier": "{ kind: 'single'; scope: 'session-maybe' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:204"
+   ]
+  },
+  "menuOpenState": {
+   "name": "menuOpenState",
+   "specifier": "SlotHookFactory<'sidebar.workspaces.session.menu.item', UseMenuOpenState>",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:177"
+   ]
+  },
+  "owner": {
+   "name": "owner",
+   "specifier": "ApprovalDetailOwnerProps",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-approval/src/client/contract/slots.ts:40",
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:393",
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:405",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:200",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:209",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:217",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:226",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:232",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:238",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:244",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:255",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:287",
+    "core/deepseek-harness/packages/client/ui-deliverables/src/client/file-actions.ts:11",
+    "core/deepseek-harness/packages/client/ui-deliverables/src/client/file-actions.ts:24",
+    "core/deepseek-harness/packages/client/ui-model-selection/src/client/slots.ts:40",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:54",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:69",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:81",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:90",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/office/OfficeBody.tsx:22",
+    "core/deepseek-harness/packages/client/ui-sidebar-files/src/client/index.ts:37",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:46",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:94",
+    "core/deepseek-harness/packages/client/ui-tool/src/client/contract/slots.ts:29",
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:174",
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/toast.ts:56",
+    "core/deepseek-harness/packages/extensions/ui-cordis/src/client/slots.ts:34"
+   ]
+  },
+  "plugins.add.actions": {
+   "name": "plugins.add.actions",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: PluginAddActionsProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/slot-contract.ts:118"
+   ]
+  },
+  "plugins.bundle.activation": {
+   "name": "plugins.bundle.activation",
+   "specifier": "{ kind: 'keyed'; scope: 'root'; owner: PluginActivationOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/slot-contract.ts:126"
+   ]
+  },
+  "plugins.bundle.config": {
+   "name": "plugins.bundle.config",
+   "specifier": "{ kind: 'keyed'; scope: 'root'; owner: PluginConfigViewProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/slot-contract.ts:142"
+   ]
+  },
+  "plugins.detail.actions": {
+   "name": "plugins.detail.actions",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: PluginDetailProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/slot-contract.ts:156"
+   ]
+  },
+  "plugins.detail.badge": {
+   "name": "plugins.detail.badge",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: PluginDetailProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/slot-contract.ts:161"
+   ]
+  },
+  "plugins.detail.section": {
+   "name": "plugins.detail.section",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: PluginDetailProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/slot-contract.ts:168"
+   ]
+  },
+  "plugins.item": {
+   "name": "plugins.item",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: PluginConfigViewProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/slot-contract.ts:136"
+   ]
+  },
+  "plugins.row.config": {
+   "name": "plugins.row.config",
+   "specifier": "{ kind: 'keyed'; scope: 'root'; owner: PluginConfigViewProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/slot-contract.ts:150"
+   ]
+  },
+  "plugins.tab": {
+   "name": "plugins.tab",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: PluginTabProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/slot-contract.ts:124"
+   ]
+  },
+  "rightbar": {
+   "name": "rightbar",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: RightbarOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-layout/src/client/index.ts:87"
+   ]
+  },
+  "rightbar.session": {
+   "name": "rightbar.session",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:43"
+   ]
+  },
+  "root": {
+   "name": "root",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: RootOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-renderer/src/client/registry.ts:44"
+   ]
+  },
+  "scope": {
+   "name": "scope",
+   "specifier": "'session'",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-approval/src/client/contract/slots.ts:39",
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:392",
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:404",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:198",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:208",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:216",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:225",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:231",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:237",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:243",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:254",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/contract/slots.ts:286",
+    "core/deepseek-harness/packages/client/ui-deliverables/src/client/file-actions.ts:10",
+    "core/deepseek-harness/packages/client/ui-deliverables/src/client/file-actions.ts:23",
+    "core/deepseek-harness/packages/client/ui-model-selection/src/client/slots.ts:38",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:53",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:68",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:80",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:89",
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/office/OfficeBody.tsx:21",
+    "core/deepseek-harness/packages/client/ui-sidebar-files/src/client/index.ts:36",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:45",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:61",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:75",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:86",
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:93",
+    "core/deepseek-harness/packages/client/ui-tool/src/client/contract/slots.ts:28",
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:173",
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/toast.ts:55",
+    "core/deepseek-harness/packages/extensions/ui-cordis/src/client/slots.ts:33"
+   ]
+  },
+  "settings.action": {
+   "name": "settings.action",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: SettingsHeaderOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/contract/slots.ts:39"
+   ]
+  },
+  "settings.close": {
+   "name": "settings.close",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: SettingsHeaderOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/contract/slots.ts:45"
+   ]
+  },
+  "settings.general.item": {
+   "name": "settings.general.item",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: SettingsGeneralItemOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/contract/slots.ts:92"
+   ]
+  },
+  "settings.header": {
+   "name": "settings.header",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: SettingsHeaderOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/contract/slots.ts:33"
+   ]
+  },
+  "settings.launcher": {
+   "name": "settings.launcher",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: SettingsLauncherOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/contract/slots.ts:17"
+   ]
+  },
+  "settings.models.footer": {
+   "name": "settings.models.footer",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: ModelsFooterOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings-models/src/client/slot-contract.ts:40"
+   ]
+  },
+  "settings.models.provider-card": {
+   "name": "settings.models.provider-card",
+   "specifier": "{ kind: 'keyed'; scope: 'root'; owner: ProviderCardExtrasOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings-models/src/client/slot-contract.ts:33"
+   ]
+  },
+  "settings.models.sign-in": {
+   "name": "settings.models.sign-in",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: { complete: () => void; useApiKey: () => void } }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings-models/src/client/slot-contract.ts:35"
+   ]
+  },
+  "settings.onboarding": {
+   "name": "settings.onboarding",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: SettingsOnboardingOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/contract/slots.ts:77"
+   ]
+  },
+  "settings.plugins.tab": {
+   "name": "settings.plugins.tab",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: SettingsPluginsTabOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/contract/slots.ts:66"
+   ]
+  },
+  "settings.section": {
+   "name": "settings.section",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: SettingsSectionOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/contract/slots.ts:57"
+   ]
+  },
+  "settings.trigger": {
+   "name": "settings.trigger",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: SettingsTriggerOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-settings/src/client/contract/slots.ts:27"
+   ]
+  },
+  "shell.bottom": {
+   "name": "shell.bottom",
+   "specifier": "{ kind: 'single'; scope: 'root' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-layout/src/client/index.ts:94"
+   ]
+  },
+  "shell.leading": {
+   "name": "shell.leading",
+   "specifier": "{ kind: 'single'; scope: 'root' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-layout/src/client/index.ts:119"
+   ]
+  },
+  "shell.overlay": {
+   "name": "shell.overlay",
+   "specifier": "{ kind: 'list'; scope: 'root' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-layout/src/client/index.ts:105"
+   ]
+  },
+  "shell.quota-notice": {
+   "name": "shell.quota-notice",
+   "specifier": "{ kind: 'chain'; scope: 'root'; owner: QuotaNoticeOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/contract/slots.ts:449"
+   ]
+  },
+  "shortcuts": {
+   "name": "shortcuts",
+   "specifier": "HostObservable<readonly ShortcutCatalogEntry[]>",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:178"
+   ]
+  },
+  "sidebar": {
+   "name": "sidebar",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: SidebarOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-layout/src/client/index.ts:68"
+   ]
+  },
+  "sidebar.brand.mark": {
+   "name": "sidebar.brand.mark",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: SidebarBrandMarkOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar/src/client/contract/slots.ts:25"
+   ]
+  },
+  "sidebar.brand.name": {
+   "name": "sidebar.brand.name",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: SidebarBrandNameOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar/src/client/contract/slots.ts:30"
+   ]
+  },
+  "sidebar.chat.conversation": {
+   "name": "sidebar.chat.conversation",
+   "specifier": "{ kind: 'single'; scope: 'session' }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-subagent/src/client/sidebar-chat/index.tsx:42"
+   ]
+  },
+  "sidebar.footer.action": {
+   "name": "sidebar.footer.action",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: SidebarFooterActionOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar/src/client/contract/slots.ts:53"
+   ]
+  },
+  "sidebar.panellist": {
+   "name": "sidebar.panellist",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: SidebarPanelIconOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar/src/client/contract/slots.ts:35"
+   ]
+  },
+  "sidebar.right.pane.tab": {
+   "name": "sidebar.right.pane.tab",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:59"
+   ]
+  },
+  "sidebar.right.pane.tab.title": {
+   "name": "sidebar.right.pane.tab.title",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:73"
+   ]
+  },
+  "sidebar.right.tab.document": {
+   "name": "sidebar.right.tab.document",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:51"
+   ]
+  },
+  "sidebar.right.tab.document.action": {
+   "name": "sidebar.right.tab.document.action",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:87"
+   ]
+  },
+  "sidebar.right.tab.document.actions": {
+   "name": "sidebar.right.tab.document.actions",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:66"
+   ]
+  },
+  "sidebar.right.tab.document.office.pdf": {
+   "name": "sidebar.right.tab.document.office.pdf",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/office/OfficeBody.tsx:19"
+   ]
+  },
+  "sidebar.right.tab.document.unpreviewable": {
+   "name": "sidebar.right.tab.document.unpreviewable",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:78"
+   ]
+  },
+  "sidebar.right.tab.files.actions": {
+   "name": "sidebar.right.tab.files.actions",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-files/src/client/index.ts:34"
+   ]
+  },
+  "sidebar.right.tab.guide": {
+   "name": "sidebar.right.tab.guide",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:84"
+   ]
+  },
+  "sidebar.right.tab.guide.entry": {
+   "name": "sidebar.right.tab.guide.entry",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:91"
+   ]
+  },
+  "sidebar.right.tab.menu.item": {
+   "name": "sidebar.right.tab.menu.item",
+   "specifier": "{ kind: 'list'; scope: 'session'; owner: SidebarRightTabMenuOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-right/src/client/contract/slots.ts:103"
+   ]
+  },
+  "sidebar.session.row.hover": {
+   "name": "sidebar.session.row.hover",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: SessionRowScheduleOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:136"
+   ]
+  },
+  "sidebar.session.row.leading": {
+   "name": "sidebar.session.row.leading",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: SessionRowScheduleOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:131"
+   ]
+  },
+  "sidebar.settings": {
+   "name": "sidebar.settings",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: SidebarSettingsOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar/src/client/contract/slots.ts:48"
+   ]
+  },
+  "sidebar.toggle.badge": {
+   "name": "sidebar.toggle.badge",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: Record<never, never> }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar/src/client/contract/slots.ts:19"
+   ]
+  },
+  "sidebar.workspaces": {
+   "name": "sidebar.workspaces",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: SidebarSectionOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar/src/client/contract/slots.ts:42"
+   ]
+  },
+  "sidebar.workspaces.directoryFlow": {
+   "name": "sidebar.workspaces.directoryFlow",
+   "specifier": "{ kind: 'single'; scope: 'root'; owner: DirectoryFlowOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:121"
+   ]
+  },
+  "sidebar.workspaces.session.menu.item": {
+   "name": "sidebar.workspaces.session.menu.item",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:171"
+   ]
+  },
+  "sidebar.workspaces.session.row.action": {
+   "name": "sidebar.workspaces.session.row.action",
+   "specifier": "{ kind: 'list'; scope: 'root'; owner: SessionRowOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/slots.ts:189"
+   ]
+  },
+  "tabInfo": {
+   "name": "tabInfo",
+   "specifier": "SlotHookFactory<'sidebar.right.tab.document', UseSidebarRightTabInfo>",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/document/contract.ts:58"
+   ]
+  },
+  "tool.call.images": {
+   "name": "tool.call.images",
+   "specifier": "{ kind: 'single'; scope: 'session'; owner: ToolImagesOwnerProps }",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-tool/src/client/contract/slots.ts:44"
+   ]
+  },
+  "tool.call.toolview": {
+   "name": "tool.call.toolview",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-tool/src/client/contract/slots.ts:26"
+   ]
+  },
+  "tool.view.cordis": {
+   "name": "tool.view.cordis",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/extensions/ui-cordis/src/client/slots.ts:31"
+   ]
+  },
+  "workspace.toast": {
+   "name": "workspace.toast",
+   "specifier": "{",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-workspace/src/client/contract/toast.ts:53"
+   ]
+  }
+ },
+ "limits": [
+  "Members are the names the service type declares, followed through its declared bases: members are the ones a caller can call, properties the ones it can read. A type whose members could not be enumerated records members: null with membersReason, and a member usage against such a service is unknown, never absent.",
+  "Members are read from the kernel sources, including declarations stored inside generated catalogs; a name that is still declared does not promise the same body.",
+  "Names and declared types only: a name that is still declared does not promise the same method set.",
+  "Only Context/Events augmentations are read; a service reached through another package’s re-export is not attributed twice.",
+  "Slot names come from SlotMap declaration merging, which is what makes a name legal; whether the current owner renders that seat is a runtime fact this does not read."
+ ],
+ "sourceDigest": "ad52b9f985f9e0aa"
+}

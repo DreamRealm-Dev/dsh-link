@@ -1,0 +1,687 @@
+diff --git a/packages/api/session-controller/src/client/contract/events.ts b/packages/api/session-controller/src/client/contract/events.ts
+index bc825f08fd..09e39a3058 100644
+--- a/packages/api/session-controller/src/client/contract/events.ts
++++ b/packages/api/session-controller/src/client/contract/events.ts
+@@ -76,6 +76,100 @@ function materialize(node: EventWindowNode): readonly SessionEventLikeEntry[] {
+   return entries
+ }
+ 
++/**
++ * Take the last `count` entries of a window tree without materializing the whole tree.
++ *
++ * Walks right-first and stops once `count` entries are collected, so a right-leaning append
++ * tree costs O(count + tree depth) instead of O(window length). Trim is the only caller.
++ * @param node - window tree root.
++ * @param count - entries to keep from the tail.
++ * @returns retained entries in ascending order.
++ */
++function tailEntries(node: EventWindowNode, count: number): readonly SessionEventLikeEntry[] {
++  const keep = Math.min(count, node.length)
++  const blocks: (readonly SessionEventLikeEntry[])[] = []
++  let want = keep
++  const pending: EventWindowNode[] = [node]
++  while (pending.length > 0 && want > 0) {
++    const current = pending.pop() as EventWindowNode
++    if (current.kind === 'concat') {
++      pending.push(current.left, current.right)
++      continue
++    }
++    const take = Math.min(current.length, want)
++    const from = current.length - take
++    const block: SessionEventLikeEntry[] = []
++    for (let index = from; index < current.entries.length; index += 1) {
++      const entry = current.entries[index]
++      if (entry !== undefined) block.push(entry)
++    }
++    blocks.push(block)
++    want -= take
++  }
++  const out: SessionEventLikeEntry[] = []
++  for (let index = blocks.length - 1; index >= 0; index -= 1) {
++    const block = blocks[index]
++    if (block === undefined) continue
++    for (const entry of block) out.push(entry)
++  }
++  return out
++}
++
++/**
++ * Optional live-tail event window limit.
++ *
++ * Absent, the event window behaves exactly like upstream: append/prepend never drop anything.
++ * When present, a Session trims the oldest prefix after a live append crosses
++ * `maxEvents + slackEvents` and, with `trimOpeningPage`, applies the same second truncation to
++ * an opening page (pages are capped by messages, not events — R495 C5).
++ */
++export interface EventWindowLimit {
++  /** Entries retained after a trim. */
++  readonly maxEvents: number
++  /** Appends allowed above the limit before the next trim. */
++  readonly slackEvents: number
++  /** Whether the opening page is truncated to `maxEvents` as well. */
++  readonly trimOpeningPage: boolean
++}
++
++/** Browser global a deployment may set before client plugins mount; absent means off. */
++const EVENT_WINDOW_LIMIT_GLOBAL = '__DSH_EVENT_WINDOW_LIMIT__'
++
++/** Programmatic override for same-process consumers and tests; null means "use the global". */
++let programmaticWindowLimit: EventWindowLimit | null = null
++
++/**
++ * Install a process-local window limit, or clear it.
++ * @param limit - validated limit, or null to fall back to the global/off default.
++ */
++export function configureEventWindowLimit(limit: EventWindowLimit | null): void {
++  programmaticWindowLimit = normalizeWindowLimit(limit)
++}
++
++/**
++ * Resolve the effective window limit for one Session open.
++ *
++ * Precedence: programmatic value, then the optional browser global, then off. A malformed value
++ * resolves to off (stock behavior) instead of throwing: the seam is additive and must never make
++ * an otherwise valid composition fail.
++ * @returns the validated limit, or null when the window is unbounded (stock behavior).
++ */
++export function resolveEventWindowLimit(): EventWindowLimit | null {
++  if (programmaticWindowLimit !== null) return programmaticWindowLimit
++  const candidate = (globalThis as Record<string, unknown>)[EVENT_WINDOW_LIMIT_GLOBAL]
++  return normalizeWindowLimit(candidate)
++}
++
++function normalizeWindowLimit(value: unknown): EventWindowLimit | null {
++  if (typeof value !== 'object' || value === null) return null
++  const candidate = value as { maxEvents?: unknown; slackEvents?: unknown; trimOpeningPage?: unknown }
++  const maxEvents = candidate.maxEvents
++  const slackEvents = candidate.slackEvents === undefined ? 0 : candidate.slackEvents
++  if (typeof maxEvents !== 'number' || !Number.isSafeInteger(maxEvents) || maxEvents <= 0) return null
++  if (typeof slackEvents !== 'number' || !Number.isSafeInteger(slackEvents) || slackEvents < 0) return null
++  return { maxEvents, slackEvents, trimOpeningPage: candidate.trimOpeningPage !== false }
++}
++
+ function windowSnapshot(
+   node: EventWindowNode,
+   hasMore: boolean,
+@@ -130,6 +224,28 @@ export class MutableSessionEventSource implements SessionEventSource {
+   /** @returns the cached event-window snapshot. */
+   getSnapshot(): SessionEventWindow { return this.snapshot }
+ 
++  /** Entries currently retained; O(1), read by the window limiter before it trims. */
++  get length(): number { return this.window.length }
++
++  /**
++   * Keep only the last `count` entries and publish one replace.
++   *
++   * The dropped range is a prefix of the contiguous window, i.e. older history, so the published
++   * change carries `hasMore: true` and the owner keeps paging through loadOlder()/loadThrough()
++   * from the new front. Nothing is reordered and nothing inside the retained tail changes.
++   * @param count - entries to retain from the tail.
++   * @returns dropped entry count and the first retained event seq (undefined when nothing dropped).
++   */
++  trimToTail(count: number): { readonly dropped: number; readonly firstSeq: number | undefined } {
++    if (count <= 0 || this.window.length <= count) return { dropped: 0, firstSeq: undefined }
++    const retained = tailEntries(this.window, count)
++    const dropped = this.window.length - retained.length
++    this.window = leaf(retained)
++    this.publish(true, { kind: 'replace', entries: retained })
++    const first = retained[0]
++    return { dropped, firstSeq: first === undefined ? undefined : first.event.seq }
++  }
++
+   /**
+    * Subscribe to synchronous window publication.
+    * @param listener - invalidation callback.
+diff --git a/packages/api/session-controller/src/client/index.ts b/packages/api/session-controller/src/client/index.ts
+index b9600f36a6..ee784b7f50 100644
+--- a/packages/api/session-controller/src/client/index.ts
++++ b/packages/api/session-controller/src/client/index.ts
+@@ -53,6 +53,8 @@ export type {
+   ISessions, SessionReference, SessionRetainInfo, SessionRetainOptions, SessionTarget,
+ } from './contract/sessions.ts'
+ export { MutableSessionEventSource } from './contract/events.ts'
++export { configureEventWindowLimit, resolveEventWindowLimit } from './contract/events.ts'
++export type { EventWindowLimit } from './contract/events.ts'
+ export type {
+   AssistantLiveChunkEvent,
+   SessionAssistantSettlementEntry,
+diff --git a/packages/api/session-controller/src/client/sessions/session.ts b/packages/api/session-controller/src/client/sessions/session.ts
+index 253da9c463..6f09e9229a 100644
+--- a/packages/api/session-controller/src/client/sessions/session.ts
++++ b/packages/api/session-controller/src/client/sessions/session.ts
+@@ -24,9 +24,9 @@ import type {
+ import type {
+   OpenState, PendingSubmission, PromptError, SessionSnapshot,
+ } from '../contract/snapshot.ts'
+-import { MutableSessionEventSource } from '../contract/events.ts'
++import { MutableSessionEventSource, resolveEventWindowLimit } from '../contract/events.ts'
+ import type {
+-  SessionEventLike, SessionEventLikeEntry, SessionLiveEventEntry,
++  EventWindowLimit, SessionEventLike, SessionEventLikeEntry, SessionLiveEventEntry,
+ } from '../contract/events.ts'
+ import { Notifier } from './notifier.ts'
+ import { isRemoteFailure } from '@deepseek-ai/dsh-api-gateway/client'
+@@ -96,6 +96,8 @@ export interface SessionOptions {
+ export class Session implements SessionFace {
+   // ---- Window and derived state (all private; the snapshot is the only read API) ----
+   private baseSeq = SessionLogOffset(0)
++  /** Resolved live-tail window limit for this open; null means stock unbounded behavior. */
++  private windowLimit: EventWindowLimit | null = null
+   private hasMore = false
+   private openState: OpenState = 'cold'
+   private openError: RemoteFailure | null = null
+@@ -639,6 +641,10 @@ export class Session implements SessionFace {
+   private async doOpen(generation: number): Promise<void> {
+     this.openState = 'loading'
+     this.openError = null
++    // Resolve once per open, before the opening page lands: a toggle set before this Session was
++    // opened applies to it; an already-open Session keeps the limit it resolved with. Absent
++    // configuration resolves to null and every path below behaves exactly like upstream.
++    this.windowLimit = resolveEventWindowLimit()
+     this.notifier.markDirty()
+     const events = new SessionEventStream(this.remote, this.sessionAddress(), {
+       publish: (change) => {
+@@ -708,6 +714,7 @@ export class Session implements SessionFace {
+     if (visible.some(entry => entry.event.type === 'turn/start')) this.firstPromptPendingTurn = false
+     if (projections !== undefined) this.projections.seed(projections)
+     this.eventSource.replace(visible, hasMore)
++    if (this.windowLimit !== null) this.trimOpeningWindow(visible.length)
+     // A new follow baseline replaces confirmed optimistic inputs with Host-owned rows.
+     // Receipt-backed inputs are accepted, not failed, even if their history is outside this window.
+     if (projections !== undefined) {
+@@ -737,6 +744,7 @@ export class Session implements SessionFace {
+     }
+     if (result?.type === 'settlement') {
+       this.eventSource.settleAssistant(result.attemptId, result.entry)
++      if (this.windowLimit !== null) this.maintainEventWindow()
+       this.observeSubmissionEvent(result.entry.event)
+       this.notifier.markDirty()
+       return
+@@ -752,6 +760,7 @@ export class Session implements SessionFace {
+       if (changed || result.retireAttemptId !== undefined) this.notifier.markDirty()
+     } else if (result?.type === 'transient') {
+       this.eventSource.append(result.entry)
++      if (this.windowLimit !== null) this.maintainEventWindow()
+       this.notifier.markDirty()
+     }
+   }
+@@ -770,12 +779,61 @@ export class Session implements SessionFace {
+     this.eventSource.prepend(entries, hasMore)
+   }
+ 
++  /**
++   * Second-truncate an opening page when the limit asks for it.
++   *
++   * A history page is capped by MESSAGES (500) and can hold thousands of events (R495 C5:
++   * 3,772 events / 8.9 MB measured), so the opening window gets the same event cap as the live
++   * tail. The trimmed prefix is older history: hasMore becomes true and the official loadOlder()
++   * pages it back from the new front.
++   * @param installed - entries in the page that was just installed.
++   */
++  private trimOpeningWindow(installed: number): void {
++    const limit = this.windowLimit
++    if (limit === null || !limit.trimOpeningPage || installed <= limit.maxEvents) return
++    // R501-P2: never trim while a page or turn jump is in flight. A loader records the pre-trim
++    // baseSeq in pendingHistory before this runs; trimming underneath it would join its page to a
++    // front that moved and leave a seq hole (prepend has no gap check). The next live trim picks
++    // the window up once the loader settles.
++    if (this.loadingOlder || this.jumpPromise !== null || this.pendingHistory !== null) return
++    const trim = this.eventSource.trimToTail(limit.maxEvents)
++    if (trim.dropped === 0) return
++    this.baseSeq = SessionLogOffset(trim.firstSeq ?? this.baseSeq)
++    this.hasMore = true
++    this.notifier.markDirty()
++  }
++
++  /**
++   * Keep the live tail within the configured event window by dropping the oldest prefix.
++   *
++   * Invariants: the dropped range is a contiguous prefix (older history), baseSeq moves to the
++   * first retained seq, hasMore stays true so loadOlder()/loadThrough() page from the new front,
++   * and nothing is trimmed while a page or turn jump is in flight (pendingHistory/loadingOlder/
++   * jumpPromise) so a loader can never join its page to a front that moved underneath it.
++   * Retained entries are never reordered or rebuilt by this method; the published change is a
++   * replace, which is what lets the Conversation assembly drop the retired nodes.
++   */
++  private maintainEventWindow(): void {
++    const limit = this.windowLimit
++    if (limit === null) return
++    if (this.loadingOlder || this.jumpPromise !== null || this.pendingHistory !== null) return
++    if (this.eventSource.length <= limit.maxEvents + limit.slackEvents) return
++    const trim = this.eventSource.trimToTail(limit.maxEvents)
++    if (trim.dropped === 0) return
++    this.baseSeq = SessionLogOffset(trim.firstSeq ?? this.baseSeq)
++    this.hasMore = true
++    this.notifier.markDirty()
++  }
++
+   /** Append one stream-validated live event. */
+   private appendLive(entry: SessionLiveEventEntry): boolean {
+     const event = entry.event
+     const awaitingFirstTurn = this.firstPromptPendingTurn
+     if (event.type === 'turn/start') this.firstPromptPendingTurn = false
+     this.eventSource.append(entry)
++    // One field read in the default-off path: the limit is resolved per open and is null unless
++    // a deployment configured it, so a stock composition pays no function call here.
++    if (this.windowLimit !== null) this.maintainEventWindow()
+     // After the feed append: the conversation assembly's animation frame is
+     // registered by the feed subscribers above, so the echo-retirement frame
+     // scheduled here always runs after the durable node became renderable.
+diff --git a/packages/api/session-controller/tests/session-window.client.spec.ts b/packages/api/session-controller/tests/session-window.client.spec.ts
+new file mode 100644
+index 0000000000..020a9a34a5
+--- /dev/null
++++ b/packages/api/session-controller/tests/session-window.client.spec.ts
+@@ -0,0 +1,412 @@
++/**
++ * Optional live-tail event window (R501): trimming invariants, the in-flight guard added by
++ * R501-P2, default-off equivalence, and limit resolution precedence.
++ *
++ * The unit cases pin MutableSessionEventSource and the module-level resolver. The client cases
++ * drive a real Session through the assembled client so the guard is exercised where it lives:
++ * loadOlder()/loadThrough() in flight, a resync replacement during a page loader, and the
++ * default-off path that must stay byte-identical to stock upstream behavior.
++ */
++
++import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest'
++import { LlmAttemptId } from '@deepseek-ai/dsh-llm'
++import { SessionSeq, type SessionEvent } from '@deepseek-ai/dsh-session/types'
++import type { SessionId } from '@deepseek-ai/dsh-api-remotes/client'
++import type { RemoteMock } from '@deepseek-ai/dsh-remote-mock'
++import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
++import { createClientTest, webApp } from '@deepseek-ai/dsh-client-test-runtime/src/assembly/index.ts'
++import {
++  MutableSessionEventSource,
++  configureEventWindowLimit,
++  resolveEventWindowLimit,
++} from '../src/client/contract/events.ts'
++import type { SessionEventLikeEntry } from '../src/client/contract/events.ts'
++import type { Session } from '../src/client/sessions/session.ts'
++import type {
++  SessionAssistantStreamFrame, SessionEventsPage, SessionPageRequest,
++} from '../src/types.ts'
++import { ev, plainTurn } from './event-script.client.ts'
++import { sessionBench } from './remote/bench.client.ts'
++import { FOLLOW, PAGE, followScript, history, pageRule, pushEvent } from './remote/session.client.ts'
++
++/** A Session talks through the Gateway client; its dependency cone is the Typert registry and the Connection. */
++const API_ROSTER = webApp.closure(['@deepseek-ai/dsh-api-gateway'])
++const clientIt = createClientTest({ roster: API_ROSTER })
++const SID = 'fk-r508' as SessionId
++const GLOBAL_KEY = '__DSH_EVENT_WINDOW_LIMIT__'
++
++beforeEach(() => {
++  configureEventWindowLimit(null)
++  Reflect.deleteProperty(globalThis, GLOBAL_KEY)
++})
++
++afterEach(() => {
++  configureEventWindowLimit(null)
++  Reflect.deleteProperty(globalThis, GLOBAL_KEY)
++})
++
++/** Retained event seqs of the Session's current window. */
++function eventSeqs(session: Session): number[] {
++  return session.eventSource.getSnapshot().entries.map(entry => entry.event.seq)
++}
++
++/** Record every published window change kind for the rest of the current case. */
++function recordChangeKinds(session: Session): string[] {
++  const kinds: string[] = []
++  onTestFinished(session.eventSource.subscribe(() => {
++    kinds.push(session.eventSource.getSnapshot().change.kind)
++  }))
++  return kinds
++}
++
++/** One live user-message entry at seq, shaped like the Host's append frame. */
++function liveEntry(seq: number, body = 'live'): SessionEventLikeEntry {
++  return { type: 'event', event: ev.user(SessionSeq(seq), body) }
++}
++
++/** Append count synthetic entries starting at offset and return them. */
++function feed(source: MutableSessionEventSource, count: number, offset = 0): SessionEventLikeEntry[] {
++  const appended: SessionEventLikeEntry[] = []
++  for (let index = 0; index < count; index += 1) {
++    const entry = liveEntry(offset + index)
++    source.append(entry)
++    appended.push(entry)
++  }
++  return appended
++}
++
++/** Wait until the Session has issued one page request. */
++async function waitForPage(mock: RemoteMock): Promise<void> {
++  await vi.waitFor(() => { expect(mock.log.requests(PAGE)).toHaveLength(1) })
++}
++
++describe('MutableSessionEventSource.trimToTail', () => {
++  it('keeps the tail through one replace and reports dropped/firstSeq', () => {
++    const source = new MutableSessionEventSource()
++    const all = feed(source, 20)
++    expect(source.length).toBe(20)
++
++    const published: number[] = []
++    onTestFinished(source.subscribe(() => { published.push(source.getSnapshot().revision) }))
++    const revision = source.getSnapshot().revision
++
++    const trim = source.trimToTail(5)
++    expect(trim).toEqual({ dropped: 15, firstSeq: 15 })
++    expect(source.length).toBe(5)
++    expect(published).toEqual([revision + 1])
++
++    const snapshot = source.getSnapshot()
++    expect(snapshot.revision).toBe(revision + 1)
++    expect(snapshot.hasMore).toBe(true)
++    expect(snapshot.change.kind).toBe('replace')
++    const change = snapshot.change
++    if (change.kind !== 'replace') throw new Error('expected a replace change')
++    expect(change.entries).toHaveLength(5)
++    // One publish: the change carries exactly the retained tail, in order and by identity.
++    change.entries.forEach((entry, index) => { expect(entry).toBe(all[15 + index]) })
++    expect(snapshot.entries.map(entry => entry.event.seq)).toEqual([15, 16, 17, 18, 19])
++  })
++
++  it('is a no-op when nothing would be dropped or the count is not positive', () => {
++    const source = new MutableSessionEventSource()
++    feed(source, 5)
++    const published: number[] = []
++    onTestFinished(source.subscribe(() => { published.push(source.getSnapshot().revision) }))
++    const revision = source.getSnapshot().revision
++
++    expect(source.trimToTail(5)).toEqual({ dropped: 0, firstSeq: undefined })
++    expect(source.trimToTail(9)).toEqual({ dropped: 0, firstSeq: undefined })
++    expect(source.trimToTail(0)).toEqual({ dropped: 0, firstSeq: undefined })
++    expect(source.trimToTail(-1)).toEqual({ dropped: 0, firstSeq: undefined })
++    expect(published).toEqual([])
++    expect(source.getSnapshot().revision).toBe(revision)
++    expect(source.length).toBe(5)
++  })
++
++  it('keeps appends contiguous after a trim and reports the new front', () => {
++    const source = new MutableSessionEventSource()
++    feed(source, 20)
++    source.trimToTail(5)
++
++    const next = liveEntry(20)
++    source.append(next)
++    expect(source.getSnapshot().change.kind).toBe('append')
++    expect(source.length).toBe(6)
++
++    expect(source.trimToTail(3)).toEqual({ dropped: 3, firstSeq: 18 })
++    expect(source.length).toBe(3)
++    expect(source.getSnapshot().entries.map(entry => entry.event.seq)).toEqual([18, 19, 20])
++  })
++})
++
++describe('resolveEventWindowLimit', () => {
++  it('prefers the programmatic limit, then the browser global, then off', () => {
++    expect(resolveEventWindowLimit()).toBeNull()
++
++    ;(globalThis as Record<string, unknown>)[GLOBAL_KEY] = {
++      maxEvents: 100,
++      slackEvents: 10,
++      trimOpeningPage: false,
++    }
++    expect(resolveEventWindowLimit()).toEqual({ maxEvents: 100, slackEvents: 10, trimOpeningPage: false })
++
++    configureEventWindowLimit({ maxEvents: 5, slackEvents: 0, trimOpeningPage: true })
++    expect(resolveEventWindowLimit()).toEqual({ maxEvents: 5, slackEvents: 0, trimOpeningPage: true })
++
++    configureEventWindowLimit(null)
++    expect(resolveEventWindowLimit()).toEqual({ maxEvents: 100, slackEvents: 10, trimOpeningPage: false })
++  })
++
++  it('normalizes defaults and resolves malformed values to off without throwing', () => {
++    const malformed: unknown[] = [
++      'limit',
++      42,
++      true,
++      {},
++      null,
++      { maxEvents: 0 },
++      { maxEvents: -1 },
++      { maxEvents: 5.5 },
++      { maxEvents: '8' },
++      { maxEvents: Number.NaN },
++      { maxEvents: 8, slackEvents: -1 },
++      { maxEvents: 8, slackEvents: 1.5 },
++      { maxEvents: 8, slackEvents: '1' },
++    ]
++    for (const value of malformed) {
++      ;(globalThis as Record<string, unknown>)[GLOBAL_KEY] = value
++      expect(() => resolveEventWindowLimit()).not.toThrow()
++      expect(resolveEventWindowLimit()).toBeNull()
++    }
++  })
++
++  it('defaults slackEvents to 0 and trimOpeningPage to true, and lets an invalid programmatic value fall back', () => {
++    ;(globalThis as Record<string, unknown>)[GLOBAL_KEY] = { maxEvents: 8 }
++    expect(resolveEventWindowLimit()).toEqual({ maxEvents: 8, slackEvents: 0, trimOpeningPage: true })
++
++    ;(globalThis as Record<string, unknown>)[GLOBAL_KEY] = { maxEvents: 8, slackEvents: 2 }
++    expect(resolveEventWindowLimit()).toEqual({ maxEvents: 8, slackEvents: 2, trimOpeningPage: true })
++
++    ;(globalThis as Record<string, unknown>)[GLOBAL_KEY] = { maxEvents: 8, slackEvents: 2, trimOpeningPage: false }
++    expect(resolveEventWindowLimit()).toEqual({ maxEvents: 8, slackEvents: 2, trimOpeningPage: false })
++
++    configureEventWindowLimit({ maxEvents: 0, slackEvents: 0, trimOpeningPage: true })
++    expect(resolveEventWindowLimit()).toEqual({ maxEvents: 8, slackEvents: 2, trimOpeningPage: false })
++  })
++})
++
++describe('Session window: default off', () => {
++  clientIt('keeps the stock window: no trim, stable front, append-only changes', async ({ mock, start }) => {
++    const session = await sessionBench(mock, start, SID)
++    const opening = plainTurn(SessionSeq(20), 0, 'q', 'a')
++    mock.stream(FOLLOW, followScript(history(opening, true)))
++    await session.open()
++    expect(resolveEventWindowLimit()).toBeNull()
++
++    const kinds = recordChangeKinds(session)
++    for (let index = 0; index < 8; index += 1) await pushEvent(mock, ev.user(SessionSeq(26 + index), 'live-' + String(index)))
++
++    expect(kinds).toEqual(['append', 'append', 'append', 'append', 'append', 'append', 'append', 'append'])
++    expect(eventSeqs(session)).toEqual([20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33])
++    expect(session.eventSource.getSnapshot().hasMore).toBe(true)
++
++    // The front never moved: the next older page starts exactly where the opening page started.
++    const pageRequests: SessionPageRequest[] = []
++    mock.remote.session.page.mockImplementation(pageRule((request) => {
++      pageRequests.push(request)
++      return history([], false)
++    }))
++    await session.loadOlder()
++    expect(pageRequests[0]?.beforeSeq).toBe(20)
++  })
++
++  clientIt('publishes only the opening replace when a configured limit is never crossed', async ({ mock, start }) => {
++    configureEventWindowLimit({ maxEvents: 1_000, slackEvents: 100, trimOpeningPage: true })
++    const session = await sessionBench(mock, start, SID)
++    mock.stream(FOLLOW, followScript(history(plainTurn(SessionSeq(40), 0, 'q', 'a'), true)))
++    const kinds = recordChangeKinds(session)
++    await session.open()
++    for (let index = 0; index < 6; index += 1) await pushEvent(mock, ev.user(SessionSeq(46 + index), 'live'))
++
++    expect(kinds[0]).toBe('replace')
++    expect(kinds.slice(1)).toEqual(['append', 'append', 'append', 'append', 'append', 'append'])
++    expect(eventSeqs(session)).toEqual([40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51])
++  })
++})
++
++describe('Session window: trimming', () => {
++  clientIt('trims the opening page to maxEvents and pages older history from the new front', async ({ mock, start }) => {
++    configureEventWindowLimit({ maxEvents: 8, slackEvents: 0, trimOpeningPage: true })
++    const session = await sessionBench(mock, start, SID)
++    const opening: SessionEvent[] = [
++      ...plainTurn(SessionSeq(300), 0, 'a', 'b'),
++      ...plainTurn(SessionSeq(306), 1, 'c', 'd'),
++      ...plainTurn(SessionSeq(312), 2, 'e', 'f'),
++      ...plainTurn(SessionSeq(318), 3, 'g', 'h'),
++    ]
++    mock.stream(FOLLOW, followScript(history(opening, false)))
++
++    const pageRequests: SessionPageRequest[] = []
++    mock.remote.session.page.mockImplementation(pageRule((request) => {
++      pageRequests.push(request)
++      return history([], false)
++    }))
++
++    await session.open()
++    expect(eventSeqs(session)).toEqual([316, 317, 318, 319, 320, 321, 322, 323])
++    expect(session.eventSource.getSnapshot().hasMore).toBe(true)
++
++    await session.loadOlder()
++    expect(pageRequests[0]?.beforeSeq).toBe(316)
++  })
++
++  clientIt('keeps the opening page when trimOpeningPage is off, then trims the live tail across slack', async ({ mock, start }) => {
++    configureEventWindowLimit({ maxEvents: 8, slackEvents: 2, trimOpeningPage: false })
++    const session = await sessionBench(mock, start, SID)
++    mock.stream(FOLLOW, followScript(history(plainTurn(SessionSeq(0), 0, 'q', 'a'), true)))
++    await session.open()
++    expect(eventSeqs(session)).toEqual([0, 1, 2, 3, 4, 5])
++    const kinds = recordChangeKinds(session)
++
++    // length 7..10 stays within maxEvents + slackEvents: append only, no replace.
++    for (const seq of [6, 7, 8, 9]) await pushEvent(mock, ev.user(SessionSeq(seq), 'live-' + String(seq)))
++    expect(eventSeqs(session)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
++    expect(kinds).toEqual(['append', 'append', 'append', 'append'])
++
++    // seq 10 makes length 11 > 10: trim to the last 8 entries.
++    await pushEvent(mock, ev.user(SessionSeq(10), 'live-10'))
++    expect(kinds).toEqual(['append', 'append', 'append', 'append', 'append', 'replace'])
++    expect(eventSeqs(session)).toEqual([3, 4, 5, 6, 7, 8, 9, 10])
++
++    await pushEvent(mock, ev.user(SessionSeq(11), 'live-11'))
++    await pushEvent(mock, ev.user(SessionSeq(12), 'live-12'))
++    expect(eventSeqs(session)).toEqual([3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
++    await pushEvent(mock, ev.user(SessionSeq(13), 'live-13'))
++    expect(eventSeqs(session)).toEqual([6, 7, 8, 9, 10, 11, 12, 13])
++  })
++})
++
++describe('Session window: in-flight guard (R501-P2)', () => {
++  clientIt('does not trim while loadOlder is in flight, then resumes on the next live append', async ({ mock, start }) => {
++    configureEventWindowLimit({ maxEvents: 8, slackEvents: 0, trimOpeningPage: false })
++    const session = await sessionBench(mock, start, SID)
++    mock.stream(FOLLOW, followScript(history(plainTurn(SessionSeq(100), 0, 'q', 'a'), true)))
++    await session.open()
++    const kinds = recordChangeKinds(session)
++
++    const gate = Promise.withResolvers<RemoteResult<SessionEventsPage>>()
++    const pageRequests: SessionPageRequest[] = []
++    mock.remote.session.page.mockImplementation(pageRule((request) => {
++      pageRequests.push(request)
++      return gate.promise
++    }))
++    const older = session.loadOlder()
++    await waitForPage(mock)
++    expect(session.getSnapshot().loadingOlder).toBe(true)
++
++    // Length 10 > maxEvents 8 would trim in the settled state; the in-flight loader suppresses it.
++    for (const seq of [106, 107, 108, 109]) await pushEvent(mock, ev.user(SessionSeq(seq), 'live-' + String(seq)))
++    expect(eventSeqs(session)).toEqual([100, 101, 102, 103, 104, 105, 106, 107, 108, 109])
++    expect(kinds).toEqual(['append', 'append', 'append', 'append'])
++
++    gate.resolve(history([], false))
++    await older
++    expect(session.getSnapshot().loadingOlder).toBe(false)
++
++    await pushEvent(mock, ev.user(SessionSeq(110), 'live-110'))
++    expect(kinds.at(-1)).toBe('replace')
++    expect(eventSeqs(session)).toEqual([103, 104, 105, 106, 107, 108, 109, 110])
++
++    // baseSeq moved with the retained front: loadOlder pages from seq 103 now.
++    await session.loadOlder()
++    expect(pageRequests.at(-1)?.beforeSeq).toBe(103)
++  })
++
++  clientIt('does not trim while a turn jump is in flight (pendingHistory), then resumes on settle', async ({ mock, start }) => {
++    configureEventWindowLimit({ maxEvents: 8, slackEvents: 0, trimOpeningPage: false })
++    const session = await sessionBench(mock, start, SID)
++    mock.stream(FOLLOW, followScript(history(plainTurn(SessionSeq(200), 0, 'q', 'a'), true)))
++    await session.open()
++    const kinds = recordChangeKinds(session)
++
++    const gate = Promise.withResolvers<RemoteResult<SessionEventsPage>>()
++    mock.remote.session.page.mockImplementation(pageRule(() => gate.promise))
++    const jump = session.loadThrough(SessionSeq(0))
++    await waitForPage(mock)
++    expect(session.getSnapshot().loadingOlder).toBe(true)
++
++    for (const seq of [206, 207, 208, 209]) await pushEvent(mock, ev.user(SessionSeq(seq), 'live-' + String(seq)))
++    expect(eventSeqs(session)).toEqual([200, 201, 202, 203, 204, 205, 206, 207, 208, 209])
++    expect(kinds).toEqual(['append', 'append', 'append', 'append'])
++
++    gate.resolve(history([], false))
++    await jump
++    expect(session.getSnapshot().loadingOlder).toBe(false)
++
++    await pushEvent(mock, ev.user(SessionSeq(210), 'live-210'))
++    expect(kinds.at(-1)).toBe('replace')
++    expect(eventSeqs(session)).toEqual([203, 204, 205, 206, 207, 208, 209, 210])
++  })
++
++  clientIt('skips trimOpeningWindow while loadOlder is in flight, then trims the replaced window on the next append', async ({ mock, start }) => {
++    configureEventWindowLimit({ maxEvents: 8, slackEvents: 0, trimOpeningPage: true })
++    const session = await sessionBench(mock, start, SID)
++    mock.stream(FOLLOW, followScript(history(plainTurn(SessionSeq(300), 0, 'q', 'a'), true)))
++    await session.open()
++    expect(eventSeqs(session)).toEqual([300, 301, 302, 303, 304, 305])
++    const kinds = recordChangeKinds(session)
++
++    const gate = Promise.withResolvers<RemoteResult<SessionEventsPage>>()
++    const pageRequests: SessionPageRequest[] = []
++    mock.remote.session.page.mockImplementation(pageRule((request) => {
++      pageRequests.push(request)
++      return gate.promise
++    }))
++    const older = session.loadOlder()
++    await waitForPage(mock)
++    expect(session.getSnapshot().loadingOlder).toBe(true)
++
++    // A replacement snapshot larger than maxEvents arrives while the page loader is in flight:
++    // trimOpeningWindow must leave it untrimmed (R501-P2), so the loader cannot join a moved front.
++    const replacement: SessionEvent[] = [
++      ...plainTurn(SessionSeq(320), 0, 'a', 'b'),
++      ...plainTurn(SessionSeq(326), 1, 'c', 'd'),
++      ...plainTurn(SessionSeq(332), 2, 'e', 'f'),
++      ...plainTurn(SessionSeq(338), 3, 'g', 'h'),
++    ]
++    mock.stream(FOLLOW, followScript(history(replacement, false)))
++    // A transient assistant revision gap rebaselines the live stream: the same SessionEventStream
++    // reopens follow and publishes a replace while the page loader is still in flight.
++    const gap: SessionAssistantStreamFrame = {
++      type: 'chunk',
++      attemptId: LlmAttemptId('r508-gap'),
++      revision: 3,
++      index: 0,
++      time: 1,
++      chunk: { type: 'text-delta', index: 0, text: 'gap' },
++    }
++    mock.streams.push(FOLLOW, { type: 'assistant-stream', frame: gap })
++    await mock.streams.drained(FOLLOW)
++    await vi.waitFor(() => { expect(mock.log.requests(FOLLOW)).toHaveLength(2) })
++    await vi.waitFor(() => { expect(eventSeqs(session)).toHaveLength(24) })
++
++    // Still in flight: the replacement must not have been trimmed under the loader.
++    expect(session.getSnapshot().loadingOlder).toBe(true)
++    expect(eventSeqs(session)).toEqual([
++      320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331,
++      332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343,
++    ])
++
++    gate.resolve(history([], false))
++    await older
++    expect(session.getSnapshot().loadingOlder).toBe(false)
++
++    await pushEvent(mock, ev.user(SessionSeq(344), 'live-344'))
++    expect(kinds.at(-1)).toBe('replace')
++    expect(eventSeqs(session)).toEqual([337, 338, 339, 340, 341, 342, 343, 344])
++
++    // The retained front is the new base: the next older page starts there.
++    await session.loadOlder()
++    expect(pageRequests.at(-1)?.beforeSeq).toBe(337)
++  })
++})

@@ -1,0 +1,29 @@
+{
+  "name": "dsh-link-host",
+  "version": "0.1.0",
+  "requires": { "dsh": "^0.2.0" },
+  "private": true,
+  "description": "The embed surface: the contract another Tauri app reads before it carries DSH-LINK as its right sidebar, and the self-contained page it points a child webview at - with the sidebar <-> full-window switch as a protocol message rather than a host-specific API.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

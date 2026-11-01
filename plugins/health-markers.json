@@ -1,0 +1,136 @@
+{
+  "note": "Per-plugin boot evidence, graded against a boot this project performed itself. 'started' is the line the plugin prints when it reaches a working state; 'announces' is the loosest line that proves the plugin ran at all; 'failed' plus 'recovered' expresses a fixable-at-boot warning (the browser plugin warns before the tool registry activates and registers afterwards, so the warning alone is not a failure). A plugin with no 'started' marker is UNGRADED, not healthy: the browser-half plugins print nothing at kernel boot and are graded by the live gates instead.",
+  "plugins": [
+    {
+      "plugin": "dsh-escalation-guard",
+      "row": "escalation-guard",
+      "kind": "host",
+      "started": "[escalation-guard] 已加载"
+    },
+    {
+      "plugin": "dsh-continue-button",
+      "row": "continue-button",
+      "kind": "host",
+      "started": "host row mounted"
+    },
+    {
+      "plugin": "dsh-browser",
+      "row": "browser",
+      "kind": "host",
+      "started": "browser tools registered",
+      "failed": "cannot register browser tools",
+      "announces": "[dsh-browser] ready",
+      "recovered": "browser tools registered"
+    },
+    {
+      "plugin": "dsh-lan-bridge",
+      "row": "lan-bridge",
+      "kind": "host",
+      "started": "[dsh-lan-bridge] host ready",
+      "announces": "[dsh-lan-bridge] host ready"
+    },
+    {
+      "plugin": "dsh-image-guard",
+      "row": "image-guard",
+      "kind": "host",
+      "started": "[image-guard] 已加载"
+    },
+    {
+      "plugin": "dsh-repeat-guard",
+      "row": "dsh-repeat-guard",
+      "kind": "host",
+      "started": "[repeat-guard] 已加载"
+    },
+    {
+      "plugin": "dsh-liquid-glass",
+      "row": "liquid-glass",
+      "kind": "client",
+      "note": "browser half only; graded by verify-theme-section on the live client"
+    },
+    {
+      "plugin": "dsh-theme-settings",
+      "row": "theme-settings",
+      "kind": "client",
+      "note": "browser half plus a Config schema; graded by verify-theme-section"
+    },
+    {
+      "plugin": "dsh-link-brand",
+      "row": "link-brand",
+      "kind": "client",
+      "note": "browser half only"
+    },
+    {
+      "plugin": "dsh-agent-context",
+      "row": "agent-context",
+      "kind": "host",
+      "note": "publishes no service and prints nothing at boot; its tools appear only inside a delegating agent scope",
+      "announces": "dsh-agent-context"
+    },
+    {
+      "plugin": "dsh-delegation-model-choice",
+      "row": "delegation-model-choice",
+      "kind": "host",
+      "note": "prints nothing at boot",
+      "announces": "delegation"
+    },
+    {
+      "plugin": "dsh-link-compat",
+      "row": "link-compat",
+      "kind": "host",
+      "note": "not yet mounted in the profile; graded by verify-compat-table"
+    },
+    {
+      "plugin": "dsh-link-collab",
+      "row": "link-collab",
+      "kind": "host",
+      "started": "control channel ready",
+      "announces": "control channel ready",
+      "note": "R204: this row now has a browser half too (the LINK panel's 'status' row, which reads the host half's read-only /api/dsh-link-collab/status route). The graded marker stays the HOST start line: the client half prints nothing at kernel boot and is graded on the live page, like the other client halves in this table."
+    },
+    {
+      "plugin": "dsh-link-groups",
+      "row": "link-groups",
+      "kind": "host",
+      "started": "[link-groups] ready",
+      "note": "R185: the tool-group kernel. This entry declares only the start line the row prints when it loads, so a boot of the live profile reads QUIET rather than NOT MOUNTED until a bundle carries the row; its two tools appear only inside an agent scope whatever the bundle state."
+    },
+    {
+      "plugin": "dsh-link-notes",
+      "row": "link-notes",
+      "kind": "host",
+      "started": "[link-notes] ready",
+      "announces": "[link-notes] ready"
+    },
+    {
+      "plugin": "dsh-link-panel",
+      "row": "link-panel",
+      "kind": "host",
+      "started": "[dsh-link-panel] ready",
+      "announces": "[dsh-link-panel] ready",
+      "note": "R188: the panel item registry floor. Host-only by design, so this marker grades the row only; the read-only state route is a second line the boot prints (state route bound on /api/dsh-link-panel/state)."
+    },
+    {
+      "plugin": "dsh-link-markdown",
+      "row": "link-markdown",
+      "kind": "host",
+      "started": "[dsh-link-markdown] ready",
+      "note": "R188: graded QUIET on purpose until the package prints a start line. Its host half exists only to let the row resolve; what this package is for is its CLIENT half, which gate 122 grades live (the row must appear in the served client manifest AND the client half must set globalThis.__dshLinkMarkdown.registered). plugin-health reads this entry as QUIET - announced itself, printed no start marker - which is the honest verdict for a row that loads and says nothing, and is not a failure."
+    },
+    {
+      "plugin": "dsh-link-teams",
+      "row": "link-teams",
+      "kind": "host",
+      "started": "[dsh-link-teams] ready",
+      "announces": "[dsh-link-teams] ready",
+      "note": "R196: the row was live all along but outside this table, so plugin-health could not grade it. The host half reaches its ready line at apply() and prints a second line when the web server appears ('state route bound on /api/dsh-link-teams/state'); the client half is the right-rail pane, graded live by teams-panel and (R196) teams-pane-truth."
+    },
+    {
+      "plugin": "dsh-link-host",
+      "row": "link-host",
+      "kind": "host",
+      "started": "[dsh-link-host] ready",
+      "announces": "[dsh-link-host] ready",
+      "note": "R198/R195: the embed surface's host half. Mounted in the live profile in the same step this marker was added, because plugin-health grades a declared-but-unmounted row NOT MOUNTED and exits 1 (verify-plugin-health.mjs:83,99-101,127)."
+    }
+  ]
+}

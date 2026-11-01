@@ -1,0 +1,12 @@
+# dsh-delegation-model-choice bundle layer.
+#
+# The plugin contributes scoped tools and a prompt section to every live Agent
+# Teams member scope; it publishes no service, so it needs no realm and no
+# host-plane registry. `requireApproval: false` would drop the user gate and
+# leave only the prompt rule — leave it at the default.
+- insert:
+    - id: delegation-model-choice
+      name: dsh-delegation-model-choice
+      config:
+        requireApproval: true
+        maxMembers: 8

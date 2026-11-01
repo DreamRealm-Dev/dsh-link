@@ -1,0 +1,98 @@
+{
+  "format": "dsh-link.third-party-pin/1",
+  "package": "dsh-ops",
+  "why": "T54 (R117/R118): the user asked for T-Auto/dsh-ops to be evaluated for internalisation. R117 measured the payloads at ~127 MB, so the repository pins the upstream artifacts instead of vendoring their bytes; the payloads are installed into a profile's node_modules like every other plugin and must be checked against these integrity values before a mount is allowed.",
+  "upstream": [
+    {
+      "name": "dsh-ops",
+      "version": "0.2.4",
+      "tarball": "https://registry.npmjs.org/dsh-ops/-/dsh-ops-0.2.4.tgz",
+      "integrity": "sha512-1xVw+HCjZP3LGnQMwRPZX1EKcQuTHDSi4M5HeS+8rDKsNtQZSkEMyQYuTuUythrvZO4b2YeiadNBwQ1OzmdkzQ==",
+      "fetched": true,
+      "bytes": 985000
+    },
+    {
+      "name": "@dsh-ops/pwsh-win32-x64",
+      "version": "0.2.1",
+      "tarball": "https://registry.npmjs.org/@dsh-ops/pwsh-win32-x64/-/pwsh-win32-x64-0.2.1.tgz",
+      "integrity": "sha512-mwdh3auRfbk4Lfgjt2NKGVvn5kHWxsIsw4rrtjv5+RQLHq5bU/ZLCAVhd9zS8/NqstjXZMRYvirq0P9FsFjykQ==",
+      "fetched": true,
+      "bytes": 107610000
+    },
+    {
+      "name": "@dsh-ops/fastctx-win32-x64",
+      "version": "0.2.1",
+      "tarball": "https://registry.npmjs.org/@dsh-ops/fastctx-win32-x64/-/fastctx-win32-x64-0.2.1.tgz",
+      "integrity": "sha512-vEB3LccHpl73Buq0ErfDTEMRfwgWNJDRy3agZBNSQwaAv028zMO79pEGPgFVEjjboLoUyOG2+NunMKm4Gszq8w==",
+      "fetched": true,
+      "bytes": 24690000
+    },
+    {
+      "name": "@dsh-ops/bash-win32-x64",
+      "version": "0.2.1",
+      "tarball": "https://registry.npmjs.org/@dsh-ops/bash-win32-x64/-/bash-win32-x64-0.2.1.tgz",
+      "integrity": "sha512-qK7Pm8ioRkjf+UBAqPOhogB0iPX/tBUmBhQSMdrBVJKOQjeLDHluRDOx1JdLHfxhW+oUJdu19TG/HXxDa9o7zw==",
+      "fetched": true,
+      "bytes": 161235224,
+      "note": "R124: fetched with curl (npm pack had ended in ECONNRESET twice in R117). The downloaded tarball hashes to exactly the integrity pinned from registry metadata, so the metadata-sourced pin was correct - the one claim that needed bytes to check is now checked."
+    }
+  ],
+  "platform": {
+    "os": "win32",
+    "cpu": "x64",
+    "why": "the package declares os=[win32] cpu=[x64]; our client ships for Windows and this repository's gates run there"
+  },
+  "license": {
+    "declared": "MIT AND Apache-2.0",
+    "compatibleWithOurs": true,
+    "obligation": "Apache-2.0 components require carrying NOTICE and PROVENANCE.md with any distribution; this repository is MIT, so a mount recipe must keep those files next to the payload"
+  },
+  "installScripts": {
+    "postinstall": null,
+    "preinstall": null,
+    "install": null,
+    "why": "npm lifecycle scripts are the supply-chain surface we refuse to run implicitly; dsh-ops declares only status/build/provision/validate/test/verify, none of which npm runs on install"
+  },
+  "ranges": {
+    "engines": "^22.19 || >=24",
+    "peer": {
+      "@deepseek-ai/cordis": "^4.0.4",
+      "@deepseek-ai/dsh": "^0.2.0-rc.2"
+    },
+    "satisfiedBy": "the vendored kernel declares dsh-v0.2.1-alpha.1 and cordis 4.0.5-alpha.1; the kernel's compatibility check uses semver.satisfies(..., { includePrerelease: true }) (packages/boot/app-boot/src/plugin-compatibility.ts:77), so both prereleases satisfy these ranges (corrected in R110)"
+  },
+  "mount": {
+    "kind": "bundle",
+    "patch": "./cordis.patch.yml",
+    "bundleEntry": "dsh-ops",
+    "rows": [
+      {
+        "id": "dsh-ops-shell",
+        "name": "dsh-ops/shell",
+        "default": "enabled",
+        "notable": "promptPolicy, publishBashTool, shellPolicy: advise, allowSystemShellFallback"
+      },
+      {
+        "id": "dsh-ops-file",
+        "name": "dsh-ops/file",
+        "default": "enabled",
+        "notable": "promptPolicy, enableShellTools: false"
+      },
+      {
+        "id": "dsh-ops-background",
+        "name": "dsh-ops/background",
+        "default": "disabled",
+        "notable": "opt-in row"
+      }
+    ],
+    "payloads": "<profile>/node_modules/@dsh-ops/{fastctx,pwsh,bash}-win32-x64",
+    "verifiedBeforeMount": false,
+    "note": "the recipe is pinned here as intent; no gate enforces the integrity check yet, and nothing has been mounted in any world or in the live profile"
+  },
+  "notYetVerified": [
+    "activation in a throwaway kernel (does it load clean, and does it print any failure line)",
+    "instrument decoupling: the pair reading that our own gates are unchanged with it mounted (it injects a prompt section and can publish a bash tool)",
+    "the token-savings claim, measured by us (bytes out and tool-call counts with it on vs off)",
+    "payload absence at tool-call time (binary.js:378 says BinaryNotFoundError with the remedy `dsh-ops provision`; we have not exercised that path)"
+  ]
+}

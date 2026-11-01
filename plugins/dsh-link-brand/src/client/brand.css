@@ -1,0 +1,8 @@
+/* The expanded sidebar row draws the wordmark alone: it already carries the symbol
+   inside its 'd', so the badge beside it would set LINK twice. The client's mark box is
+   a flex item of the brand row (gap 8px), so it has to disappear rather than merely be
+   empty — and it cannot match :empty itself, because the slot renderer keeps an empty
+   wrapper div in it. Hiding the box is what puts the wordmark flush with the sidebar's
+   text column. The collapsed rail draws the badge in its own box (railMark), which this
+   rule does not touch. */
+[class*='brandMark']:has(> [data-slot='sidebar.brand.mark']:empty) { display: none; }

@@ -1,0 +1,138 @@
+{
+ "format": "dsh-link.plugin-contract/1",
+ "kernel": {
+  "package": "@deepseek-ai/dsh-root",
+  "version": "0.2.1-alpha.1"
+ },
+ "note": "Static contract only: a plugin package directory in, one verdict per rule out. It does not mount the package (that is mount-admission and compat-live), does not reach the market, and never rewrites plugin source. Verification labels: evidence paths are the repository files a reader can check; a verdict carries the basis it was decided from.",
+ "severities": {
+  "refuse": "this package cannot be admitted this way",
+  "rewrite": "admissible once changed",
+  "note": "reported, not judged"
+ },
+ "kinds": [
+  "package-field",
+  "row-patch",
+  "import-specifier",
+  "client-usage",
+  "peer-range",
+  "licence"
+ ],
+ "rules": [
+  {
+   "id": "manifest-readable",
+   "severity": "refuse",
+   "category": "not-a-package",
+   "what": "the directory is a package: package.json exists, parses, and names a package",
+   "evidence": "compat/adaptation/import-resolution.json (counts.not-a-package) plus the walk in scripts/check-import-resolution.mjs:24-46: a directory without a readable manifest is classified not-a-package, and the loader mounts rows by package name, so such a directory cannot be admitted",
+   "check": {
+    "kind": "package-field",
+    "rule": "manifest-readable"
+   }
+  },
+  {
+   "id": "patch-files-exist",
+   "severity": "rewrite",
+   "what": "every path declared in dsh.bundle.patch exists, and a package that declares none contributes no rows",
+   "evidence": "core/deepseek-harness/packages/boot/app-boot/src/config-schema/document.ts:14 (a row name is a plugin module specifier) and the composer at scripts/compose-profile-rows.mjs:107-111, which records a missing declared patch as a limit instead of mounting it",
+   "check": {
+    "kind": "package-field",
+    "rule": "patch-declared-exists"
+   }
+  },
+  {
+   "id": "patch-top-level-array",
+   "severity": "refuse",
+   "what": "a patch file is a top-level array of mappings; anything else is not a patch list",
+   "evidence": "core/deepseek-harness/vendor/include/src/index.ts:230-232 throws TypeError(config file must be a top-level array of entries) for every non-array document",
+   "check": {
+    "kind": "row-patch",
+    "rule": "top-level-array"
+   }
+  },
+  {
+   "id": "row-ids-and-inserts",
+   "severity": "rewrite",
+   "what": "a non-insert row carries a nonempty id, an insert child carries id and name, and one file does not insert the same id twice",
+   "evidence": "core/deepseek-harness/packages/boot/app-boot/src/config-schema/document.ts:11-31 (the metadata key list, the insert shape, and non-insert rows replacing supplied fields); the class vocabulary this mirrors is read from compat/adaptation/rows/reports/rows.json counts.byClass (skipped-no-id, duplicate-insert-id, unknown-metadata-key)",
+   "check": {
+    "kind": "row-patch",
+    "rule": "ids-and-inserts"
+   }
+  },
+  {
+   "id": "row-id-contested-in-composition",
+   "severity": "rewrite",
+   "category": "row-config-superseded",
+   "what": "an id this package inserts is also claimed by a later layer of this repository composition",
+   "evidence": "compat/adaptation/rows/profile-composition.json (each id carries mentions with layer order and the configSuperseded flag); the same fact is an item of category row-config-superseded in compat/adaptation/port-verdicts.json",
+   "check": {
+    "kind": "row-patch",
+    "rule": "id-contested-in-composition"
+   }
+  },
+  {
+   "id": "row-module-resolves",
+   "severity": "refuse",
+   "what": "a bare module a row names resolves from the package or is a package the kernel itself provides",
+   "evidence": "compat/adaptation/loader-boot.json case negative-missing-module (raw reading: the row is reported as failed to import and the entry does not activate) together with compat/adaptation/import-resolution.json (classes resolves, dependency-not-installed, undeclared-not-found, peer-not-installed)",
+   "check": {
+    "kind": "import-specifier",
+    "rule": "row-module-resolves"
+   }
+  },
+  {
+   "id": "dependency-declared",
+   "severity": "rewrite",
+   "what": "a bare specifier the package own files import is declared in dependencies, peerDependencies or optionalDependencies",
+   "evidence": "compat/adaptation/import-resolution.json counts: undeclared-not-found 2 and dependency-not-installed 5 out of 72 rows, each row carrying the at file:line that names the specifier",
+   "check": {
+    "kind": "package-field",
+    "rule": "dependency-declared"
+   }
+  },
+  {
+   "id": "peer-range-admits-kernel",
+   "severity": "rewrite",
+   "category": "peer-range-excludes-kernel",
+   "what": "a peer range on a kernel package admits the kernel version this build carries",
+   "evidence": "compat/adaptation/usage-targets.json records dsh-search-failover peer ^0.1.0-rc.6 against kernel 0.2.1-alpha.1; compat/adaptation/port-verdicts.json carries three items of category peer-range-excludes-kernel, severity rewrite",
+   "check": {
+    "kind": "peer-range",
+    "rule": "admits-kernel"
+   }
+  },
+  {
+   "id": "client-service-collected",
+   "severity": "rewrite",
+   "category": "client-service-absent",
+   "what": "a client-plane usage names a service the captured client surface declares",
+   "evidence": "compat/surface/client-0.2.1-alpha.1.json (39 services with declaredIn); compat/adaptation/port-verdicts.json carries client-service-absent (3) and host-callsite-absent (2), both severity rewrite; compat/adaptation/client-plane.json judges the same usage per plugin",
+   "check": {
+    "kind": "client-usage",
+    "rule": "service-collected"
+   }
+  },
+  {
+   "id": "client-member-collected",
+   "severity": "note",
+   "category": "client-member-absent",
+   "what": "a client-plane usage names a member the captured member set of that service declares",
+   "evidence": "compat/surface/client-0.2.1-alpha.1.json services[].members/membersComplete/membersReason (28 complete, 2 partial, 9 unreadable) and compat/adaptation/client-plane.json member-present/member-unknown rows; a member is absent only when the set was enumerated completely",
+   "check": {
+    "kind": "client-usage",
+    "rule": "member-collected"
+   }
+  },
+  {
+   "id": "licence-permissive",
+   "severity": "refuse",
+   "what": "the package declares a licence, and it is one the host may load",
+   "evidence": "compat/adaptation/third-party-scan.json hits[].license and compat/adaptation/port-verdicts.json verdicts[].license: the admission pipeline records the declared licence for every package it judges (all seven are MIT), so a package that declares none is unread rather than fine",
+   "check": {
+    "kind": "licence",
+    "rule": "permissive"
+   }
+  }
+ ]
+}

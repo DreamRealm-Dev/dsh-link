@@ -1,0 +1,19 @@
+{
+  "name": "dsh-anchored-lite",
+  "version": "0.1.0",
+  "requires": { "dsh": "^0.2.0" },
+  "private": true,
+  "description": "按需工具申请（Anchored 思路的本机实现）：冷启动只暴露最小组工具对，模型首次行动后才放开常驻集与显式申请入口；极简调优预设的第一行。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib"
+  ],
+  "license": "MIT"
+}

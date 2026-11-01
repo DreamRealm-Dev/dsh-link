@@ -1,0 +1,269 @@
+/* dsh-link-teams: the agent-teams pane, as a panel rather than a dump.
+ *
+ * Scoped under .dsh-link-teams, mounted for this plugin's lifetime (see apply()), and using only the tokens the
+ * shell already carries so it cannot look like it came from another product. The inline styles the rows shipped
+ * with stay for the small things (chips, error text); the layout, the header, the metric board and the folding of
+ * the observed-only teams live here.
+ */
+.dsh-link-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px 18px;
+  min-height: 100%;
+  box-sizing: border-box;
+  color: var(--dsw-alias-label-primary);
+  font: var(--dsw-font-xs-13);
+}
+
+/* the header: a title row with the refresh control, then the four numbers as their own board */
+.dsh-link-teams .dlt-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--dsw-alias-border-l1);
+}
+.dsh-link-teams .dlt-titleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dsh-link-teams .dlt-title {
+  flex: 1 1 auto;
+  font: var(--dsw-font-sm-14);
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+.dsh-link-teams .dlt-refresh {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: var(--dsw-radius-sm);
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xxs-12);
+  cursor: pointer;
+}
+.dsh-link-teams .dlt-refresh:hover:not(:disabled) {
+  background: var(--dsw-alias-bg-l1);
+  color: var(--dsw-alias-label-primary);
+}
+.dsh-link-teams .dlt-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 8px;
+}
+/* BLOCK, not flex: a flex item is blockified, and innerText then puts a NEWLINE between the label and the number -
+   which no /团队\s+(\d+)/ pattern matches. As a block with inline children the metric lays out and reads as one line:
+   "成员 41" with the label dim and the number bold. */
+.dsh-link-teams .dlt-metric {
+  display: block;
+  padding: 8px 10px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-l1);
+  min-width: 0;
+}
+/* INLINE, deliberately: the teams gates read the pane's text for "团队 N" and innerText puts a NEWLINE between two
+   block-level spans, which no /团队\s+(\d+)/ pattern matches. Inline keeps the space the value carries and lets the
+   label and the number keep different weights on one line. */
+.dsh-link-teams .dlt-metricLabel {
+  display: inline;
+  color: var(--dsw-alias-label-tertiary);
+  font: var(--dsw-font-xxs-12);
+}
+.dsh-link-teams .dlt-metricValue {
+  display: inline;
+  font: var(--dsw-font-sm-14);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* cards: the tree, the board, the members - each one a surface with a title that says what it holds */
+.dsh-link-teams .dlt-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--dsw-alias-border-l1);
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-layer-1, transparent);
+}
+.dsh-link-teams .dlt-cardTitle {
+  font: var(--dsw-font-xs-13);
+  font-weight: 600;
+}
+
+/* capability declarations that have no member row: always drawn (a closed <details> is not rendered, so it would be
+   absent from innerText), and as quiet as a fact can be while staying readable */
+.dsh-link-teams .dlt-caps {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--dsw-alias-border-l1);
+}
+.dsh-link-teams .dlt-capsHead {
+  color: var(--dsw-alias-label-tertiary);
+  font: var(--dsw-font-xxs-12);
+}
+.dsh-link-teams .dlt-capsRow {
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xxs-12);
+  overflow-wrap: anywhere;
+}
+
+/* the observed-only teams: folded by default, because 29 session ids are a fact, not a thing to read first */
+.dsh-link-teams .dlt-fold {
+  border-top: 1px dashed var(--dsw-alias-border-l1);
+  padding-top: 6px;
+}
+.dsh-link-teams .dlt-foldSummary {
+  cursor: pointer;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xxs-12);
+  list-style: none;
+}
+.dsh-link-teams .dlt-foldSummary::-webkit-details-marker { display: none; }
+.dsh-link-teams .dlt-foldSummary::before {
+  content: '▸ ';
+  color: var(--dsw-alias-label-tertiary);
+}
+.dsh-link-teams details[open] > .dlt-foldSummary::before { content: '▾ '; }
+.dsh-link-teams .dlt-foldList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.dsh-link-teams .dlt-foldRow {
+  padding: 3px 0;
+  color: var(--dsw-alias-label-secondary);
+  font: var(--dsw-font-xxs-12);
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------------------------------------------
+   R313: the agent-network board.
+   Columns are teams, nodes are members. The board is a picture of the cluster; the verbatim rows below it
+   are still the ledger. State colours are the pane's own tokens so a skin change reaches both.
+   ------------------------------------------------------------------------------------------------ */
+.dlt-net { display: flex; flex-direction: column; gap: 8px; }
+.dlt-netBoard { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; align-items: flex-start; }
+.dlt-netTeam {
+  min-width: 190px; max-width: 260px; display: flex; flex-direction: column; gap: 4px;
+  border: 1px solid var(--dsw-alias-border-l2, #3a3a3a); border-radius: 10px; padding: 8px;
+  background: var(--dsw-alias-fill-l1, #1b1b1b);
+}
+.dlt-netTeamDeclared { border-color: var(--dsw-alias-interactive-border, #4a6fa5); }
+.dlt-netTeamHead { display: flex; align-items: baseline; gap: 6px; padding-bottom: 4px; }
+.dlt-netTeamId { font-weight: 600; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dlt-netTeamCount {
+  font-size: 11px; padding: 0 5px; border-radius: 8px;
+  background: var(--dsw-alias-fill-l2, #2a2a2a); color: var(--dsw-alias-label-secondary, #bbb);
+}
+.dlt-netTeamState { font-size: 10px; color: var(--dsw-alias-label-tertiary, #999); margin-left: auto; white-space: nowrap; }
+.dlt-node {
+  display: grid; grid-template-columns: 8px 1fr auto; grid-auto-rows: min-content; gap: 2px 6px;
+  align-items: center; text-align: left; width: 100%; cursor: pointer;
+  border: 1px solid transparent; border-radius: 8px; padding: 5px 6px;
+  background: var(--dsw-alias-fill-l2, #232323); color: inherit; font: inherit;
+}
+.dlt-node:hover { border-color: var(--dsw-alias-border-l2, #3a3a3a); }
+.dlt-nodeOn { border-color: var(--dsw-alias-interactive-border, #4aa3ff); background: var(--dsw-alias-interactive-bg-active, #2d3a4d); }
+.dlt-nodeDot { width: 8px; height: 8px; border-radius: 50%; background: #888; grid-row: span 3; align-self: center; }
+.dlt-nodeDot[data-state="active"] { background: #46c07a; }
+.dlt-nodeDot[data-state="provisioning"] { background: #d9a441; }
+.dlt-nodeDot[data-state="gone"], .dlt-nodeDot[data-state="left"] { background: #6b6b6b; }
+.dlt-nodeDot[data-state="unknown"] { background: var(--dsw-alias-state-idle-primary, #d4d4d4); }
+/* R393: "busy" is the state that actually VARIES here (all 78 members report active and every heartbeat is days old),
+   so the dot lights with DSH's own success token when the member holds an open task claim; idle uses the idle token,
+   and "stale" (a heartbeat older than a day) sits at idle too - a dim dot never means "broken". */
+.dlt-nodeDot[data-state="busy"] { background: var(--dsw-alias-state-success, #22c55e); box-shadow: 0 0 0 2px color-mix(in srgb, var(--dsw-alias-state-success, #22c55e) 22%, transparent); }
+.dlt-nodeDot[data-state="stale"] { background: var(--dsw-alias-state-idle-primary, #d4d4d4); }
+.dlt-nodeDot[data-state="active"] { background: var(--dsw-alias-state-success, #46c07a); }
+.dlt-nodeName { font-size: 12px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dlt-nodeBeat { font-size: 10px; color: var(--dsw-alias-label-tertiary, #999); white-space: nowrap; }
+.dlt-nodeTask { grid-column: 2 / span 2; font-size: 11px; color: var(--dsw-alias-label-secondary, #bbb); }
+.dlt-nodeCaps { grid-column: 2 / span 2; font-size: 10px; color: var(--dsw-alias-label-tertiary, #999); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dlt-nodeDetail {
+  border: 1px solid var(--dsw-alias-interactive-border, #4aa3ff); border-radius: 10px; padding: 8px;
+  display: flex; flex-direction: column; gap: 4px; background: var(--dsw-alias-fill-l1, #1b1b1b);
+}
+.dlt-nodeDetailHead { display: flex; align-items: center; gap: 8px; }
+.dlt-nodeDetailName { font-weight: 600; font-size: 13px; }
+.dlt-nodeDetailRow { font-size: 11px; color: var(--dsw-alias-label-secondary, #bbb); word-break: break-all; }
+/* R313: the selection's trail. Any row that names the selected id wears this ring, so clicking a node shows a person
+   where that node appears without changing one character of the rows themselves. */
+.dlt-focus {
+  outline: 1px solid var(--dsw-alias-interactive-border, #4aa3ff);
+  outline-offset: 2px; border-radius: 6px;
+}
+
+/* R457: the header entry and its popover - one visual language with the official header actions: a 24px pill, a
+   token-coloured border and hover, a bordered popover anchored under it. */
+.dlt-headAction { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border-radius: 7px;
+  border: 0.5px solid var(--dsw-alias-border-l2, #2a2a2a); background: var(--dsw-alias-bg-layer-2, #1b1b1c);
+  color: var(--dsw-alias-label-secondary, #b8bec8); font-size: 12px; line-height: 1; cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease; }
+.dlt-headAction:hover { background: var(--dsw-alias-interactive-bg-hover, #24282c); color: var(--dsw-alias-label-primary, #e5e9ef); }
+.dlt-headAction[data-open="true"] { border-color: var(--dsw-alias-state-success, #3fb950); color: var(--dsw-alias-label-primary, #e5e9ef); }
+.dlt-headActionCount { min-width: 16px; padding: 0 5px; border-radius: 9px; background: var(--dsw-alias-bg-layer-3, #2a2d31);
+  font-size: 10px; line-height: 15px; text-align: center; }
+.dlt-headPopover { position: absolute; top: 30px; right: 0; z-index: 60; width: 268px; padding: 10px 12px; border-radius: 12px;
+  border: 0.5px solid var(--dsw-alias-border-l2, #2a2a2a); background: var(--dsw-alias-bg-layer-2, #1b1b1c);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55); color: var(--dsw-alias-label-primary, #e5e9ef); font-size: 12px; }
+.dlt-headPopoverTitle { display: flex; justify-content: space-between; margin-bottom: 6px;
+  color: var(--dsw-alias-label-tertiary, #8b929c); font-size: 11px; }
+.dlt-headRow { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
+.dlt-headDot { width: 7px; height: 7px; border-radius: 4px; flex: 0 0 auto; }
+.dlt-headName { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dlt-headState { color: var(--dsw-alias-label-tertiary, #8b929c); font-size: 11px; }
+.dlt-headFoot { margin-top: 8px; padding-top: 6px; border-top: 0.5px solid var(--dsw-alias-border-l2, #2a2a2a);
+  color: var(--dsw-alias-label-tertiary, #8b929c); font-size: 11px; }
+
+/* R459: the pane header, restyled. The four counts stay as "label space count" text (the teams gate parses
+   /<label>\s+(\d+)/ out of the pane's textContent), but they become a row of stat tiles instead of four plain lines,
+   the title gets a live dot, the refresh becomes a quiet ghost button, and the map's controls read as one segmented
+   bar instead of browser-default buttons. */
+.dlt-head { display: flex; flex-direction: column; gap: 10px; padding: 12px 12px 4px; }
+.dlt-titleRow { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.dlt-title { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.2px;
+  color: var(--dsw-alias-label-primary, #e5e9ef); }
+.dlt-title::before { content: ''; width: 6px; height: 6px; border-radius: 3px; background: var(--dsw-alias-state-success, #3fb950);
+  box-shadow: 0 0 0 3px rgba(63, 185, 80, 0.16); }
+.dlt-refresh { height: 24px; padding: 0 10px; border-radius: 7px; border: 0.5px solid var(--dsw-alias-border-l2, #2a2e34);
+  background: transparent; color: var(--dsw-alias-label-tertiary, #8b929c); font-size: 11px; line-height: 1; cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease; }
+.dlt-refresh:hover:not(:disabled) { background: var(--dsw-alias-bg-layer-2, #1b1b1c); color: var(--dsw-alias-label-primary, #e5e9ef); }
+.dlt-refresh:disabled { opacity: 0.55; cursor: default; }
+.dlt-metrics { display: flex; gap: 6px; }
+.dlt-metric { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding: 7px 9px; border-radius: 9px;
+  background: var(--dsw-alias-bg-layer-2, #16181b); border: 0.5px solid var(--dsw-alias-border-l2, #262a2f); }
+.dlt-metricLabel { font-size: 10px; letter-spacing: 0.3px; color: var(--dsw-alias-label-tertiary, #8b929c); }
+.dlt-metricValue { font-size: 15px; font-weight: 600; line-height: 1.1; color: var(--dsw-alias-label-primary, #e5e9ef);
+  font-variant-numeric: tabular-nums; }
+/* the map card's own title row */
+[data-mindmap-card] { padding: 10px 12px 12px; border-radius: 12px; }
+[data-mindmap-card] > div:first-child { display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+  margin-bottom: 8px; font-size: 12px; font-weight: 600; color: var(--dsw-alias-label-primary, #e5e9ef); }
+[data-mindmap-card] > div:first-child > span { font-weight: 400; font-size: 10.5px; color: var(--dsw-alias-label-tertiary, #8b929c); }
+/* the map chrome: three quiet controls, a zoom readout, then the scope toggle pushed right */
+.dsh-link-mindmap-tools { display: flex; align-items: center; gap: 6px; margin: 0 0 8px; }
+.dsh-link-mindmap-tools button { height: 22px; min-width: 22px; padding: 0 8px; border-radius: 6px;
+  border: 0.5px solid var(--dsw-alias-border-l2, #2a2e34); background: var(--dsw-alias-bg-layer-2, #16181b);
+  color: var(--dsw-alias-label-secondary, #b8bec8); font-size: 11px; line-height: 1; cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease; }
+.dsh-link-mindmap-tools button:hover { border-color: var(--dsw-alias-border-l3, #3a4048); color: var(--dsw-alias-label-primary, #e5e9ef); }
+.dsh-link-mindmap-tools span { min-width: 36px; text-align: center; font-size: 11px; color: var(--dsw-alias-label-tertiary, #8b929c);
+  font-variant-numeric: tabular-nums; }
+.dsh-link-mindmap-tools button[data-mindmap-toggle] { margin-left: auto; }
+.dsh-link-mindmap-canvas { border-radius: 10px; border: 0.5px solid var(--dsw-alias-border-l2, #24282d);
+  background: radial-gradient(120% 80% at 50% 0%, rgba(255, 255, 255, 0.035), transparent 60%), var(--dsw-alias-bg-layer-1, #101214);
+  padding: 4px 2px; }
+/* the legend under the controls */
+.dsh-link-mindmap-legend { display: flex; align-items: center; gap: 12px; margin: 0 0 8px; font-size: 10.5px;
+  color: var(--dsw-alias-label-tertiary, #8b929c); }
+.dsh-link-mindmap-legend i { width: 7px; height: 7px; border-radius: 4px; display: inline-block; margin-right: 4px; vertical-align: -1px; }
+

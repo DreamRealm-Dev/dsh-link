@@ -1,0 +1,8 @@
+# dsh-link-teams bundle: one row.
+#
+# The read-only product surface for the collaboration bus: it owns no storage and writes
+# no records. It reads the capability the bus publishes (ctx.get('linkCollab')) and serves
+# ONE GET route the right-rail pane polls. The browser half is the pane itself.
+- insert:
+    - id: link-teams
+      name: dsh-link-teams

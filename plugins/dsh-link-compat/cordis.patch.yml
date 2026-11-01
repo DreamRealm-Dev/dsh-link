@@ -1,0 +1,9 @@
+# dsh-link-compat bundle: one Host row, no client half.
+#
+# The row publishes ctx.link.compat. The kernel section is chosen from the running
+# kernel's own identity, so this row needs no config to work. Set `kernel:` only
+# when a shell already knows the identity and wants the loader to agree with it,
+# and `strict: false` only to keep a stale refusal from failing the row.
+- insert:
+    - id: dsh-link-compat
+      name: dsh-link-compat

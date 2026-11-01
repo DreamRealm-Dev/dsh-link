@@ -1,0 +1,85 @@
+[workspace]
+# `src-tauri` is the shell package AND the workspace root, so the host application that embeds the shell
+# (host-app/) shares this one `target/` directory. A sibling project would need a `target/` of its own, and
+# this machine has ~3.9 GB free against the ~9.9 GB of built dependencies already here (R308, measured); a
+# member reuses them instead of rebuilding the graph beside it. `cargo check` in this directory still means
+# the shell: the default members are the root package, and the host app is opt-in with `-p host-app`.
+members = ["host-app"]
+default-members = ["."]
+resolver = "2"
+
+[package]
+name = "dsh-link"
+version = "0.1.0"
+# The workspace has two packages, so Tauri must be told which binary is the app.
+default-run = "dsh-link"
+description = "DSH Link - a Tauri desktop shell for the DeepSeek Harness kernel"
+authors = ["DSH Link"]
+edition = "2021"
+license = "MIT"
+
+[lib]
+name = "dsh_link_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# `unstable` is what exposes the multiwebview API (`Window::add_child`) the right column's
+# browser panel needs. It gates one API; it pulls in no new dependency (tauri-runtime-wry's own
+# `unstable` feature is empty). See core/sidebar_panel.rs.
+tauri = { version = "2", features = ["devtools", "tray-icon", "image-png", "image-ico", "unstable"] }
+tauri-plugin-single-instance = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+tokio = { version = "1", features = ["time", "rt", "rt-multi-thread", "sync", "macros", "net", "io-util"] }
+tokio-tungstenite = "0.24"
+futures-util = "0.3"
+axum = { version = "0.8", features = ["ws", "http1"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "stream"] }
+# Handing a URL to the OS default handler. The mechanism differs per platform — Windows
+# ShellExecuteW, macOS open, Linux xdg-open with an embedded fallback — and none of them is
+# a shell invocation. See open_url in src/lib.rs for what that cost.
+opener = "0.9"
+# The copy-first policy for links the shell is offered but nobody clicked.
+tauri-plugin-clipboard-manager = "2"
+
+# The phone's device-net bridge (core/device_bridge.rs). Its wire is the shipped
+# dsh-lan-bridge contract (plugins/dsh-lan-bridge/lib/core/{frame,crypto,p256,link}.js):
+# P-256 for the ephemeral exchange and for SPAKE2, Ed25519 for the device's own identity,
+# SHA-256/HMAC/HKDF for the key schedule, AES-256-GCM for the session. Naming the crates is
+# the whole point - re-implementing any of them would be a second answer to the same
+# question, and the host authenticates both.
+p256 = { version = "0.13", features = ["arithmetic"] }
+sha2 = "0.10"
+hmac = "0.12"
+aes-gcm = "0.10"
+base64 = "0.22"
+ed25519-dalek = "2"
+rand_core = { version = "0.6", features = ["getrandom"] }
+
+# The panel's own DevTools protocol, called IN PROCESS (see core/panel_cdp.rs). Both crates are already in the
+# lock file through tauri/wry, so naming them adds no new version to the build - it only makes the interfaces
+# reachable from this code.
+[target.'cfg(target_os = "windows")'.dependencies]
+webview2-com = "0.39"
+windows-core = "0.62"
+# R388: the tray is built on the Win32 mechanism this machine is measured to accept (see src/tray.rs).
+[target.'cfg(windows)'.dependencies.windows-sys]
+version = "0.61"
+features = ["Win32_Foundation", "Win32_System_LibraryLoader", "Win32_UI_Shell", "Win32_UI_WindowsAndMessaging", "Win32_Graphics_Gdi"]
+
+# Android and iOS have no ShellExecuteW: there the handoff is the platform's own Intent or
+# UIApplication request, which the official opener plugin wraps. Registered for those targets
+# only, so a desktop build keeps the in-process call above instead of a second implementation
+# (that plugin's desktop backend shells out to PowerShell, which is no better here).
+[target.'cfg(any(target_os = "android", target_os = "ios"))'.dependencies]
+tauri-plugin-opener = "2"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

@@ -1,0 +1,313 @@
+/*
+ * The Theme section's own chrome: the same metrics as the client's Appearance
+ * row (title over a cube row, 16px padding, one hairline), so a setting this
+ * plugin adds is indistinguishable from a setting that shipped with the client.
+ * Colours are the official `--dsw-*` tokens only.
+ */
+
+.dsh-theme-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.dsh-theme-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.dsh-theme-title {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--dsw-alias-label-primary);
+}
+
+.dsh-theme-description {
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.dsh-theme-error {
+  color: var(--dsw-alias-state-error-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.dsh-theme-cubes {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* The official Appearance cube: transparent until hovered or selected. */
+.dsh-theme-cube {
+  box-sizing: border-box;
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 12px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-xl);
+  background: transparent;
+  font: inherit;
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+}
+
+.dsh-theme-cube:hover:not(.dsh-theme-cube--selected) {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.dsh-theme-cube--selected {
+  background: var(--dsw-alias-bg-module-platform);
+  border-color: var(--dsw-static-neutral-bluish-400);
+}
+
+.dsh-theme-cube:focus-visible {
+  outline: var(--dsw-focus-ring-width) solid var(--dsw-alias-brand-primary);
+  outline-offset: 2px;
+}
+
+.dsh-theme-cube-title {
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.dsh-theme-cube-hint {
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* ---------------------------------------------------------------------------
+ * The cube's preview: the same two controls over the same backdrop, so the
+ * choice is made by looking rather than by reading. The preview carries its own
+ * backdrop and its own material: it shows what each style does, not what the
+ * client is currently wearing.
+ * ------------------------------------------------------------------------- */
+.dsh-theme-preview {
+  position: relative;
+  display: block;
+  height: 68px;
+  border-radius: var(--dsw-radius-md);
+  overflow: hidden;
+  background-color: #101018;
+  background-image:
+    radial-gradient(62% 76% at 16% 10%, #4a6cd6 0%, transparent 66%),
+    radial-gradient(58% 70% at 86% 18%, #8a4abe 0%, transparent 68%),
+    radial-gradient(84% 64% at 48% 104%, #268088 0%, transparent 72%);
+}
+
+.dsh-theme-preview-bar,
+.dsh-theme-preview-button {
+  position: absolute;
+  display: block;
+}
+
+.dsh-theme-preview-bar {
+  left: 12px;
+  right: 12px;
+  top: 12px;
+  height: 20px;
+}
+
+.dsh-theme-preview-button {
+  left: 12px;
+  top: 40px;
+  width: 46px;
+  height: 16px;
+}
+
+/* Official: opaque fills, flat corners, no rim. */
+.dsh-theme-preview--flat .dsh-theme-preview-bar {
+  background-color: #2c2c2e;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 0.5px rgb(255 255 255 / 10%);
+}
+
+.dsh-theme-preview--flat .dsh-theme-preview-button {
+  background-color: #43454a;
+  border-radius: 4px;
+}
+
+/* Liquid Glass: the backdrop shows through, the rim catches the light. */
+.dsh-theme-preview--glass .dsh-theme-preview-bar {
+  background-color: rgb(255 255 255 / 14%);
+  -webkit-backdrop-filter: blur(7px) saturate(180%);
+  backdrop-filter: blur(7px) saturate(180%);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 45%),
+    inset 0 0 0 0.5px rgb(255 255 255 / 22%),
+    0 10px 18px -10px rgb(0 0 0 / 70%);
+}
+
+.dsh-theme-preview--glass .dsh-theme-preview-button {
+  background-color: rgb(255 255 255 / 18%);
+  -webkit-backdrop-filter: blur(6px) saturate(180%);
+  backdrop-filter: blur(6px) saturate(180%);
+  border-radius: 999px;
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 50%),
+    inset 0 0 0 0.5px rgb(255 255 255 / 25%);
+}
+
+/* The unified-radius row: one slider, on the metrics of the rows the client draws itself. */
+.dsh-theme-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.dsh-theme-slider {
+  flex: 1 1 auto;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--dsw-alias-brand-primary, #4d6bfe);
+  cursor: pointer;
+}
+
+.dsh-theme-slider:focus-visible {
+  outline: 2px solid var(--dsw-alias-brand-primary, #4d6bfe);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.dsh-theme-slider-value {
+  min-width: 48px;
+  text-align: right;
+  font-family: 'SF Mono', 'JetBrains Mono', Consolas, monospace;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--dsw-alias-label-secondary, #61666b);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+ * The preset row: a layout preview, not a material one.
+ *
+ * The two presets are the same glass in two arrangements, so what distinguishes
+ * the cubes has to be the arrangement: Tahoe's sidebar is a rounded pane inset
+ * in its own gutter and carrying its own float shadow, Golden Gate's is a flush
+ * full-height pane with no corner of its own and no shadow. Both previews draw
+ * the real properties (radius, shadow, frost) rather than an illustration of
+ * them, so a reader picks the arrangement by looking.
+ * ------------------------------------------------------------------------- */
+.dsh-theme-cubes--presets .dsh-theme-cube {
+  flex: 1 1 180px;
+}
+
+.dsh-theme-cube:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.dsh-theme-cube:disabled:hover {
+  background: transparent;
+}
+
+.dsh-theme-preview-sidebar,
+.dsh-theme-preview-line {
+  position: absolute;
+  display: block;
+}
+
+/* Tahoe: floating — a gutter all round, the panel's own corner, its own shadow. */
+.dsh-theme-preview--tahoe .dsh-theme-preview-sidebar {
+  left: 7px;
+  top: 7px;
+  bottom: 7px;
+  width: 34%;
+  border-radius: 9px;
+  background-color: rgb(255 255 255 / 14%);
+  -webkit-backdrop-filter: blur(7px) saturate(180%);
+  backdrop-filter: blur(7px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 45%),
+    inset 0 0 0 0.5px rgb(255 255 255 / 22%),
+    0 8px 16px -8px rgb(0 0 0 / 70%);
+}
+
+/* Golden Gate: edge-to-edge — no gutter, no corner, no shadow, the frost runs on. */
+.dsh-theme-preview--edge .dsh-theme-preview-sidebar {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38%;
+  border-radius: 0;
+  background-color: rgb(255 255 255 / 22%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: inset -1px 0 0 0 rgb(255 255 255 / 24%);
+}
+
+/* The content beside it: two lines, so the sidebar reads as a column of a layout. */
+.dsh-theme-preview-line {
+  height: 6px;
+  border-radius: 3px;
+  background-color: rgb(255 255 255 / 26%);
+}
+
+.dsh-theme-preview-line--a {
+  left: 52%;
+  right: 10px;
+  top: 20px;
+}
+
+.dsh-theme-preview-line--b {
+  left: 52%;
+  right: 30%;
+  top: 34px;
+}
+
+/* ---------------------------------------------------------------------------
+ * The transparency row: three steps on one scale.
+ *
+ * A segmented control rather than a slider, because the preference is the three
+ * grades Apple's axis actually has room for here, and a segmented control states
+ * which grade is current without the reader having to aim at it.
+ * ------------------------------------------------------------------------- */
+.dsh-theme-steps {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 2px;
+  padding: 2px;
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-xl, 12px);
+}
+
+.dsh-theme-step {
+  min-width: 76px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+
+.dsh-theme-step:hover:not(.dsh-theme-step--selected) {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.dsh-theme-step--selected {
+  background: var(--dsw-alias-bg-module-platform);
+  color: var(--dsw-alias-label-primary);
+  box-shadow: inset 0 0 0 0.5px var(--dsw-static-neutral-bluish-400);
+}
+
+.dsh-theme-step:focus-visible {
+  outline: var(--dsw-focus-ring-width) solid var(--dsw-alias-brand-primary);
+  outline-offset: 2px;
+}

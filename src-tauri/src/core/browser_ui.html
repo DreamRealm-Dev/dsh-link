@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><title>DSH 浏览器外壳</title>
+<style>
+  /* R178-G: the shell's OWN browser chrome page. It is a separate webview, so the client's custom
+     properties are NOT in scope here: the tokens below are MIRRORED from the kernel's own theme
+     (core/deepseek-harness packages/client/ui-theme/src/styles/base.css:16-21 defines
+     --dsw-radius-xs 4px / -sm 8px / -md 12px / -lg 16px / -xl 20px / -panel 28px), and the palette
+     is the same one the shell's panel-start page already uses, so a new control cannot look like it
+     came from another product.
+
+     R179-A: the page is no longer a 36 px strip. The shell hands it the whole DECK - the bar AND the
+     bay - because the bay has to be painted by somebody, and this page is the only thing on our side of
+     the surface that can draw: the letterbox (the black around the screen) and the screen's own frame
+     are drawn HERE. The active tab's window is a native webview the shell places on top of #screen, so
+     everything this page draws inside the screen rectangle is covered - the frame is drawn as a ring
+     AROUND that rectangle (box-shadow, outside the box), which is why a 1 px disagreement between the two
+     is visible as a line rather than as smeared paint. */
+  :root {
+    --dsh-radius-xs: 4px; --dsh-radius-sm: 8px; --dsh-radius-md: 12px;
+    --dsh-bg: #14161a; --dsh-bg-raised: #1b1f24; --dsh-bg-hover: #23282e;
+    --dsh-line: #2c3138; --dsh-line-soft: #23282e;
+    --dsh-text: #e6e8ea; --dsh-text-dim: #8b929a; --dsh-text-faint: #6b727a;
+    --dsh-accent: #2f6fbf; --dsh-accent-line: #3d6ea8; --dsh-warn: #c9803c;
+    --dsh-screen-void: #050608; --dsh-screen-edge: rgba(255,255,255,0.10);
+    /* The strip the shell cuts off the surface. sidebar_panel.rs holds the same number as CHROME_H
+       and reports it as chromeH; readings() below reports what this document REALLY laid out, so the
+       two are comparable instead of assumed equal. */
+    --dsh-browser-chrome-h: 36px;
+  }
+  html, body { margin: 0; height: 100%; overflow: hidden;
+    background: var(--dsh-bg-raised); color: var(--dsh-text);
+    font: 12px/1.2 system-ui, "Segoe UI", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+  #bar { display: flex; align-items: center; gap: 4px; height: var(--dsh-browser-chrome-h);
+    box-sizing: border-box; padding: 0 6px; border-bottom: 1px solid var(--dsh-line); }
+  button { font: inherit; color: var(--dsh-text-dim); background: transparent;
+    border: 1px solid transparent; border-radius: var(--dsh-radius-sm); cursor: pointer; padding: 0; }
+  button:hover:not(:disabled) { background: var(--dsh-bg-hover); color: var(--dsh-text); }
+  button:disabled { opacity: 0.45; cursor: default; }
+  #new { width: 24px; height: 24px; font-size: 15px; line-height: 1; flex: 0 0 auto; }
+  #tabs { display: flex; align-items: center; gap: 3px; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .tab { display: flex; align-items: center; gap: 2px; height: 24px; max-width: 132px; min-width: 0;
+    padding: 0 3px 0 8px; border-radius: var(--dsh-radius-sm); background: var(--dsh-bg);
+    border: 1px solid var(--dsh-line-soft); color: var(--dsh-text-dim); }
+  .tab.on { background: var(--dsh-bg-hover); border-color: var(--dsh-line); color: var(--dsh-text); }
+  .tab .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .tab .x { width: 17px; height: 17px; font-size: 13px; line-height: 1; flex: 0 0 auto; border-radius: var(--dsh-radius-xs); }
+  #url { flex: 0 1 auto; max-width: 30%; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; color: var(--dsh-text-faint); direction: rtl; text-align: left; }
+  #reload { width: 24px; height: 24px; font-size: 13px; flex: 0 0 auto; }
+  #mode { height: 24px; padding: 0 9px; flex: 0 0 auto; border-radius: var(--dsh-radius-md);
+    border-color: var(--dsh-line); background: var(--dsh-bg); color: var(--dsh-text-dim); }
+  #mode.fixed { border-color: var(--dsh-accent-line); color: var(--dsh-text); }
+  /* R179-A: the resolution control. The button CYCLES the presets the shell publishes in op=state; the
+     pencil opens an inline row INSIDE the bar for a custom WxH. The row is in the bar and not a popover
+     on purpose: in fit mode the screen fills the bay, the tab's native window is on top of this page, and
+     anything drawn below the bar would be behind it. */
+  #res { height: 24px; padding: 0 8px; flex: 0 0 auto; border-radius: var(--dsh-radius-md);
+    border-color: var(--dsh-line); background: var(--dsh-bg); color: var(--dsh-text-dim);
+    font-variant-numeric: tabular-nums; }
+  #zoom { flex: 0 0 auto; color: var(--dsh-text-faint); font-variant-numeric: tabular-nums; }
+  #edit { width: 24px; height: 24px; font-size: 12px; flex: 0 0 auto; }
+  #custom { display: none; align-items: center; gap: 4px; flex: 0 0 auto; color: var(--dsh-text-dim); }
+  body.editing #custom { display: flex; }
+  body.editing #tabs, body.editing #url, body.editing #note, body.editing #err,
+  body.editing #res, body.editing #zoom, body.editing #mode, body.editing #reload { display: none; }
+  #custom input { width: 58px; height: 22px; box-sizing: border-box; font: inherit; padding: 0 4px;
+    color: var(--dsh-text); background: var(--dsh-bg); border: 1px solid var(--dsh-line);
+    border-radius: var(--dsh-radius-xs); }
+  #custom .go { height: 22px; padding: 0 8px; border: 1px solid var(--dsh-accent-line);
+    border-radius: var(--dsh-radius-sm); color: var(--dsh-text); background: var(--dsh-bg-hover); }
+  #note { flex: 1 1 auto; color: var(--dsh-text-faint); padding-left: 2px; }
+  #err { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    color: var(--dsh-warn); }
+  /* The bay: the letterbox and the screen's frame, drawn by this document. */
+  #bay { position: absolute; left: 0; right: 0; top: var(--dsh-browser-chrome-h); bottom: 0;
+    background: var(--dsh-screen-void); overflow: hidden; }
+  #screen { position: absolute; display: none; border-radius: 6px; pointer-events: none;
+    box-shadow: 0 0 0 1px var(--dsh-screen-edge), 0 0 0 3px #0a0c0f, 0 14px 34px rgba(0,0,0,0.55); }
+  #screen.on { display: block; }
+  #caption { position: absolute; left: 10px; top: 8px; color: var(--dsh-text-faint); font-size: 11px;
+    font-variant-numeric: tabular-nums; pointer-events: none; }
+  #bayMsg { position: absolute; left: 0; right: 0; top: 44%; text-align: center;
+    color: var(--dsh-text-faint); font-size: 11px; pointer-events: none; }
+  [hidden] { display: none !important; }
+  /* R396: DSH's own browser-pane metrics - a 38px strip, 28px controls, one truncating address pill, the overflow menu in
+     a popover. The tab strip scrolls instead of being squeezed, so a second pane never pushes a tab out of reach. */
+  /* 36px, not DSH's 38: this strip IS the shell's CHROME_H webview (sidebar_panel.rs:115), and the shell reports that
+     height in op=state as chromeH with the checkable identity surface.h - chromeH - chinH == contentPane.h. A bar taller
+     than the strip it lives in is simply clipped, so the page follows the shell's number. */
+  #bar { height: 36px; display: flex; align-items: center; gap: 6px; padding: 0 8px; box-sizing: border-box; }
+  #bar button, #more > summary { height: 28px; min-width: 28px; padding: 0 8px; font-size: 12px; }
+  #tabs { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; max-width: 55%; scrollbar-width: thin; }
+  #tabs::-webkit-scrollbar { height: 3px; }
+  #url { flex: 1 1 auto; min-width: 60px; max-width: 34%; height: 28px; line-height: 28px; padding: 0 8px;
+    border: 0.5px solid var(--dsw-alias-border-l2, #0000001a); border-radius: 8px; background: var(--dsw-alias-bg-layer-1, #0f1115);
+    font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #more { position: relative; }
+  #more > summary { list-style: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+    border-radius: 8px; }
+  #more > summary::-webkit-details-marker { display: none; }
+  #more .menu { position: absolute; right: 0; top: 32px; z-index: 30; min-width: 260px; padding: 8px;
+    border: 0.5px solid var(--dsw-alias-border-l2, #0000001a); border-radius: 12px;
+    background: var(--dsw-alias-bg-layer-2, #1b1b1c); box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
+  #more .menuRow { display: flex; align-items: center; gap: 8px; min-height: 30px; font-size: 12px; }
+  #more .menuLabel { color: var(--dsw-alias-label-tertiary, #979da6); min-width: 64px; }
+</style></head>
+<body><div id="bar">
+  <!-- R396: the bar follows DSH's own browser pane (dsh-client-ui-sidebar-browser): a 38px strip of 28px controls, the
+       address as ONE truncating pill, and everything that is not needed to pick a tab behind a ⋯ menu. The old bar
+       printed the address, the resolution, the zoom and the mode permanently, which crowded out the tab strip - the
+       person could not reach their own tabs once a second pane was open. -->
+  <button id="new" title="新建标签页">+</button>
+  <div id="tabs"></div>
+  <span id="url" title=""></span>
+  <span id="note">等待插件声明画面区…</span>
+  <span id="err" hidden></span>
+  <button id="reload" title="重新加载当前标签页">↻</button>
+  <!-- R430: the controls are INLINE, not behind a popup. The chrome webview is only CHROME_H (36 px) tall, so a
+       popup anchored at top:32px is painted outside the webview own rectangle and covered by the native content
+       window - measured by the delivery axis, the dots menu could not be clicked at all. These four controls fit the
+       strip beside a 55%-capped tab row and a 34%-capped address pill. The custom-size editor is an in-place bar
+       takeover (body class), not an overlay, so it is not clipped. -->
+  <button id="res" title="点击切换到下一个预设分辨率">1280×800</button>
+  <button id="mode" title="页面尺寸：恒定缩放 / 自适应跟随画面区">恒定</button>
+  <span id="zoom" title="当前缩放">100%</span>
+  <!-- R439: the UI size is adjustable from the strip itself - two number fields, default 1920x1080, applied with
+       Enter or the ✓. The same numbers travel through op=viewport {w,h}, which is also how an Agent sets them on demand
+       (the panel route is already agent-callable; a preset can still be cycled with the button on the left). -->
+  <input id="vw" type="number" min="200" max="5120" step="1" inputmode="numeric" title="页面宽度" />
+  <span id="vx">×</span>
+  <input id="vh" type="number" min="200" max="5120" step="1" inputmode="numeric" title="页面高度" />
+  <button id="vapply" title="应用页面尺寸">✓</button>
+  <button id="edit" title="输入自定义分辨率">✎</button>
+  <div id="custom">
+    宽 <input id="w" type="number" min="200" max="5120" step="1" inputmode="numeric">
+    ×
+    高 <input id="h" type="number" min="200" max="5120" step="1" inputmode="numeric">
+    <button class="go" id="apply">应用</button>
+    <button id="cancel">取消</button>
+  </div>
+</div>
+<div id="bay">
+  <div id="caption"></div>
+  <div id="screen"></div>
+  <div id="bayMsg">等待插件声明画面区…</div>
+</div>
+<script>
+/* The chrome page is the page-side driver of the host's ops. It is same-origin with the shell
+ * (SELF_ORIGIN), which is what makes this possible with no second credential: the shell's CORS rule
+ * refuses any other origin outright.
+ *
+ * R179-A: a write from THIS document is the user's hand as far as the shell is concerned (the proxy
+ * names it user-chrome by this document's own URL), so a click here takes the turn away from an AI that
+ * holds the lease and the op then goes through - instead of being refused because the page has no name.
+ */
+(function () {
+  var OP = '/__shell/panel'
+  var START = location.origin + '/__shell/panel-start'
+  var state = null
+  var busy = false
+  var lastScreen = null
+  var errorTimer = null
+  /* R442: a refusal is shown, not swallowed. Every write op answers with `error` when it refuses (`needs a mounted
+   * browser`, `needs a surface`, the MAX_TABS refusal that names the tab it will not open), and the old catch turned all
+   * of it into null - which is exactly the "silent failure" the person could not act on. */
+  function post(payload) {
+    return fetch(OP, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) })
+      .then(function (answer) {
+        return answer.json().then(function (body) {
+          if (body !== null && typeof body === 'object' && typeof body.error === 'string' && body.error !== '') {
+            showError(body.error)
+          }
+          return body
+        })
+      })
+      .catch(function (error) {
+        showError('面板请求失败：' + String(error && error.message ? error.message : error))
+        return null
+      })
+  }
+  function tabs() { return (state && state.tabs) || [] }
+  function presets() { return (state && state.presets) || [] }
+  function activeTab() { var id = state ? state.active : null; for (var i = 0; i < tabs().length; i++) { if (tabs()[i].id === id) { return tabs()[i] } } return null }
+  function name(tab) {
+    /* R179-A: the page's own title when it has one (op=state carries it for the ACTIVE tab, whose document
+     * the panel's self-report describes). The URL is the fallback, because a page that has not introduced
+     * itself yet still has to be nameable on a pill. */
+    var title = tab.title === undefined || tab.title === null ? '' : String(tab.title)
+    if (title !== '') { return title }
+    try {
+      var url = new URL(tab.url)
+      if (url.origin === location.origin) { return url.pathname.replace('/__shell/', '') }
+      return url.hostname.replace(/^www\./, '')
+    } catch (error) { return '标签 ' + String(tab.id) }
+  }
+  function zoomText() {
+    if (state === null) { return '—' }
+    if (state.scale === null || state.scale === undefined) { return '100%' }
+    return String(Math.round(Number(state.scale) * 100)) + '%'
+  }
+  function sizeText() {
+    var viewport = state === null ? null : state.viewport
+    if (viewport === null || viewport === undefined) { return '—' }
+    return String(Math.round(viewport.w)) + '×' + String(Math.round(viewport.h))
+  }
+  function showError(text) {
+    var node = document.getElementById('err')
+    if (text === null || text === undefined) { node.hidden = true; node.textContent = ''; return }
+    node.hidden = false
+    node.textContent = String(text)
+    node.title = String(text)
+    if (errorTimer !== null) { clearTimeout(errorTimer) }
+    errorTimer = setTimeout(function () { node.hidden = true; node.textContent = ''; errorTimer = null }, 8000)
+  }
+  /* Ask for something and REPORT a refusal by name instead of dropping it: every write op answers with the
+   * panel's report, and a refusal carries `error` - which is the whole point of the named refusals. */
+  function drive(payload, after) {
+    post(payload).then(function (answer) {
+      if (answer !== null && answer.error !== undefined && answer.error !== null) { showError(answer.error); return }
+      showError(null)
+      if (after !== undefined) { after() }
+      poll()
+    })
+  }
+  function render() {
+    var list = document.getElementById('tabs')
+    var mounted = state !== null && state.mounted === true
+    list.textContent = ''
+    tabs().forEach(function (tab) {
+      var pill = document.createElement('div')
+      pill.className = 'tab' + (tab.active === true ? ' on' : '')
+      pill.dataset.tab = tab.id
+      var label = document.createElement('span')
+      label.className = 'name'
+      label.textContent = name(tab)
+      label.title = (tab.title === undefined || tab.title === null || tab.title === '') ? tab.url : (tab.title + ' — ' + tab.url)
+      var close = document.createElement('button')
+      close.className = 'x'
+      close.textContent = '×'
+      close.title = '关闭 ' + name(tab)
+      close.addEventListener('click', function (event) {
+        event.stopPropagation()
+        drive({ op: 'tab-close', id: tab.id })
+      })
+      pill.appendChild(label)
+      pill.appendChild(close)
+      pill.addEventListener('click', function () { drive({ op: 'tab-activate', id: tab.id }) })
+      list.appendChild(pill)
+    })
+    document.getElementById('note').hidden = mounted
+    document.getElementById('new').disabled = !mounted || tabs().length >= (state.limit || 0)
+    document.getElementById('reload').disabled = activeTab() === null
+    var current = activeTab()
+    document.getElementById('url').textContent = current === null ? '' : (current.url || '')
+    document.getElementById('url').title = current === null ? '' : (current.url || '')
+    var mode = document.getElementById('mode')
+    mode.textContent = state !== null && state.mode === 'fit' ? '自适应' : '恒定'
+    mode.className = state !== null && state.mode === 'fit' ? '' : 'fixed'
+    mode.title = state === null ? '' : ('当前：' + mode.textContent + '；点击切换。恒定 = 页面视口固定 ' + sizeText() + ' 后整体缩放（scale=' + String(state.scale) + '）')
+    /* R179-A: the resolution and the zoom are always on screen, because they are the two numbers the user
+     * asked to be able to SEE and change ("固定分辨率应该可改"). */
+    var res = document.getElementById('res')
+    res.textContent = sizeText()
+    var next = nextPreset()
+    res.title = state === null ? '' : ('当前分辨率 ' + sizeText() + '（' + (state.viewportPreset === null || state.viewportPreset === undefined ? '自定义' : state.viewportPreset) + '）'
+      + (next === null ? '' : '；点击切到下一个预设 ' + next.name) + '；用 ✎ 输入自定义尺寸')
+    document.getElementById('zoom').textContent = zoomText()
+    document.getElementById('zoom').title = state !== null && state.scale !== null && state.scale !== undefined
+      ? '缩放 ' + zoomText() + '：页面视口 ' + sizeText() + ' 缩到屏幕 ' + String(Math.round(state.screenPane === null ? 0 : state.screenPane.w)) + '×' + String(Math.round(state.screenPane === null ? 0 : state.screenPane.h)) + '。CDP 输入坐标 = 页面 CSS × scale'
+      : '自适应模式：页面视口就是屏幕本身，换算系数为 1'
+    caption()
+    drawScreen()
+  }
+  function caption() {
+    var text = '未挂载'
+    if (state !== null && state.mounted === true) {
+      text = '屏幕 ' + sizeText() + ' · ' + (state.mode === 'fit' ? '自适应' : '恒定') + ' · ' + zoomText()
+    }
+    document.getElementById('caption').textContent = text
+  }
+  /* R179-A: draw the screen's frame where the SHELL says the screen is (op=state screenPane), converted
+   * into this document's own coordinates through the bay's client rect - the same numbers readings()
+   * reports back, so the shell's rectangle and the page's rectangle are comparable rather than assumed. */
+  function drawScreen() {
+    var bay = document.getElementById('bay')
+    var screen = document.getElementById('screen')
+    var msg = document.getElementById('bayMsg')
+    var surface = state === null ? null : state.surface
+    var spot = state === null ? null : state.screenPane
+    var usable = state !== null && state.mounted === true && surface !== null && surface !== undefined
+      && spot !== null && spot !== undefined && spot.w > 2 && spot.h > 2
+    if (usable !== true) {
+      screen.className = ''
+      lastScreen = null
+      msg.hidden = state !== null && state.mounted === true
+      return
+    }
+    msg.hidden = true
+    var box = bay.getBoundingClientRect()
+    var left = Math.round(spot.x - surface.x - box.left)
+    var top = Math.round(spot.y - surface.y - box.top)
+    var width = Math.round(spot.w)
+    var height = Math.round(spot.h)
+    screen.style.left = String(left) + 'px'
+    screen.style.top = String(top) + 'px'
+    screen.style.width = String(width) + 'px'
+    screen.style.height = String(height) + 'px'
+    screen.className = 'on'
+    lastScreen = { x: left, y: top, w: width, h: height }
+  }
+  function nextPreset() {
+    var list = presets()
+    if (list.length === 0) { return null }
+    var viewport = state === null ? null : state.viewport
+    var at = -1
+    for (var i = 0; i < list.length; i++) {
+      if (viewport !== null && viewport !== undefined && list[i].w === viewport.w && list[i].h === viewport.h) { at = i }
+    }
+    return list[(at + 1) % list.length]
+  }
+  /* R398: readings() existed but nothing ever SENT it, which is why no chrome reading could be observed from the shell
+   * side (op=state.content only ever carried the panel-start page's beacon). This posts it on its own slow beat with a
+   * channel name, so op=state.content names where it came from and the bar's size, the tab strip's scrollability and the
+   * overflow menu's state become checkable instead of only visible in a screenshot. */
+  /* R439: apply the two number fields. `op=viewport` accepts a custom W x H, so this is the same path an Agent uses
+   * through the panel route; the fields are seeded from the state the shell reports. */
+  function applyViewport() {
+    var w = parseInt(document.getElementById('vw').value, 10)
+    var h = parseInt(document.getElementById('vh').value, 10)
+    if (!isFinite(w) || !isFinite(h) || w < 200 || h < 200 || w > 5120 || h > 5120) { return }
+    post({ op: 'viewport', w: w, h: h }).then(function () { poll() })
+  }
+  ;(function () {
+    var button = document.getElementById('vapply')
+    if (button) { button.addEventListener('click', applyViewport) }
+    for (var id of ['vw', 'vh']) {
+      var field = document.getElementById(id)
+      if (field) { field.addEventListener('keydown', function (e) { if (e.key === 'Enter') { applyViewport() } }) }
+    }
+  })()
+  function seedViewportFields(answer) {
+    try {
+      var vp = answer && answer.viewport
+      if (!vp) { return }
+      var w = document.getElementById('vw')
+      var h = document.getElementById('vh')
+      if (w && document.activeElement !== w && typeof vp.w === 'number') { w.value = String(Math.round(vp.w)) }
+      if (h && document.activeElement !== h && typeof vp.h === 'number') { h.value = String(Math.round(vp.h)) }
+    } catch (error) { /* a seed must never break the chrome */ }
+  }
+  function poll() {
+    if (busy) { return }
+    post({ op: 'state' }).then(function (answer) {
+      if (answer !== null) { state = answer; seedViewportFields(answer); render() }
+      busy = false
+      /* R404: the reading is taken HERE because poll() is the one function proven to run on every beat - an earlier
+         version registered its own interval in a scope that never executed, and the try/catch around it turned "never
+         ran" into "no data". Both outcomes are now written down: the payload, or the failure that produced it. */
+      try {
+        window.localStorage.setItem('dsh.link.chrome.readings', JSON.stringify({ at: Date.now(), channel: 'chrome', readings: readings() }))
+      } catch (error) {
+        try { window.localStorage.setItem('dsh.link.chrome.readings', JSON.stringify({ at: Date.now(), channel: 'chrome', readingsError: String(error && error.message ? error.message : error) })) } catch (ignored) {}
+      }
+    })
+    busy = true
+  }
+  function closeEdit() {
+    document.body.className = ''
+  }
+  function openEdit() {
+    var viewport = state === null ? null : state.viewport
+    if (viewport !== null && viewport !== undefined) {
+      document.getElementById('w').value = String(Math.round(viewport.w))
+      document.getElementById('h').value = String(Math.round(viewport.h))
+    }
+    document.body.className = 'editing'
+    document.getElementById('w').focus()
+    document.getElementById('w').select()
+  }
+  document.getElementById('new').addEventListener('click', function () { drive({ op: 'tab-new', url: START }) })
+  document.getElementById('reload').addEventListener('click', function () {
+    var current = activeTab()
+    if (current !== null) { drive({ op: 'tab-goto', id: current.id, url: current.url }) }
+  })
+  document.getElementById('mode').addEventListener('click', function () {
+    drive({ op: 'mode', kind: state !== null && state.mode === 'fit' ? 'fixed' : 'fit' })
+  })
+  document.getElementById('res').addEventListener('click', function () {
+    var next = nextPreset()
+    if (next !== null) { drive({ op: 'viewport', preset: next.name }) }
+  })
+  document.getElementById('edit').addEventListener('click', function () {
+    if (document.body.className === 'editing') { closeEdit() } else { openEdit() }
+  })
+  document.getElementById('cancel').addEventListener('click', closeEdit)
+  document.getElementById('apply').addEventListener('click', function () {
+    var width = Number(document.getElementById('w').value)
+    var height = Number(document.getElementById('h').value)
+    if (!isFinite(width) || !isFinite(height) || width <= 0 || height <= 0) {
+      showError('named refusal: 宽和高都必须是正数')
+      return
+    }
+    drive({ op: 'viewport', width: width, height: height }, closeEdit)
+  })
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') { closeEdit() }
+    if (event.key === 'Enter' && document.body.className === 'editing') { document.getElementById('apply').click() }
+  })
+  window.addEventListener('resize', function () { drawScreen() })
+  /* The readings the check script asks for through in-process CDP (op:cdp {tab:'chrome'}). Numbers,
+   * not a picture: the strip's laid-out height, what the shell said the height is, where this page drew
+   * the screen frame against where the shell placed the window, and the state this page last rendered. */
+  globalThis.__DSH_BROWSER = {
+    readings: function () {
+      var bar = document.getElementById('bar')
+      var bay = document.getElementById('bay')
+      var box = bay.getBoundingClientRect()
+      var surface = state === null ? null : state.surface
+      var spot = state === null ? null : state.screenPane
+      var fromShell = (surface === null || surface === undefined || spot === null || spot === undefined) ? null : {
+        x: Math.round(spot.x - surface.x), y: Math.round(spot.y - surface.y),
+        w: Math.round(spot.w), h: Math.round(spot.h)
+      }
+      return {
+        chromeVarH: getComputedStyle(document.documentElement).getPropertyValue('--dsh-browser-chrome-h').trim(),
+        barH: bar.getBoundingClientRect().height,
+        bodyH: document.body.getBoundingClientRect().height,
+        innerW: window.innerWidth, innerH: window.innerHeight, dpr: window.devicePixelRatio,
+        pills: document.querySelectorAll('.tab').length,
+        /* R397: the three readings that make the reworked bar falsifiable from the shell side - the strip's height, whether
+           the tab strip can actually scroll when panes overflow, and the overflow menu's state. Without these the new
+           chrome can only be judged by looking at a screenshot. */
+        tabsScrollable: (function () { var t = document.getElementById('tabs'); return t === null ? null : t.scrollWidth > t.clientWidth + 1 })(),
+        moreOpen: (function () { var m = document.getElementById('more'); return m === null ? null : m.open })(),
+        chromeStripH: document.getElementById('bar') === null ? null : Math.round(document.getElementById('bar').getBoundingClientRect().height),
+        names: Array.prototype.map.call(document.querySelectorAll('.tab .name'), function (node) { return node.textContent }),
+        active: state === null ? null : state.active,
+        mode: state === null ? null : state.mode,
+        modeLabel: document.getElementById('mode').textContent,
+        mounted: state === null ? null : state.mounted,
+        count: state === null ? null : state.count,
+        limit: state === null ? null : state.limit,
+        url: document.getElementById('url').textContent,
+        shellChromeH: state === null ? null : state.chromeH,
+        shellSurface: state === null ? null : state.surface,
+        shellContentPane: state === null ? null : state.contentPane,
+        /* R179-A: the VM-preview numbers. */
+        shellDeckPane: state === null ? null : state.deckPane,
+        shellBayPane: state === null ? null : state.bayPane,
+        shellScreenPane: state === null ? null : state.screenPane,
+        shellViewport: state === null ? null : state.viewport,
+        viewportPreset: state === null ? null : state.viewportPreset,
+        presets: presets().map(function (row) { return row.name }),
+        scale: state === null ? null : state.scale,
+        zoomPct: zoomText(),
+        resLabel: document.getElementById('res').textContent,
+        caption: document.getElementById('caption').textContent,
+        bayRect: { x: Math.round(box.left), y: Math.round(box.top), w: Math.round(box.width), h: Math.round(box.height) },
+        /* R179-A: what this page REALLY laid out for the screen, MEASURED (getBoundingClientRect, in this
+         * document's own coordinates) rather than remembered from what was assigned to it. The first build
+         * of this reading reported the STYLE numbers, which are relative to #bay - they disagreed with the
+         * shell's screenPane by exactly the bar's height (36 px) and looked like a layout bug that was not
+         * one. screenStyle below keeps the offset-parent numbers as the second reading. */
+        screenDrawn: (function () {
+          var node = document.getElementById('screen')
+          if (node.className !== 'on') { return null }
+          var rect = node.getBoundingClientRect()
+          return { x: Math.round(rect.left), y: Math.round(rect.top), w: Math.round(rect.width), h: Math.round(rect.height) }
+        })(),
+        screenStyle: lastScreen,
+        screenFromShell: fromShell,
+        screenAgrees: (function () {
+          var node = document.getElementById('screen')
+          if (node.className !== 'on' || fromShell === null) { return null }
+          var rect = node.getBoundingClientRect()
+          return Math.abs(Math.round(rect.left) - fromShell.x) <= 1 && Math.abs(Math.round(rect.top) - fromShell.y) <= 1
+            && Math.abs(Math.round(rect.width) - fromShell.w) <= 1 && Math.abs(Math.round(rect.height) - fromShell.h) <= 1
+        })(),
+        editing: document.body.className === 'editing',
+        error: document.getElementById('err').hidden ? null : document.getElementById('err').textContent
+      }
+    },
+    state: function () { return state },
+    next: function (payload) { return post(payload) }
+  }
+  poll()
+  setInterval(poll, 400)
+})();
+</script></body></html>

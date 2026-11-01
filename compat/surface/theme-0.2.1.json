@@ -1,0 +1,3102 @@
+{
+ "format": "dsh-link.theme-surface/1",
+ "kernel": "0.2.1-rc.2",
+ "method": "reads --dsw-* declarations and usages under core/deepseek-harness/packages/client/*/src",
+ "files": 1366,
+ "counts": {
+  "declared": 404,
+  "used": 217,
+  "orphaned": 12
+ },
+ "families": {
+  "alias": 107,
+  "corner": 1,
+  "elevation": 5,
+  "focus": 2,
+  "font": 182,
+  "gradient": 3,
+  "hovercard": 1,
+  "linear": 2,
+  "mask": 1,
+  "menu": 2,
+  "radius": 6,
+  "shadow": 4,
+  "specific": 11,
+  "static": 77
+ },
+ "declared": {
+  "--dsw-alias-bg-base": {
+   "token": "--dsw-alias-bg-base",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:167",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:285"
+   ]
+  },
+  "--dsw-alias-bg-document-preview": {
+   "token": "--dsw-alias-bg-document-preview",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:168",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:286"
+   ]
+  },
+  "--dsw-alias-bg-document-selection": {
+   "token": "--dsw-alias-bg-document-selection",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:169",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:287"
+   ]
+  },
+  "--dsw-alias-bg-layer-1": {
+   "token": "--dsw-alias-bg-layer-1",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:171",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:289"
+   ]
+  },
+  "--dsw-alias-bg-layer-2": {
+   "token": "--dsw-alias-bg-layer-2",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:172",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:290"
+   ]
+  },
+  "--dsw-alias-bg-layer-3": {
+   "token": "--dsw-alias-bg-layer-3",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:173",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:291"
+   ]
+  },
+  "--dsw-alias-bg-mask-1": {
+   "token": "--dsw-alias-bg-mask-1",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:174",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:292"
+   ]
+  },
+  "--dsw-alias-bg-mask-2": {
+   "token": "--dsw-alias-bg-mask-2",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:175",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:293"
+   ]
+  },
+  "--dsw-alias-bg-mask-3": {
+   "token": "--dsw-alias-bg-mask-3",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:176",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:294"
+   ]
+  },
+  "--dsw-alias-bg-mask-drop": {
+   "token": "--dsw-alias-bg-mask-drop",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:178",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:296"
+   ]
+  },
+  "--dsw-alias-bg-mask-photo": {
+   "token": "--dsw-alias-bg-mask-photo",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:177",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:295"
+   ]
+  },
+  "--dsw-alias-bg-module-platform": {
+   "token": "--dsw-alias-bg-module-platform",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:179",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:297"
+   ]
+  },
+  "--dsw-alias-bg-multi-select": {
+   "token": "--dsw-alias-bg-multi-select",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:180",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:298"
+   ]
+  },
+  "--dsw-alias-bg-overlay": {
+   "token": "--dsw-alias-bg-overlay",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:181",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:299"
+   ]
+  },
+  "--dsw-alias-bg-skeleton": {
+   "token": "--dsw-alias-bg-skeleton",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:182",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:300"
+   ]
+  },
+  "--dsw-alias-border-inverted": {
+   "token": "--dsw-alias-border-inverted",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:184",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:302"
+   ]
+  },
+  "--dsw-alias-border-inverted2": {
+   "token": "--dsw-alias-border-inverted2",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:183",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:301"
+   ]
+  },
+  "--dsw-alias-border-l1": {
+   "token": "--dsw-alias-border-l1",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:185",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:303"
+   ]
+  },
+  "--dsw-alias-border-l2": {
+   "token": "--dsw-alias-border-l2",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:187",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:305"
+   ]
+  },
+  "--dsw-alias-border-l2-darkmode-thin": {
+   "token": "--dsw-alias-border-l2-darkmode-thin",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:186",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:304"
+   ]
+  },
+  "--dsw-alias-border-l3": {
+   "token": "--dsw-alias-border-l3",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:188",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:306"
+   ]
+  },
+  "--dsw-alias-border-l4": {
+   "token": "--dsw-alias-border-l4",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:189",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:307"
+   ]
+  },
+  "--dsw-alias-brand-primary": {
+   "token": "--dsw-alias-brand-primary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:192",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:310"
+   ]
+  },
+  "--dsw-alias-brand-primary-invert": {
+   "token": "--dsw-alias-brand-primary-invert",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:190",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:308"
+   ]
+  },
+  "--dsw-alias-brand-primary-new-colorprimary-new-color": {
+   "token": "--dsw-alias-brand-primary-new-colorprimary-new-color",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:191",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:309"
+   ]
+  },
+  "--dsw-alias-brand-text": {
+   "token": "--dsw-alias-brand-text",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:193",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:311"
+   ]
+  },
+  "--dsw-alias-button-contrast-fill": {
+   "token": "--dsw-alias-button-contrast-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:194",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:312"
+   ]
+  },
+  "--dsw-alias-button-elevated-fill": {
+   "token": "--dsw-alias-button-elevated-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:195",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:313"
+   ]
+  },
+  "--dsw-alias-button-floating-fill": {
+   "token": "--dsw-alias-button-floating-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:196",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:314"
+   ]
+  },
+  "--dsw-alias-button-floating-hover": {
+   "token": "--dsw-alias-button-floating-hover",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:197",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:315"
+   ]
+  },
+  "--dsw-alias-button-ghost-active-border": {
+   "token": "--dsw-alias-button-ghost-active-border",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:198",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:316"
+   ]
+  },
+  "--dsw-alias-button-ghost-active-fill": {
+   "token": "--dsw-alias-button-ghost-active-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:199",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:317"
+   ]
+  },
+  "--dsw-alias-button-ghost-active-hover": {
+   "token": "--dsw-alias-button-ghost-active-hover",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:200",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:318"
+   ]
+  },
+  "--dsw-alias-button-info-fill": {
+   "token": "--dsw-alias-button-info-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:201",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:319"
+   ]
+  },
+  "--dsw-alias-button-info-hover": {
+   "token": "--dsw-alias-button-info-hover",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:202",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:320"
+   ]
+  },
+  "--dsw-alias-button-primary-dimmed": {
+   "token": "--dsw-alias-button-primary-dimmed",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:203",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:321"
+   ]
+  },
+  "--dsw-alias-button-primary-fill": {
+   "token": "--dsw-alias-button-primary-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/PluginManagerPage.module.css:1196",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:204",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:322"
+   ]
+  },
+  "--dsw-alias-button-primary-hover": {
+   "token": "--dsw-alias-button-primary-hover",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/PluginManagerPage.module.css:1197",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:205",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:323"
+   ]
+  },
+  "--dsw-alias-button-tool-bar-fill": {
+   "token": "--dsw-alias-button-tool-bar-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:207",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:325"
+   ]
+  },
+  "--dsw-alias-button-tool-bar-fill-invisible": {
+   "token": "--dsw-alias-button-tool-bar-fill-invisible",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:206",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:324"
+   ]
+  },
+  "--dsw-alias-button-tool-bar-hover": {
+   "token": "--dsw-alias-button-tool-bar-hover",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:208",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:326"
+   ]
+  },
+  "--dsw-alias-code-diff-added": {
+   "token": "--dsw-alias-code-diff-added",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:242",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:360"
+   ]
+  },
+  "--dsw-alias-code-diff-deleted": {
+   "token": "--dsw-alias-code-diff-deleted",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:243",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:361"
+   ]
+  },
+  "--dsw-alias-file-diff-added-bg": {
+   "token": "--dsw-alias-file-diff-added-bg",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:244",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:362"
+   ]
+  },
+  "--dsw-alias-file-diff-added-gutter": {
+   "token": "--dsw-alias-file-diff-added-gutter",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:245",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:363"
+   ]
+  },
+  "--dsw-alias-file-diff-added-marker": {
+   "token": "--dsw-alias-file-diff-added-marker",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:246",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:364"
+   ]
+  },
+  "--dsw-alias-file-diff-deleted-bg": {
+   "token": "--dsw-alias-file-diff-deleted-bg",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:247",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:365"
+   ]
+  },
+  "--dsw-alias-file-diff-deleted-gutter": {
+   "token": "--dsw-alias-file-diff-deleted-gutter",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:248",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:366"
+   ]
+  },
+  "--dsw-alias-file-diff-deleted-marker": {
+   "token": "--dsw-alias-file-diff-deleted-marker",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:249",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:367"
+   ]
+  },
+  "--dsw-alias-interactive-bg-active": {
+   "token": "--dsw-alias-interactive-bg-active",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:209",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:327"
+   ]
+  },
+  "--dsw-alias-interactive-bg-hover": {
+   "token": "--dsw-alias-interactive-bg-hover",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-plugin-manager/src/client/PluginManagerPage.module.css:469",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:213",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:331"
+   ]
+  },
+  "--dsw-alias-interactive-bg-hover-accent": {
+   "token": "--dsw-alias-interactive-bg-hover-accent",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:210",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:328"
+   ]
+  },
+  "--dsw-alias-interactive-bg-hover-danger": {
+   "token": "--dsw-alias-interactive-bg-hover-danger",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:211",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:329"
+   ]
+  },
+  "--dsw-alias-interactive-bg-hover-solid": {
+   "token": "--dsw-alias-interactive-bg-hover-solid",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:212",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:330"
+   ]
+  },
+  "--dsw-alias-label-caption": {
+   "token": "--dsw-alias-label-caption",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:214",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:332"
+   ]
+  },
+  "--dsw-alias-label-deep-diving": {
+   "token": "--dsw-alias-label-deep-diving",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:215",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:333"
+   ]
+  },
+  "--dsw-alias-label-deep-diving-shimmer": {
+   "token": "--dsw-alias-label-deep-diving-shimmer",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:216",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:334"
+   ]
+  },
+  "--dsw-alias-label-dimmed": {
+   "token": "--dsw-alias-label-dimmed",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:217",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:335"
+   ]
+  },
+  "--dsw-alias-label-document-preview": {
+   "token": "--dsw-alias-label-document-preview",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:170",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:288"
+   ]
+  },
+  "--dsw-alias-label-primary": {
+   "token": "--dsw-alias-label-primary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:222",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:340"
+   ]
+  },
+  "--dsw-alias-label-primary-bluish": {
+   "token": "--dsw-alias-label-primary-bluish",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:218",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:336"
+   ]
+  },
+  "--dsw-alias-label-primary-dimmed": {
+   "token": "--dsw-alias-label-primary-dimmed",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:219",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:337"
+   ]
+  },
+  "--dsw-alias-label-primary-foreground": {
+   "token": "--dsw-alias-label-primary-foreground",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:220",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:338"
+   ]
+  },
+  "--dsw-alias-label-primary-inverted": {
+   "token": "--dsw-alias-label-primary-inverted",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:221",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:339"
+   ]
+  },
+  "--dsw-alias-label-secondary": {
+   "token": "--dsw-alias-label-secondary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:223",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:341"
+   ]
+  },
+  "--dsw-alias-label-shimmer": {
+   "token": "--dsw-alias-label-shimmer",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-chat/src/client/chat/ChatView.module.css:147",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:224",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:342"
+   ]
+  },
+  "--dsw-alias-label-tertiary": {
+   "token": "--dsw-alias-label-tertiary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:225",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:343"
+   ]
+  },
+  "--dsw-alias-link": {
+   "token": "--dsw-alias-link",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:227",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:345"
+   ]
+  },
+  "--dsw-alias-markdown-citation": {
+   "token": "--dsw-alias-markdown-citation",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:228",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:346"
+   ]
+  },
+  "--dsw-alias-markdown-code-block": {
+   "token": "--dsw-alias-markdown-code-block",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:230",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:348"
+   ]
+  },
+  "--dsw-alias-markdown-code-block-banner": {
+   "token": "--dsw-alias-markdown-code-block-banner",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:229",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:347"
+   ]
+  },
+  "--dsw-alias-markdown-code-segment-selected": {
+   "token": "--dsw-alias-markdown-code-segment-selected",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:231",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:349"
+   ]
+  },
+  "--dsw-alias-markdown-code-segment-unselected": {
+   "token": "--dsw-alias-markdown-code-segment-unselected",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:232",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:350"
+   ]
+  },
+  "--dsw-alias-markdown-inline-code": {
+   "token": "--dsw-alias-markdown-inline-code",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:233",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:351"
+   ]
+  },
+  "--dsw-alias-markdown-placeholder": {
+   "token": "--dsw-alias-markdown-placeholder",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:234",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:352"
+   ]
+  },
+  "--dsw-alias-markdown-tag": {
+   "token": "--dsw-alias-markdown-tag",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:235",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:353"
+   ]
+  },
+  "--dsw-alias-menu-group-header-fill": {
+   "token": "--dsw-alias-menu-group-header-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:272",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:390"
+   ]
+  },
+  "--dsw-alias-menu-icon": {
+   "token": "--dsw-alias-menu-icon",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:226",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:344"
+   ]
+  },
+  "--dsw-alias-onboarding-accent": {
+   "token": "--dsw-alias-onboarding-accent",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/onboarding.css:3"
+   ]
+  },
+  "--dsw-alias-onboarding-card-fill": {
+   "token": "--dsw-alias-onboarding-card-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/onboarding.css:7",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/onboarding.css:13"
+   ]
+  },
+  "--dsw-alias-onboarding-checkbox-border": {
+   "token": "--dsw-alias-onboarding-checkbox-border",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/onboarding.css:9",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/onboarding.css:15"
+   ]
+  },
+  "--dsw-alias-onboarding-secondary-fill": {
+   "token": "--dsw-alias-onboarding-secondary-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/onboarding.css:8",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/onboarding.css:14"
+   ]
+  },
+  "--dsw-alias-scrollbar-bg-l1": {
+   "token": "--dsw-alias-scrollbar-bg-l1",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:236",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:354"
+   ]
+  },
+  "--dsw-alias-scrollbar-bg-l2": {
+   "token": "--dsw-alias-scrollbar-bg-l2",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:237",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:355"
+   ]
+  },
+  "--dsw-alias-scrollbar-hover-l1": {
+   "token": "--dsw-alias-scrollbar-hover-l1",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:238",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:356"
+   ]
+  },
+  "--dsw-alias-scrollbar-hover-l2": {
+   "token": "--dsw-alias-scrollbar-hover-l2",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:239",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:357"
+   ]
+  },
+  "--dsw-alias-settings-card-fill": {
+   "token": "--dsw-alias-settings-card-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:32"
+   ]
+  },
+  "--dsw-alias-settings-card-stroke": {
+   "token": "--dsw-alias-settings-card-stroke",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:33"
+   ]
+  },
+  "--dsw-alias-state-business-primary": {
+   "token": "--dsw-alias-state-business-primary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:240",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:358"
+   ]
+  },
+  "--dsw-alias-state-business-tertiary": {
+   "token": "--dsw-alias-state-business-tertiary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:241",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:359"
+   ]
+  },
+  "--dsw-alias-state-error-primary": {
+   "token": "--dsw-alias-state-error-primary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:250",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:368"
+   ]
+  },
+  "--dsw-alias-state-error-secondary": {
+   "token": "--dsw-alias-state-error-secondary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:251",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:369"
+   ]
+  },
+  "--dsw-alias-state-idle-primary": {
+   "token": "--dsw-alias-state-idle-primary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:252",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:370"
+   ]
+  },
+  "--dsw-alias-state-success-primary": {
+   "token": "--dsw-alias-state-success-primary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:253",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:371"
+   ]
+  },
+  "--dsw-alias-state-success-secondary": {
+   "token": "--dsw-alias-state-success-secondary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:254",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:372"
+   ]
+  },
+  "--dsw-alias-state-success-tertiary": {
+   "token": "--dsw-alias-state-success-tertiary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:255",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:373"
+   ]
+  },
+  "--dsw-alias-state-warn-label": {
+   "token": "--dsw-alias-state-warn-label",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:256",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:374"
+   ]
+  },
+  "--dsw-alias-state-warn-primary": {
+   "token": "--dsw-alias-state-warn-primary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:257",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:375"
+   ]
+  },
+  "--dsw-alias-state-warn-secondary": {
+   "token": "--dsw-alias-state-warn-secondary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:258",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:376"
+   ]
+  },
+  "--dsw-alias-state-warn-tertiary": {
+   "token": "--dsw-alias-state-warn-tertiary",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:259",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:377"
+   ]
+  },
+  "--dsw-alias-switch-thumb": {
+   "token": "--dsw-alias-switch-thumb",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:260",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:378"
+   ]
+  },
+  "--dsw-alias-toast-bg": {
+   "token": "--dsw-alias-toast-bg",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:261",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:379"
+   ]
+  },
+  "--dsw-alias-toast-label": {
+   "token": "--dsw-alias-toast-label",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:262",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:380"
+   ]
+  },
+  "--dsw-alias-tooltip-bg": {
+   "token": "--dsw-alias-tooltip-bg",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:263",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:383"
+   ]
+  },
+  "--dsw-alias-tooltip-key-bg": {
+   "token": "--dsw-alias-tooltip-key-bg",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:264",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:384"
+   ]
+  },
+  "--dsw-alias-turn-trigger-bg": {
+   "token": "--dsw-alias-turn-trigger-bg",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:265",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:381"
+   ]
+  },
+  "--dsw-alias-turn-trigger-bg-hover": {
+   "token": "--dsw-alias-turn-trigger-bg-hover",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:266",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:382"
+   ]
+  },
+  "--dsw-corner-shape": {
+   "token": "--dsw-corner-shape",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/corner-shape.css:18"
+   ]
+  },
+  "--dsw-elevation-panel": {
+   "token": "--dsw-elevation-panel",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:34"
+   ]
+  },
+  "--dsw-elevation-prominent": {
+   "token": "--dsw-elevation-prominent",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:36"
+   ]
+  },
+  "--dsw-elevation-soft": {
+   "token": "--dsw-elevation-soft",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:38"
+   ]
+  },
+  "--dsw-elevation-stroke": {
+   "token": "--dsw-elevation-stroke",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:33"
+   ]
+  },
+  "--dsw-elevation-stroke-color": {
+   "token": "--dsw-elevation-stroke-color",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-attachment/src/AttachmentRail.module.css:95",
+    "core/deepseek-harness/packages/client/ui-chat/src/client/chat/ChatView.module.css:287",
+    "core/deepseek-harness/packages/client/ui-chat/src/client/chat/stat-dialog.module.css:25",
+    "core/deepseek-harness/packages/client/ui-commands/src/client/PopupSelectView.module.css:28",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/skeleton/ContextMeter.module.css:56",
+    "core/deepseek-harness/packages/client/ui-conversation/src/client/skeleton/InputBar.module.css:60"
+   ]
+  },
+  "--dsw-focus-ring-color": {
+   "token": "--dsw-focus-ring-color",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/focus.css:19"
+   ]
+  },
+  "--dsw-focus-ring-width": {
+   "token": "--dsw-focus-ring-width",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/focus.css:3"
+   ]
+  },
+  "--dsw-font-base-16": {
+   "token": "--dsw-font-base-16",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:206"
+   ]
+  },
+  "--dsw-font-base-16-font-family": {
+   "token": "--dsw-font-base-16-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:207"
+   ]
+  },
+  "--dsw-font-base-16-font-size": {
+   "token": "--dsw-font-base-16-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:210"
+   ]
+  },
+  "--dsw-font-base-16-font-style": {
+   "token": "--dsw-font-base-16-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:211"
+   ]
+  },
+  "--dsw-font-base-16-font-weight": {
+   "token": "--dsw-font-base-16-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:208"
+   ]
+  },
+  "--dsw-font-base-16-line-height": {
+   "token": "--dsw-font-base-16-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:209"
+   ]
+  },
+  "--dsw-font-base-strong-16": {
+   "token": "--dsw-font-base-strong-16",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:213"
+   ]
+  },
+  "--dsw-font-base-strong-16-font-family": {
+   "token": "--dsw-font-base-strong-16-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:214"
+   ]
+  },
+  "--dsw-font-base-strong-16-font-size": {
+   "token": "--dsw-font-base-strong-16-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:217"
+   ]
+  },
+  "--dsw-font-base-strong-16-font-style": {
+   "token": "--dsw-font-base-strong-16-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:218"
+   ]
+  },
+  "--dsw-font-base-strong-16-font-weight": {
+   "token": "--dsw-font-base-strong-16-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:215"
+   ]
+  },
+  "--dsw-font-base-strong-16-line-height": {
+   "token": "--dsw-font-base-strong-16-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:216"
+   ]
+  },
+  "--dsw-font-family": {
+   "token": "--dsw-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:9",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:30"
+   ]
+  },
+  "--dsw-font-family-brand": {
+   "token": "--dsw-font-family-brand",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:10"
+   ]
+  },
+  "--dsw-font-l-20": {
+   "token": "--dsw-font-l-20",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:192"
+   ]
+  },
+  "--dsw-font-l-20-font-family": {
+   "token": "--dsw-font-l-20-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:193"
+   ]
+  },
+  "--dsw-font-l-20-font-size": {
+   "token": "--dsw-font-l-20-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:196"
+   ]
+  },
+  "--dsw-font-l-20-font-style": {
+   "token": "--dsw-font-l-20-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:197"
+   ]
+  },
+  "--dsw-font-l-20-font-weight": {
+   "token": "--dsw-font-l-20-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:194"
+   ]
+  },
+  "--dsw-font-l-20-line-height": {
+   "token": "--dsw-font-l-20-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:195"
+   ]
+  },
+  "--dsw-font-m-18": {
+   "token": "--dsw-font-m-18",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:199"
+   ]
+  },
+  "--dsw-font-m-18-font-family": {
+   "token": "--dsw-font-m-18-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:200"
+   ]
+  },
+  "--dsw-font-m-18-font-size": {
+   "token": "--dsw-font-m-18-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:203"
+   ]
+  },
+  "--dsw-font-m-18-font-style": {
+   "token": "--dsw-font-m-18-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:204"
+   ]
+  },
+  "--dsw-font-m-18-font-weight": {
+   "token": "--dsw-font-m-18-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:201"
+   ]
+  },
+  "--dsw-font-m-18-line-height": {
+   "token": "--dsw-font-m-18-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:202"
+   ]
+  },
+  "--dsw-font-markdown-base": {
+   "token": "--dsw-font-markdown-base",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:93"
+   ]
+  },
+  "--dsw-font-markdown-base-font-family": {
+   "token": "--dsw-font-markdown-base-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:94"
+   ]
+  },
+  "--dsw-font-markdown-base-font-size": {
+   "token": "--dsw-font-markdown-base-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:97"
+   ]
+  },
+  "--dsw-font-markdown-base-font-style": {
+   "token": "--dsw-font-markdown-base-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:98"
+   ]
+  },
+  "--dsw-font-markdown-base-font-weight": {
+   "token": "--dsw-font-markdown-base-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:95"
+   ]
+  },
+  "--dsw-font-markdown-base-italic": {
+   "token": "--dsw-font-markdown-base-italic",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:107"
+   ]
+  },
+  "--dsw-font-markdown-base-italic-font-family": {
+   "token": "--dsw-font-markdown-base-italic-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:108"
+   ]
+  },
+  "--dsw-font-markdown-base-italic-font-size": {
+   "token": "--dsw-font-markdown-base-italic-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:111"
+   ]
+  },
+  "--dsw-font-markdown-base-italic-font-style": {
+   "token": "--dsw-font-markdown-base-italic-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:112"
+   ]
+  },
+  "--dsw-font-markdown-base-italic-font-weight": {
+   "token": "--dsw-font-markdown-base-italic-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:109"
+   ]
+  },
+  "--dsw-font-markdown-base-italic-line-height": {
+   "token": "--dsw-font-markdown-base-italic-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:110"
+   ]
+  },
+  "--dsw-font-markdown-base-line-height": {
+   "token": "--dsw-font-markdown-base-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:96"
+   ]
+  },
+  "--dsw-font-markdown-base-strong": {
+   "token": "--dsw-font-markdown-base-strong",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:100"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-font-family": {
+   "token": "--dsw-font-markdown-base-strong-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:101"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-font-size": {
+   "token": "--dsw-font-markdown-base-strong-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:104"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-font-style": {
+   "token": "--dsw-font-markdown-base-strong-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:105"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-font-weight": {
+   "token": "--dsw-font-markdown-base-strong-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:102"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-italic": {
+   "token": "--dsw-font-markdown-base-strong-italic",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:114"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-italic-font-family": {
+   "token": "--dsw-font-markdown-base-strong-italic-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:115"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-italic-font-size": {
+   "token": "--dsw-font-markdown-base-strong-italic-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:118"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-italic-font-style": {
+   "token": "--dsw-font-markdown-base-strong-italic-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:119"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-italic-font-weight": {
+   "token": "--dsw-font-markdown-base-strong-italic-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:116"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-italic-line-height": {
+   "token": "--dsw-font-markdown-base-strong-italic-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:117"
+   ]
+  },
+  "--dsw-font-markdown-base-strong-line-height": {
+   "token": "--dsw-font-markdown-base-strong-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:103"
+   ]
+  },
+  "--dsw-font-markdown-code": {
+   "token": "--dsw-font-markdown-code",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:163"
+   ]
+  },
+  "--dsw-font-markdown-code-block": {
+   "token": "--dsw-font-markdown-code-block",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:170"
+   ]
+  },
+  "--dsw-font-markdown-code-block-font-family": {
+   "token": "--dsw-font-markdown-code-block-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:171"
+   ]
+  },
+  "--dsw-font-markdown-code-block-font-size": {
+   "token": "--dsw-font-markdown-code-block-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:174"
+   ]
+  },
+  "--dsw-font-markdown-code-block-font-style": {
+   "token": "--dsw-font-markdown-code-block-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:175"
+   ]
+  },
+  "--dsw-font-markdown-code-block-font-weight": {
+   "token": "--dsw-font-markdown-code-block-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:172"
+   ]
+  },
+  "--dsw-font-markdown-code-block-line-height": {
+   "token": "--dsw-font-markdown-code-block-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:173"
+   ]
+  },
+  "--dsw-font-markdown-code-block-small": {
+   "token": "--dsw-font-markdown-code-block-small",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:178"
+   ]
+  },
+  "--dsw-font-markdown-code-block-small-font-family": {
+   "token": "--dsw-font-markdown-code-block-small-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:179"
+   ]
+  },
+  "--dsw-font-markdown-code-block-small-font-size": {
+   "token": "--dsw-font-markdown-code-block-small-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:182"
+   ]
+  },
+  "--dsw-font-markdown-code-block-small-font-style": {
+   "token": "--dsw-font-markdown-code-block-small-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:183"
+   ]
+  },
+  "--dsw-font-markdown-code-block-small-font-weight": {
+   "token": "--dsw-font-markdown-code-block-small-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:180"
+   ]
+  },
+  "--dsw-font-markdown-code-block-small-line-height": {
+   "token": "--dsw-font-markdown-code-block-small-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:181"
+   ]
+  },
+  "--dsw-font-markdown-code-font-family": {
+   "token": "--dsw-font-markdown-code-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:164"
+   ]
+  },
+  "--dsw-font-markdown-code-font-size": {
+   "token": "--dsw-font-markdown-code-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:167"
+   ]
+  },
+  "--dsw-font-markdown-code-font-style": {
+   "token": "--dsw-font-markdown-code-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:168"
+   ]
+  },
+  "--dsw-font-markdown-code-font-weight": {
+   "token": "--dsw-font-markdown-code-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:165"
+   ]
+  },
+  "--dsw-font-markdown-code-line-height": {
+   "token": "--dsw-font-markdown-code-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:166"
+   ]
+  },
+  "--dsw-font-markdown-h1": {
+   "token": "--dsw-font-markdown-h1",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:65"
+   ]
+  },
+  "--dsw-font-markdown-h1-font-family": {
+   "token": "--dsw-font-markdown-h1-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:66"
+   ]
+  },
+  "--dsw-font-markdown-h1-font-size": {
+   "token": "--dsw-font-markdown-h1-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:69"
+   ]
+  },
+  "--dsw-font-markdown-h1-font-style": {
+   "token": "--dsw-font-markdown-h1-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:70"
+   ]
+  },
+  "--dsw-font-markdown-h1-font-weight": {
+   "token": "--dsw-font-markdown-h1-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:67"
+   ]
+  },
+  "--dsw-font-markdown-h1-line-height": {
+   "token": "--dsw-font-markdown-h1-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:68"
+   ]
+  },
+  "--dsw-font-markdown-h2": {
+   "token": "--dsw-font-markdown-h2",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:72"
+   ]
+  },
+  "--dsw-font-markdown-h2-font-family": {
+   "token": "--dsw-font-markdown-h2-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:73"
+   ]
+  },
+  "--dsw-font-markdown-h2-font-size": {
+   "token": "--dsw-font-markdown-h2-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:76"
+   ]
+  },
+  "--dsw-font-markdown-h2-font-style": {
+   "token": "--dsw-font-markdown-h2-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:77"
+   ]
+  },
+  "--dsw-font-markdown-h2-font-weight": {
+   "token": "--dsw-font-markdown-h2-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:74"
+   ]
+  },
+  "--dsw-font-markdown-h2-line-height": {
+   "token": "--dsw-font-markdown-h2-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:75"
+   ]
+  },
+  "--dsw-font-markdown-h3": {
+   "token": "--dsw-font-markdown-h3",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:79"
+   ]
+  },
+  "--dsw-font-markdown-h3-font-family": {
+   "token": "--dsw-font-markdown-h3-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:80"
+   ]
+  },
+  "--dsw-font-markdown-h3-font-size": {
+   "token": "--dsw-font-markdown-h3-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:83"
+   ]
+  },
+  "--dsw-font-markdown-h3-font-style": {
+   "token": "--dsw-font-markdown-h3-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:84"
+   ]
+  },
+  "--dsw-font-markdown-h3-font-weight": {
+   "token": "--dsw-font-markdown-h3-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:81"
+   ]
+  },
+  "--dsw-font-markdown-h3-line-height": {
+   "token": "--dsw-font-markdown-h3-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:82"
+   ]
+  },
+  "--dsw-font-markdown-h4": {
+   "token": "--dsw-font-markdown-h4",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:86"
+   ]
+  },
+  "--dsw-font-markdown-h4-font-family": {
+   "token": "--dsw-font-markdown-h4-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:87"
+   ]
+  },
+  "--dsw-font-markdown-h4-font-size": {
+   "token": "--dsw-font-markdown-h4-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:90"
+   ]
+  },
+  "--dsw-font-markdown-h4-font-style": {
+   "token": "--dsw-font-markdown-h4-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:91"
+   ]
+  },
+  "--dsw-font-markdown-h4-font-weight": {
+   "token": "--dsw-font-markdown-h4-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:88"
+   ]
+  },
+  "--dsw-font-markdown-h4-line-height": {
+   "token": "--dsw-font-markdown-h4-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:89"
+   ]
+  },
+  "--dsw-font-markdown-small": {
+   "token": "--dsw-font-markdown-small",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:135"
+   ]
+  },
+  "--dsw-font-markdown-small-font-family": {
+   "token": "--dsw-font-markdown-small-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:136"
+   ]
+  },
+  "--dsw-font-markdown-small-font-size": {
+   "token": "--dsw-font-markdown-small-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:139"
+   ]
+  },
+  "--dsw-font-markdown-small-font-style": {
+   "token": "--dsw-font-markdown-small-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:140"
+   ]
+  },
+  "--dsw-font-markdown-small-font-weight": {
+   "token": "--dsw-font-markdown-small-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:137"
+   ]
+  },
+  "--dsw-font-markdown-small-italic": {
+   "token": "--dsw-font-markdown-small-italic",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:149"
+   ]
+  },
+  "--dsw-font-markdown-small-italic-font-family": {
+   "token": "--dsw-font-markdown-small-italic-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:150"
+   ]
+  },
+  "--dsw-font-markdown-small-italic-font-size": {
+   "token": "--dsw-font-markdown-small-italic-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:153"
+   ]
+  },
+  "--dsw-font-markdown-small-italic-font-style": {
+   "token": "--dsw-font-markdown-small-italic-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:154"
+   ]
+  },
+  "--dsw-font-markdown-small-italic-font-weight": {
+   "token": "--dsw-font-markdown-small-italic-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:151"
+   ]
+  },
+  "--dsw-font-markdown-small-italic-line-height": {
+   "token": "--dsw-font-markdown-small-italic-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:152"
+   ]
+  },
+  "--dsw-font-markdown-small-line-height": {
+   "token": "--dsw-font-markdown-small-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:138"
+   ]
+  },
+  "--dsw-font-markdown-small-strong": {
+   "token": "--dsw-font-markdown-small-strong",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:142"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-font-family": {
+   "token": "--dsw-font-markdown-small-strong-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:143"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-font-size": {
+   "token": "--dsw-font-markdown-small-strong-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:146"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-font-style": {
+   "token": "--dsw-font-markdown-small-strong-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:147"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-font-weight": {
+   "token": "--dsw-font-markdown-small-strong-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:144"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-italic": {
+   "token": "--dsw-font-markdown-small-strong-italic",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:156"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-italic-font-family": {
+   "token": "--dsw-font-markdown-small-strong-italic-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:157"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-italic-font-size": {
+   "token": "--dsw-font-markdown-small-strong-italic-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:160"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-italic-font-style": {
+   "token": "--dsw-font-markdown-small-strong-italic-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:161"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-italic-font-weight": {
+   "token": "--dsw-font-markdown-small-strong-italic-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:158"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-italic-line-height": {
+   "token": "--dsw-font-markdown-small-strong-italic-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:159"
+   ]
+  },
+  "--dsw-font-markdown-small-strong-line-height": {
+   "token": "--dsw-font-markdown-small-strong-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:145"
+   ]
+  },
+  "--dsw-font-markdown-table": {
+   "token": "--dsw-font-markdown-table",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:121"
+   ]
+  },
+  "--dsw-font-markdown-table-font-family": {
+   "token": "--dsw-font-markdown-table-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:122"
+   ]
+  },
+  "--dsw-font-markdown-table-font-size": {
+   "token": "--dsw-font-markdown-table-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:125"
+   ]
+  },
+  "--dsw-font-markdown-table-font-style": {
+   "token": "--dsw-font-markdown-table-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:126"
+   ]
+  },
+  "--dsw-font-markdown-table-font-weight": {
+   "token": "--dsw-font-markdown-table-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:123"
+   ]
+  },
+  "--dsw-font-markdown-table-head": {
+   "token": "--dsw-font-markdown-table-head",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:128"
+   ]
+  },
+  "--dsw-font-markdown-table-head-font-family": {
+   "token": "--dsw-font-markdown-table-head-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:129"
+   ]
+  },
+  "--dsw-font-markdown-table-head-font-size": {
+   "token": "--dsw-font-markdown-table-head-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:132"
+   ]
+  },
+  "--dsw-font-markdown-table-head-font-style": {
+   "token": "--dsw-font-markdown-table-head-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:133"
+   ]
+  },
+  "--dsw-font-markdown-table-head-font-weight": {
+   "token": "--dsw-font-markdown-table-head-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:130"
+   ]
+  },
+  "--dsw-font-markdown-table-head-line-height": {
+   "token": "--dsw-font-markdown-table-head-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:131"
+   ]
+  },
+  "--dsw-font-markdown-table-line-height": {
+   "token": "--dsw-font-markdown-table-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:124"
+   ]
+  },
+  "--dsw-font-s-14": {
+   "token": "--dsw-font-s-14",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:220"
+   ]
+  },
+  "--dsw-font-s-14-font-family": {
+   "token": "--dsw-font-s-14-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:221"
+   ]
+  },
+  "--dsw-font-s-14-font-size": {
+   "token": "--dsw-font-s-14-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:224"
+   ]
+  },
+  "--dsw-font-s-14-font-style": {
+   "token": "--dsw-font-s-14-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:225"
+   ]
+  },
+  "--dsw-font-s-14-font-weight": {
+   "token": "--dsw-font-s-14-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:222"
+   ]
+  },
+  "--dsw-font-s-14-line-height": {
+   "token": "--dsw-font-s-14-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:223"
+   ]
+  },
+  "--dsw-font-s-strong-14": {
+   "token": "--dsw-font-s-strong-14",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:227"
+   ]
+  },
+  "--dsw-font-s-strong-14-font-family": {
+   "token": "--dsw-font-s-strong-14-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:228"
+   ]
+  },
+  "--dsw-font-s-strong-14-font-size": {
+   "token": "--dsw-font-s-strong-14-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:231"
+   ]
+  },
+  "--dsw-font-s-strong-14-font-style": {
+   "token": "--dsw-font-s-strong-14-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:232"
+   ]
+  },
+  "--dsw-font-s-strong-14-font-weight": {
+   "token": "--dsw-font-s-strong-14-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:229"
+   ]
+  },
+  "--dsw-font-s-strong-14-line-height": {
+   "token": "--dsw-font-s-strong-14-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:230"
+   ]
+  },
+  "--dsw-font-xl-24": {
+   "token": "--dsw-font-xl-24",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:185"
+   ]
+  },
+  "--dsw-font-xl-24-font-family": {
+   "token": "--dsw-font-xl-24-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:186"
+   ]
+  },
+  "--dsw-font-xl-24-font-size": {
+   "token": "--dsw-font-xl-24-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:189"
+   ]
+  },
+  "--dsw-font-xl-24-font-style": {
+   "token": "--dsw-font-xl-24-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:190"
+   ]
+  },
+  "--dsw-font-xl-24-font-weight": {
+   "token": "--dsw-font-xl-24-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:187"
+   ]
+  },
+  "--dsw-font-xl-24-line-height": {
+   "token": "--dsw-font-xl-24-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:188"
+   ]
+  },
+  "--dsw-font-xs-13": {
+   "token": "--dsw-font-xs-13",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-primitives/src/markdown/CodeBlock.module.css:7",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:234"
+   ]
+  },
+  "--dsw-font-xs-13-font-family": {
+   "token": "--dsw-font-xs-13-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:235"
+   ]
+  },
+  "--dsw-font-xs-13-font-size": {
+   "token": "--dsw-font-xs-13-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:238"
+   ]
+  },
+  "--dsw-font-xs-13-font-style": {
+   "token": "--dsw-font-xs-13-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:239"
+   ]
+  },
+  "--dsw-font-xs-13-font-weight": {
+   "token": "--dsw-font-xs-13-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:236"
+   ]
+  },
+  "--dsw-font-xs-13-line-height": {
+   "token": "--dsw-font-xs-13-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:237"
+   ]
+  },
+  "--dsw-font-xs-strong-13": {
+   "token": "--dsw-font-xs-strong-13",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:241"
+   ]
+  },
+  "--dsw-font-xs-strong-13-font-family": {
+   "token": "--dsw-font-xs-strong-13-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:242"
+   ]
+  },
+  "--dsw-font-xs-strong-13-font-size": {
+   "token": "--dsw-font-xs-strong-13-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:245"
+   ]
+  },
+  "--dsw-font-xs-strong-13-font-style": {
+   "token": "--dsw-font-xs-strong-13-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:246"
+   ]
+  },
+  "--dsw-font-xs-strong-13-font-weight": {
+   "token": "--dsw-font-xs-strong-13-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:243"
+   ]
+  },
+  "--dsw-font-xs-strong-13-line-height": {
+   "token": "--dsw-font-xs-strong-13-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:244"
+   ]
+  },
+  "--dsw-font-xxs-12": {
+   "token": "--dsw-font-xxs-12",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:248"
+   ]
+  },
+  "--dsw-font-xxs-12-font-family": {
+   "token": "--dsw-font-xxs-12-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:249"
+   ]
+  },
+  "--dsw-font-xxs-12-font-size": {
+   "token": "--dsw-font-xxs-12-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:252"
+   ]
+  },
+  "--dsw-font-xxs-12-font-style": {
+   "token": "--dsw-font-xxs-12-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:253"
+   ]
+  },
+  "--dsw-font-xxs-12-font-weight": {
+   "token": "--dsw-font-xxs-12-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:250"
+   ]
+  },
+  "--dsw-font-xxs-12-line-height": {
+   "token": "--dsw-font-xxs-12-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:251"
+   ]
+  },
+  "--dsw-font-xxs-strong-12": {
+   "token": "--dsw-font-xxs-strong-12",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:255"
+   ]
+  },
+  "--dsw-font-xxs-strong-12-font-family": {
+   "token": "--dsw-font-xxs-strong-12-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:256"
+   ]
+  },
+  "--dsw-font-xxs-strong-12-font-size": {
+   "token": "--dsw-font-xxs-strong-12-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:259"
+   ]
+  },
+  "--dsw-font-xxs-strong-12-font-style": {
+   "token": "--dsw-font-xxs-strong-12-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:260"
+   ]
+  },
+  "--dsw-font-xxs-strong-12-font-weight": {
+   "token": "--dsw-font-xxs-strong-12-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:257"
+   ]
+  },
+  "--dsw-font-xxs-strong-12-line-height": {
+   "token": "--dsw-font-xxs-strong-12-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:258"
+   ]
+  },
+  "--dsw-font-xxxs-11": {
+   "token": "--dsw-font-xxxs-11",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:262"
+   ]
+  },
+  "--dsw-font-xxxs-11-font-family": {
+   "token": "--dsw-font-xxxs-11-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:263"
+   ]
+  },
+  "--dsw-font-xxxs-11-font-size": {
+   "token": "--dsw-font-xxxs-11-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:266"
+   ]
+  },
+  "--dsw-font-xxxs-11-font-style": {
+   "token": "--dsw-font-xxxs-11-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:267"
+   ]
+  },
+  "--dsw-font-xxxs-11-font-weight": {
+   "token": "--dsw-font-xxxs-11-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:264"
+   ]
+  },
+  "--dsw-font-xxxs-11-line-height": {
+   "token": "--dsw-font-xxxs-11-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:265"
+   ]
+  },
+  "--dsw-font-xxxs-strong-11": {
+   "token": "--dsw-font-xxxs-strong-11",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:269"
+   ]
+  },
+  "--dsw-font-xxxs-strong-11-font-family": {
+   "token": "--dsw-font-xxxs-strong-11-font-family",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:270"
+   ]
+  },
+  "--dsw-font-xxxs-strong-11-font-size": {
+   "token": "--dsw-font-xxxs-strong-11-font-size",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:273"
+   ]
+  },
+  "--dsw-font-xxxs-strong-11-font-style": {
+   "token": "--dsw-font-xxxs-strong-11-font-style",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:274"
+   ]
+  },
+  "--dsw-font-xxxs-strong-11-font-weight": {
+   "token": "--dsw-font-xxxs-strong-11-font-weight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:271"
+   ]
+  },
+  "--dsw-font-xxxs-strong-11-line-height": {
+   "token": "--dsw-font-xxxs-strong-11-line-height",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:272"
+   ]
+  },
+  "--dsw-gradient-onboarding-blue-stops": {
+   "token": "--dsw-gradient-onboarding-blue-stops",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/onboarding.css:5"
+   ]
+  },
+  "--dsw-gradient-onboarding-cyan-stops": {
+   "token": "--dsw-gradient-onboarding-cyan-stops",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/onboarding.css:6"
+   ]
+  },
+  "--dsw-gradient-onboarding-violet-stops": {
+   "token": "--dsw-gradient-onboarding-violet-stops",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/onboarding.css:4"
+   ]
+  },
+  "--dsw-hovercard-bg": {
+   "token": "--dsw-hovercard-bg",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-primitives/src/HoverCard.module.css:10"
+   ]
+  },
+  "--dsw-linear-gradient-think": {
+   "token": "--dsw-linear-gradient-think",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:2",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:43"
+   ]
+  },
+  "--dsw-linear-think-select": {
+   "token": "--dsw-linear-think-select",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:3",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:44"
+   ]
+  },
+  "--dsw-mask-blur": {
+   "token": "--dsw-mask-blur",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:19"
+   ]
+  },
+  "--dsw-menu-backdrop-filter": {
+   "token": "--dsw-menu-backdrop-filter",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:20"
+   ]
+  },
+  "--dsw-menu-surface-fill": {
+   "token": "--dsw-menu-surface-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:271",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:389"
+   ]
+  },
+  "--dsw-radius-lg": {
+   "token": "--dsw-radius-lg",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:21"
+   ]
+  },
+  "--dsw-radius-md": {
+   "token": "--dsw-radius-md",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:20"
+   ]
+  },
+  "--dsw-radius-panel": {
+   "token": "--dsw-radius-panel",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:23"
+   ]
+  },
+  "--dsw-radius-sm": {
+   "token": "--dsw-radius-sm",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:19"
+   ]
+  },
+  "--dsw-radius-xl": {
+   "token": "--dsw-radius-xl",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:22"
+   ]
+  },
+  "--dsw-radius-xs": {
+   "token": "--dsw-radius-xs",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/base.css:18"
+   ]
+  },
+  "--dsw-shadow-lv1": {
+   "token": "--dsw-shadow-lv1",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:5"
+   ]
+  },
+  "--dsw-shadow-lv1-blur": {
+   "token": "--dsw-shadow-lv1-blur",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:6"
+   ]
+  },
+  "--dsw-shadow-lv2": {
+   "token": "--dsw-shadow-lv2",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:7"
+   ]
+  },
+  "--dsw-shadow-lv3": {
+   "token": "--dsw-shadow-lv3",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/gradient-shadow-text.css:8"
+   ]
+  },
+  "--dsw-specific-bubble": {
+   "token": "--dsw-specific-bubble",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:268",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:386"
+   ]
+  },
+  "--dsw-specific-bubble-highlight": {
+   "token": "--dsw-specific-bubble-highlight",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:267",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:385"
+   ]
+  },
+  "--dsw-specific-input-major": {
+   "token": "--dsw-specific-input-major",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:269",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:387"
+   ]
+  },
+  "--dsw-specific-login-input": {
+   "token": "--dsw-specific-login-input",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:270",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:388"
+   ]
+  },
+  "--dsw-specific-menu": {
+   "token": "--dsw-specific-menu",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:273",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:391",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:403",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:407"
+   ]
+  },
+  "--dsw-specific-selector": {
+   "token": "--dsw-specific-selector",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:274",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:392"
+   ]
+  },
+  "--dsw-specific-sidebar-fill": {
+   "token": "--dsw-specific-sidebar-fill",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:275",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:393"
+   ]
+  },
+  "--dsw-specific-sidebar-nav-item-active": {
+   "token": "--dsw-specific-sidebar-nav-item-active",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:277",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:395"
+   ]
+  },
+  "--dsw-specific-sidebar-nav-item-active-accent": {
+   "token": "--dsw-specific-sidebar-nav-item-active-accent",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:276",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:394"
+   ]
+  },
+  "--dsw-specific-sidebar-nav-item-hover": {
+   "token": "--dsw-specific-sidebar-nav-item-hover",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:278",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:396"
+   ]
+  },
+  "--dsw-specific-tip": {
+   "token": "--dsw-specific-tip",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:279",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:397"
+   ]
+  },
+  "--dsw-static-amber-100": {
+   "token": "--dsw-static-amber-100",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:5",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:86"
+   ]
+  },
+  "--dsw-static-amber-400": {
+   "token": "--dsw-static-amber-400",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:6",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:87"
+   ]
+  },
+  "--dsw-static-amber-500": {
+   "token": "--dsw-static-amber-500",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:7",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:88"
+   ]
+  },
+  "--dsw-static-amber-600": {
+   "token": "--dsw-static-amber-600",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:8",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:89"
+   ]
+  },
+  "--dsw-static-amber-900": {
+   "token": "--dsw-static-amber-900",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:9",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:90"
+   ]
+  },
+  "--dsw-static-blue-100": {
+   "token": "--dsw-static-blue-100",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:10",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:91"
+   ]
+  },
+  "--dsw-static-blue-300": {
+   "token": "--dsw-static-blue-300",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:11",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:92"
+   ]
+  },
+  "--dsw-static-blue-400": {
+   "token": "--dsw-static-blue-400",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:12",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:93"
+   ]
+  },
+  "--dsw-static-blue-450": {
+   "token": "--dsw-static-blue-450",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:13",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:94"
+   ]
+  },
+  "--dsw-static-blue-50": {
+   "token": "--dsw-static-blue-50",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:15",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:96"
+   ]
+  },
+  "--dsw-static-blue-500": {
+   "token": "--dsw-static-blue-500",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:14",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:95"
+   ]
+  },
+  "--dsw-static-blue-50p": {
+   "token": "--dsw-static-blue-50p",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:16",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:97"
+   ]
+  },
+  "--dsw-static-blue-600": {
+   "token": "--dsw-static-blue-600",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:17",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:98"
+   ]
+  },
+  "--dsw-static-blue-75": {
+   "token": "--dsw-static-blue-75",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:18",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:99"
+   ]
+  },
+  "--dsw-static-blue-800": {
+   "token": "--dsw-static-blue-800",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:19",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:100"
+   ]
+  },
+  "--dsw-static-blue-900": {
+   "token": "--dsw-static-blue-900",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:20",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:101"
+   ]
+  },
+  "--dsw-static-blue-950": {
+   "token": "--dsw-static-blue-950",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:21",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:102"
+   ]
+  },
+  "--dsw-static-deepseek-100": {
+   "token": "--dsw-static-deepseek-100",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:22",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:103"
+   ]
+  },
+  "--dsw-static-deepseek-200": {
+   "token": "--dsw-static-deepseek-200",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:23",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:104"
+   ]
+  },
+  "--dsw-static-deepseek-300": {
+   "token": "--dsw-static-deepseek-300",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:24",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:105"
+   ]
+  },
+  "--dsw-static-deepseek-400": {
+   "token": "--dsw-static-deepseek-400",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:26",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:107"
+   ]
+  },
+  "--dsw-static-deepseek-450": {
+   "token": "--dsw-static-deepseek-450",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:27",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:108"
+   ]
+  },
+  "--dsw-static-deepseek-50": {
+   "token": "--dsw-static-deepseek-50",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:29",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:110"
+   ]
+  },
+  "--dsw-static-deepseek-500": {
+   "token": "--dsw-static-deepseek-500",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:28",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:109"
+   ]
+  },
+  "--dsw-static-deepseek-600": {
+   "token": "--dsw-static-deepseek-600",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:30",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:111"
+   ]
+  },
+  "--dsw-static-deepseek-700-delete": {
+   "token": "--dsw-static-deepseek-700-delete",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:31",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:112"
+   ]
+  },
+  "--dsw-static-deepseek-800": {
+   "token": "--dsw-static-deepseek-800",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:32",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:113"
+   ]
+  },
+  "--dsw-static-deepseek-900": {
+   "token": "--dsw-static-deepseek-900",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:33",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:114"
+   ]
+  },
+  "--dsw-static-green-100": {
+   "token": "--dsw-static-green-100",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:34",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:115"
+   ]
+  },
+  "--dsw-static-green-400": {
+   "token": "--dsw-static-green-400",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:35",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:116"
+   ]
+  },
+  "--dsw-static-green-500": {
+   "token": "--dsw-static-green-500",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:36",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:117"
+   ]
+  },
+  "--dsw-static-green-500-a08": {
+   "token": "--dsw-static-green-500-a08",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:37",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:118"
+   ]
+  },
+  "--dsw-static-green-500-a12": {
+   "token": "--dsw-static-green-500-a12",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:38",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:119"
+   ]
+  },
+  "--dsw-static-green-900": {
+   "token": "--dsw-static-green-900",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:39",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:120"
+   ]
+  },
+  "--dsw-static-neutral-00": {
+   "token": "--dsw-static-neutral-00",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:40",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:121"
+   ]
+  },
+  "--dsw-static-neutral-100": {
+   "token": "--dsw-static-neutral-100",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:42",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:123"
+   ]
+  },
+  "--dsw-static-neutral-1000": {
+   "token": "--dsw-static-neutral-1000",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:41",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:122"
+   ]
+  },
+  "--dsw-static-neutral-150": {
+   "token": "--dsw-static-neutral-150",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:43",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:124"
+   ]
+  },
+  "--dsw-static-neutral-200": {
+   "token": "--dsw-static-neutral-200",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:44",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:125"
+   ]
+  },
+  "--dsw-static-neutral-250": {
+   "token": "--dsw-static-neutral-250",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:45",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:126"
+   ]
+  },
+  "--dsw-static-neutral-300": {
+   "token": "--dsw-static-neutral-300",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:46",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:127"
+   ]
+  },
+  "--dsw-static-neutral-400": {
+   "token": "--dsw-static-neutral-400",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:47",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:128"
+   ]
+  },
+  "--dsw-static-neutral-50": {
+   "token": "--dsw-static-neutral-50",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:49",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:130"
+   ]
+  },
+  "--dsw-static-neutral-500": {
+   "token": "--dsw-static-neutral-500",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:48",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:129"
+   ]
+  },
+  "--dsw-static-neutral-550": {
+   "token": "--dsw-static-neutral-550",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:50",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:131"
+   ]
+  },
+  "--dsw-static-neutral-600": {
+   "token": "--dsw-static-neutral-600",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:51",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:132"
+   ]
+  },
+  "--dsw-static-neutral-700": {
+   "token": "--dsw-static-neutral-700",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:52",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:133"
+   ]
+  },
+  "--dsw-static-neutral-800": {
+   "token": "--dsw-static-neutral-800",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:53",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:134"
+   ]
+  },
+  "--dsw-static-neutral-850": {
+   "token": "--dsw-static-neutral-850",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:54",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:135"
+   ]
+  },
+  "--dsw-static-neutral-900": {
+   "token": "--dsw-static-neutral-900",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:55",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:136"
+   ]
+  },
+  "--dsw-static-neutral-bluish-00": {
+   "token": "--dsw-static-neutral-bluish-00",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:56",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:137"
+   ]
+  },
+  "--dsw-static-neutral-bluish-100": {
+   "token": "--dsw-static-neutral-bluish-100",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:58",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:139"
+   ]
+  },
+  "--dsw-static-neutral-bluish-1000": {
+   "token": "--dsw-static-neutral-bluish-1000",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:57",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:138"
+   ]
+  },
+  "--dsw-static-neutral-bluish-150": {
+   "token": "--dsw-static-neutral-bluish-150",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:59",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:140"
+   ]
+  },
+  "--dsw-static-neutral-bluish-200": {
+   "token": "--dsw-static-neutral-bluish-200",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:60",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:141"
+   ]
+  },
+  "--dsw-static-neutral-bluish-300": {
+   "token": "--dsw-static-neutral-bluish-300",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:61",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:142"
+   ]
+  },
+  "--dsw-static-neutral-bluish-400": {
+   "token": "--dsw-static-neutral-bluish-400",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:62",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:143"
+   ]
+  },
+  "--dsw-static-neutral-bluish-50": {
+   "token": "--dsw-static-neutral-bluish-50",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:64",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:145"
+   ]
+  },
+  "--dsw-static-neutral-bluish-500": {
+   "token": "--dsw-static-neutral-bluish-500",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:63",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:144"
+   ]
+  },
+  "--dsw-static-neutral-bluish-60": {
+   "token": "--dsw-static-neutral-bluish-60",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:66",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:147"
+   ]
+  },
+  "--dsw-static-neutral-bluish-600": {
+   "token": "--dsw-static-neutral-bluish-600",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:65",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:146"
+   ]
+  },
+  "--dsw-static-neutral-bluish-700": {
+   "token": "--dsw-static-neutral-bluish-700",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:67",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:148"
+   ]
+  },
+  "--dsw-static-neutral-bluish-75": {
+   "token": "--dsw-static-neutral-bluish-75",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:69",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:150"
+   ]
+  },
+  "--dsw-static-neutral-bluish-750": {
+   "token": "--dsw-static-neutral-bluish-750",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:68",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:149"
+   ]
+  },
+  "--dsw-static-neutral-bluish-800": {
+   "token": "--dsw-static-neutral-bluish-800",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:70",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:151"
+   ]
+  },
+  "--dsw-static-neutral-bluish-850": {
+   "token": "--dsw-static-neutral-bluish-850",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:71",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:152"
+   ]
+  },
+  "--dsw-static-neutral-bluish-875": {
+   "token": "--dsw-static-neutral-bluish-875",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:72",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:153"
+   ]
+  },
+  "--dsw-static-neutral-bluish-900": {
+   "token": "--dsw-static-neutral-bluish-900",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:73",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:154"
+   ]
+  },
+  "--dsw-static-neutral-bluish-950": {
+   "token": "--dsw-static-neutral-bluish-950",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:74",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:155"
+   ]
+  },
+  "--dsw-static-red-100": {
+   "token": "--dsw-static-red-100",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:75",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:156"
+   ]
+  },
+  "--dsw-static-red-400": {
+   "token": "--dsw-static-red-400",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:76",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:157"
+   ]
+  },
+  "--dsw-static-red-400-a12": {
+   "token": "--dsw-static-red-400-a12",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:77",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:158"
+   ]
+  },
+  "--dsw-static-red-50": {
+   "token": "--dsw-static-red-50",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:79",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:160"
+   ]
+  },
+  "--dsw-static-red-500": {
+   "token": "--dsw-static-red-500",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:78",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:159"
+   ]
+  },
+  "--dsw-static-red-600": {
+   "token": "--dsw-static-red-600",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:80",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:161"
+   ]
+  },
+  "--dsw-static-red-600-a08": {
+   "token": "--dsw-static-red-600-a08",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:81",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:162"
+   ]
+  },
+  "--dsw-static-red-900": {
+   "token": "--dsw-static-red-900",
+   "declaredIn": [
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:82",
+    "core/deepseek-harness/packages/client/ui-theme/src/styles/design-platform.css:163"
+   ]
+  }
+ },
+ "usedButUndeclared": [
+  {
+   "token": "--dsw-font-mono",
+   "uses": 7,
+   "firstUse": "core/deepseek-harness/packages/client/ui-agent-preset/src/client/AgentPresetSection.module.css:236"
+  },
+  {
+   "token": "--dsw-font",
+   "uses": 7,
+   "firstUse": "core/deepseek-harness/packages/client/ui-sidebar-documentpreview/src/client/excel/ExcelBody.module.css:8"
+  },
+  {
+   "token": "--dsw-alias-label-quaternary",
+   "uses": 2,
+   "firstUse": "core/deepseek-harness/packages/client/ui-agent-preset/src/client/AgentPresetSeat.module.css:44"
+  },
+  {
+   "token": "--dsw-alias-fill-l1",
+   "uses": 2,
+   "firstUse": "core/deepseek-harness/packages/client/ui-jobs/src/client/JobListAction.module.css:106"
+  },
+  {
+   "token": "--dsw-alias-fill-l2",
+   "uses": 2,
+   "firstUse": "core/deepseek-harness/packages/client/ui-jobs/src/client/JobListAction.module.css:138"
+  },
+  {
+   "token": "--dsw-alias-bg-layer-4",
+   "uses": 2,
+   "firstUse": "core/deepseek-harness/packages/client/ui-primitives/src/settings-form/fields.module.css:58"
+  },
+  {
+   "token": "--dsw-alias-bg-l2",
+   "uses": 2,
+   "firstUse": "core/deepseek-harness/packages/client/ui-sidebar-terminal/src/client/terminal.module.css:5"
+  },
+  {
+   "token": "--dsw-alias-bg-l1",
+   "uses": 2,
+   "firstUse": "core/deepseek-harness/packages/client/ui-sidebar-terminal/src/client/TerminalCleanup.module.css:2"
+  },
+  {
+   "token": "--dsw-alias-fill-tsp-secondary",
+   "uses": 1,
+   "firstUse": "core/deepseek-harness/packages/client/ui-agent-preset/src/client/AgentPresetLabel.module.css:11"
+  },
+  {
+   "token": "--dsw-alias-fill-tertiary",
+   "uses": 1,
+   "firstUse": "core/deepseek-harness/packages/client/ui-attachment/src/FileCard.module.css:140"
+  },
+  {
+   "token": "--dsw-alias-separator-primary",
+   "uses": 1,
+   "firstUse": "core/deepseek-harness/packages/client/ui-chat/src/client/chat/StatsPills.module.css:55"
+  },
+  {
+   "token": "--dsw-alias-label-error",
+   "uses": 1,
+   "firstUse": "core/deepseek-harness/packages/client/ui-primitives/src/settings-form/SettingsForm.module.css:29"
+  }
+ ],
+ "plugins": {
+  "tokensUsed": [
+   {
+    "token": "--dsw-font-xxs-12",
+    "uses": 24,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-label-secondary",
+    "uses": 22,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-label-primary",
+    "uses": 15,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-border-l1",
+    "uses": 13,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-label-tertiary",
+    "uses": 12,
+    "declared": true
+   },
+   {
+    "token": "--dsw-radius-sm",
+    "uses": 9,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-border-l2",
+    "uses": 8,
+    "declared": true
+   },
+   {
+    "token": "--dsw-radius-md",
+    "uses": 8,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-bg-base",
+    "uses": 6,
+    "declared": true
+   },
+   {
+    "token": "--dsw-font-xs-13",
+    "uses": 5,
+    "declared": true
+   },
+   {
+    "token": "--dsw-radius-xl",
+    "uses": 5,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-bg-layer-1",
+    "uses": 5,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-interactive-bg-hover",
+    "uses": 5,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-bg-layer-2",
+    "uses": 4,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-label-caption",
+    "uses": 4,
+    "declared": true
+   },
+   {
+    "token": "--dsw-focus-ring-width",
+    "uses": 4,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-interactive-border",
+    "uses": 4,
+    "declared": false
+   },
+   {
+    "token": "--dsw-alias-border-l4",
+    "uses": 4,
+    "declared": true
+   },
+   {
+    "token": "--dsw-corner-shape",
+    "uses": 4,
+    "declared": true
+   },
+   {
+    "token": "--dsw-specific-sidebar-fill",
+    "uses": 4,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-brand-primary",
+    "uses": 4,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-state-error-primary",
+    "uses": 3,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-fill-l1",
+    "uses": 3,
+    "declared": false
+   },
+   {
+    "token": "--dsw-alias-bg-module-platform",
+    "uses": 3,
+    "declared": true
+   },
+   {
+    "token": "--dsw-specific-bubble",
+    "uses": 3,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-state-success-primary",
+    "uses": 2,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-border-l3",
+    "uses": 2,
+    "declared": true
+   },
+   {
+    "token": "--dsw-focus-ring-color",
+    "uses": 2,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-interactive-bg-active",
+    "uses": 2,
+    "declared": true
+   },
+   {
+    "token": "--dsw-font-sm-14",
+    "uses": 2,
+    "declared": false
+   },
+   {
+    "token": "--dsw-alias-bg-l1",
+    "uses": 2,
+    "declared": false
+   },
+   {
+    "token": "--dsw-alias-fill-l2",
+    "uses": 2,
+    "declared": false
+   },
+   {
+    "token": "--dsw-static-neutral-bluish-400",
+    "uses": 2,
+    "declared": true
+   },
+   {
+    "token": "--dsw-font-s-14",
+    "uses": 1,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-state-idle-primary",
+    "uses": 1,
+    "declared": true
+   },
+   {
+    "token": "--dsw-elevation-soft",
+    "uses": 1,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-button-elevated-fill",
+    "uses": 1,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-scrollbar-bg-l1",
+    "uses": 1,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-button-primary-fill",
+    "uses": 1,
+    "declared": true
+   },
+   {
+    "token": "--dsw-alias-label-primary-foreground",
+    "uses": 1,
+    "declared": true
+   }
+  ],
+  "tokensUsedButNotDeclared": [
+   "--dsw-alias-fill-l1",
+   "--dsw-font-sm-14",
+   "--dsw-alias-bg-l1",
+   "--dsw-alias-interactive-border",
+   "--dsw-alias-fill-l2"
+  ],
+  "literals": [
+   {
+    "at": "plugins/dsh-continue-button/src/client/index.tsx:45",
+    "literal": "rgba("
+   },
+   {
+    "at": "plugins/dsh-continue-button/src/client/index.tsx:46",
+    "literal": "rgba("
+   },
+   {
+    "at": "plugins/dsh-continue-button/src/client/index.tsx:57",
+    "literal": "rgba("
+   },
+   {
+    "at": "plugins/dsh-link-brand/src/client/marks.tsx:15",
+    "literal": "#fff"
+   },
+   {
+    "at": "plugins/dsh-link-brand/src/client/marks.tsx:16",
+    "literal": "#000"
+   },
+   {
+    "at": "plugins/dsh-link-brand/src/client/marks.tsx:23",
+    "literal": "#4D6BFE"
+   },
+   {
+    "at": "plugins/dsh-link-brand/src/client/marks.tsx:46",
+    "literal": "#fff"
+   },
+   {
+    "at": "plugins/dsh-link-brand/src/client/marks.tsx:47",
+    "literal": "#000"
+   },
+   {
+    "at": "plugins/dsh-link-brand/src/client/marks.tsx:51",
+    "literal": "#4D6BFE"
+   },
+   {
+    "at": "plugins/dsh-link-brand/src/client/marks.tsx:58",
+    "literal": "#4D6BFE"
+   },
+   {
+    "at": "plugins/dsh-link-brand/src/client/marks.tsx:59",
+    "literal": "#4D6BFE"
+   },
+   {
+    "at": "plugins/dsh-link-brand/src/client/marks.tsx:60",
+    "literal": "#4D6BFE"
+   },
+   {
+    "at": "plugins/dsh-link-brand/src/client/marks.tsx:61",
+    "literal": "#4D6BFE"
+   },
+   {
+    "at": "plugins/dsh-link-host/src/index.ts:427",
+    "literal": "#151517"
+   },
+   {
+    "at": "plugins/dsh-link-host/src/index.ts:428",
+    "literal": "rgba("
+   },
+   {
+    "at": "plugins/dsh-link-host/src/index.ts:429",
+    "literal": "#f9fafb"
+   },
+   {
+    "at": "plugins/dsh-link-host/src/index.ts:430",
+    "literal": "#7aaaff"
+   },
+   {
+    "at": "plugins/dsh-link-host/src/index.ts:438",
+    "literal": "#3a3a3d"
+   },
+   {
+    "at": "plugins/dsh-link-host/src/index.ts:463",
+    "literal": "rgba("
+   },
+   {
+    "at": "plugins/dsh-link-host/src/index.ts:469",
+    "literal": "rgba("
+   },
+   {
+    "at": "plugins/dsh-link-host/src/index.ts:482",
+    "literal": "rgba("
+   },
+   {
+    "at": "plugins/dsh-link-host/src/index.ts:483",
+    "literal": "rgba("
+   },
+   {
+    "at": "plugins/dsh-link-host/src/index.ts:484",
+    "literal": "rgba("
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:92",
+    "literal": "#3a3a3a"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:93",
+    "literal": "#ddd"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:94",
+    "literal": "#bbb"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:95",
+    "literal": "#999"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:96",
+    "literal": "#1b1b1b"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:97",
+    "literal": "#2d3a4d"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:121",
+    "literal": "#ff8a8a"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:122",
+    "literal": "#ff8a8a"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:126",
+    "literal": "#c9a227"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:127",
+    "literal": "#c9a227"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:419",
+    "literal": "#888"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:449",
+    "literal": "#888"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/index.tsx:502",
+    "literal": "#e05252"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/teams.css:156",
+    "literal": "#3a3a3a"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/teams.css:157",
+    "literal": "#1b1b1b"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/teams.css:159",
+    "literal": "#4a6fa5"
+   },
+   {
+    "at": "plugins/dsh-link-teams/src/client/teams.css:164",
+    "literal": "#2a2a2a"
+   }
+  ],
+  "literalCount": 40
+ },
+ "limits": [
+  "Declarations are read from the client sources, not from the assembled stylesheet: a token a plugin declares at runtime is counted as used-but-undeclared.",
+  "Only --dsw-* names are read; an outside spec’s own prefix would need its own capture."
+ ],
+ "sourceDigest": "dd7d2c9dbb18584d"
+}

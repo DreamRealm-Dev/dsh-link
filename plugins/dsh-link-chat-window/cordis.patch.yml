@@ -1,0 +1,18 @@
+# dsh-link-chat-window bundle (R493 B2 prototype): one row per half, both OFF by default.
+#
+# The host half only exports the window policy and the tail-window controller (the payload of the
+# proposed kernel client seam) and, when enabled, publishes ctx.linkChatWindow for inspection.
+# The client half, when enabled, sets the optional `globalThis.__DSH_EVENT_WINDOW_LIMIT__` policy
+# object the draft kernel patch reads; when disabled it does nothing at all.
+#
+# Enablement is Lead-owned, not part of this package's delivery: add these rows to the LINK
+# profile's bundle list and set enabled: true. The kernel needs the R501 client patch for the
+# limit to have any effect; without it the global is inert and behavior is today's.
+- insert:
+    - id: dsh-link-chat-window
+      name: dsh-link-chat-window
+      config:
+        enabled: false
+        windowEvents: 500
+        slackEvents: 125
+        trimOpeningPage: false

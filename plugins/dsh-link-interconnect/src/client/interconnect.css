@@ -1,0 +1,520 @@
+/* dsh-link-interconnect: the client half's material.
+ *
+ * Scoped under the dli- prefix and mounted for this plugin's lifetime (see apply()). It wears the
+ * shell's own tokens - no literal palette - and the same glass treatment the sidebar uses, so the
+ * consent card reads as part of the product rather than a banner from elsewhere.
+ */
+
+/* ---------------------------------------------------------------- consent stack */
+
+.dli-consentStack {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 360px;
+  max-width: calc(100vw - 28px);
+  pointer-events: none;
+}
+
+.dli-consent {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+  padding: 12px 14px 13px;
+  border-radius: var(--dsw-radius-lg, 16px);
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.14));
+  background: color-mix(in srgb, var(--dsw-alias-bg-layer-2, #212226) 78%, transparent);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(28px) saturate(160%);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28), 0 2px 8px rgba(0, 0, 0, 0.14);
+  color: var(--dsw-alias-label-primary, #ededee);
+  font: var(--dsw-font-xs-13, 13px/20px system-ui, sans-serif);
+}
+
+.dli-consentHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.dli-consentTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  font: var(--dsw-font-sm-14, 14px/22px system-ui, sans-serif);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dli-risk {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dli-risk-low {
+  color: var(--dsw-alias-label-success, #4caf7d);
+  border-color: color-mix(in srgb, var(--dsw-alias-label-success, #4caf7d) 45%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-label-success, #4caf7d) 14%, transparent);
+}
+
+.dli-risk-medium {
+  color: var(--dsw-alias-label-warning, #d9a03c);
+  border-color: color-mix(in srgb, var(--dsw-alias-label-warning, #d9a03c) 45%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-label-warning, #d9a03c) 14%, transparent);
+}
+
+.dli-risk-high {
+  color: var(--dsw-alias-label-danger, #e05252);
+  border-color: color-mix(in srgb, var(--dsw-alias-label-danger, #e05252) 45%, transparent);
+  background: color-mix(in srgb, var(--dsw-alias-label-danger, #e05252) 14%, transparent);
+}
+
+.dli-consentPeer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--dsw-alias-label-secondary, #b7bbc2);
+}
+
+.dli-peerName {
+  font-weight: 600;
+  color: var(--dsw-alias-label-primary, #ededee);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dli-consentActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+/* ---------------------------------------------------------------- shared bits */
+
+.dli-dim {
+  color: var(--dsw-alias-label-tertiary, #8b929c);
+}
+
+.dli-mono {
+  font-family: var(--dsw-font-family-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 11px;
+  color: var(--dsw-alias-label-tertiary, #8b929c);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 14em;
+}
+
+.dli-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dli-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 7px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.1));
+  background: var(--dsw-alias-bg-l1, rgba(255, 255, 255, 0.04));
+  color: var(--dsw-alias-label-secondary, #b7bbc2);
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+  white-space: nowrap;
+}
+
+.dli-chipOk {
+  color: var(--dsw-alias-label-success, #4caf7d);
+  border-color: color-mix(in srgb, var(--dsw-alias-label-success, #4caf7d) 40%, transparent);
+}
+
+.dli-chipMuted {
+  color: var(--dsw-alias-label-tertiary, #8b929c);
+}
+
+.dli-chipState {
+  color: var(--dsw-alias-label-primary, #ededee);
+}
+
+.dli-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 6px 8px;
+  border-radius: var(--dsw-radius-sm, 8px);
+  background: color-mix(in srgb, var(--dsw-alias-bg-l1, #ffffff) 40%, transparent);
+}
+
+.dli-detailRow {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+}
+
+.dli-detailRow dt {
+  flex: 0 0 auto;
+  color: var(--dsw-alias-label-tertiary, #8b929c);
+}
+
+.dli-detailRow dd {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  color: var(--dsw-alias-label-secondary, #b7bbc2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.dli-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 14px;
+  border-radius: var(--dsw-radius-sm, 8px);
+  border: 1px solid transparent;
+  font: var(--dsw-font-xs-13, 13px/20px system-ui, sans-serif);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.dli-btn:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+/* The accent fill and its label must never resolve to the same colour. This skin resolves both
+ * --dsw-alias-button-primary-fill and --dsw-alias-brand-primary-invert to #f9fafb, which painted
+ * the label white on a white pill; the label now comes from the theme's layer colour, so it is
+ * dark on the light accent fill in the dark theme and light on the dark accent fill in the light
+ * theme. Same pair on hover, where the fill only shifts one step. */
+.dli-btnPrimary {
+  background: var(--dsw-alias-button-primary-fill, #e8e8e8);
+  color: var(--dsw-alias-bg-layer-1, #101010);
+  font-weight: 600;
+}
+
+.dli-btnPrimary:hover:not(:disabled) {
+  background: var(--dsw-alias-button-primary-hover, #ffffff);
+  color: var(--dsw-alias-bg-layer-1, #101010);
+}
+
+.dli-btnGhost {
+  background: transparent;
+  border-color: var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.16));
+  color: var(--dsw-alias-label-primary, #ededee);
+}
+
+.dli-btnGhost:hover:not(:disabled) {
+  background: var(--dsw-alias-bg-l1, rgba(255, 255, 255, 0.06));
+}
+
+.dli-btnSmall {
+  height: 24px;
+  padding: 0 10px;
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+}
+
+/* ---------------------------------------------------------------- sidebar footer entry */
+
+.dli-footerBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 32px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: var(--dsw-radius-sm, 8px);
+  background: transparent;
+  color: var(--dsw-alias-label-secondary, #b7bbc2);
+  font: var(--dsw-font-xs-13, 13px/20px system-ui, sans-serif);
+  cursor: pointer;
+  text-align: left;
+}
+
+.dli-footerBtn:hover,
+.dli-footerBtn[data-open="true"] {
+  background: var(--dsw-alias-bg-l1, rgba(255, 255, 255, 0.06));
+  color: var(--dsw-alias-label-primary, #ededee);
+}
+
+.dli-footerBtn[data-link-footer-wide="false"] {
+  justify-content: center;
+  padding: 0;
+}
+
+.dli-footerIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.dli-footerLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dli-footerCount {
+  flex: 0 0 auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: var(--dsw-alias-label-danger, #e05252);
+  color: #fff;
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- peers surface */
+
+.dli-panelHidden {
+  display: none;
+}
+
+/* The panel's anchored box. The panel itself is a surface the skin dresses with its own rules
+ * (it sets position: relative on it), so position: fixed, the offsets and the stacking order live
+ * on this un-dressed host: no skin rule can turn the anchor back into an in-flow box, and the
+ * body-level portal in peers.tsx puts it above the sidebar's glass instead of under it. */
+.dli-panelHost {
+  position: fixed;
+  left: 12px;
+  bottom: 52px;
+  z-index: 2147483000;
+  display: flex;
+  width: 384px;
+  max-width: calc(100vw - 24px);
+  max-height: min(72vh, calc(100vh - 100px));
+  pointer-events: auto;
+}
+
+.dli-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: var(--dsw-radius-lg, 16px);
+  border: 1px solid var(--dsw-alias-border-l2, rgba(255, 255, 255, 0.14));
+  background: color-mix(in srgb, var(--dsw-alias-bg-layer-2, #212226) 82%, transparent);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(28px) saturate(160%);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28), 0 2px 8px rgba(0, 0, 0, 0.14);
+  color: var(--dsw-alias-label-primary, #ededee);
+  font: var(--dsw-font-xs-13, 13px/20px system-ui, sans-serif);
+}
+
+.dli-panelHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px 8px;
+}
+
+.dli-panelTitles {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.dli-panelTitle {
+  margin: 0;
+  font: var(--dsw-font-sm-14, 14px/22px system-ui, sans-serif);
+  font-weight: 600;
+}
+
+.dli-panelSub {
+  margin-top: 2px;
+  color: var(--dsw-alias-label-tertiary, #8b929c);
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+}
+
+.dli-iconBtn {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--dsw-radius-sm, 8px);
+  background: transparent;
+  color: var(--dsw-alias-label-secondary, #b7bbc2);
+  font-size: 16px;
+  line-height: 26px;
+  cursor: pointer;
+}
+
+.dli-iconBtn:hover {
+  background: var(--dsw-alias-bg-l1, rgba(255, 255, 255, 0.06));
+  color: var(--dsw-alias-label-primary, #ededee);
+}
+
+.dli-identity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px 8px;
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+}
+
+.dli-routeNote,
+.dli-actionError {
+  margin: 0 14px 8px;
+  padding: 6px 9px;
+  border-radius: var(--dsw-radius-sm, 8px);
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+}
+
+.dli-routeNote {
+  color: var(--dsw-alias-label-tertiary, #8b929c);
+  background: var(--dsw-alias-bg-l1, rgba(255, 255, 255, 0.04));
+}
+
+.dli-actionError {
+  color: var(--dsw-alias-label-danger, #e05252);
+  background: color-mix(in srgb, var(--dsw-alias-label-danger, #e05252) 12%, transparent);
+}
+
+.dli-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dli-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: var(--dsw-radius-md, 12px);
+  border: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.1));
+  background: var(--dsw-alias-bg-layer-1, rgba(255, 255, 255, 0.03));
+}
+
+.dli-sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dli-sectionTitle {
+  flex: 1 1 auto;
+  font-weight: 600;
+}
+
+.dli-sectionCount {
+  color: var(--dsw-alias-label-tertiary, #8b929c);
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+  font-variant-numeric: tabular-nums;
+}
+
+.dli-empty {
+  color: var(--dsw-alias-label-tertiary, #8b929c);
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+  padding: 2px 0;
+}
+
+.dli-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dli-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px 9px;
+  border-radius: var(--dsw-radius-sm, 8px);
+  background: color-mix(in srgb, var(--dsw-alias-bg-l1, #ffffff) 45%, transparent);
+}
+
+.dli-rowMain {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dli-rowName {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 15em;
+}
+
+.dli-rowSub {
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+  color: var(--dsw-alias-label-secondary, #b7bbc2);
+}
+
+.dli-rowActions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.dli-auditRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+}
+
+.dli-ok {
+  color: var(--dsw-alias-label-success, #4caf7d);
+}
+
+.dli-fail {
+  color: var(--dsw-alias-label-danger, #e05252);
+}
+
+.dli-panelFoot {
+  flex: 0 0 auto;
+  padding: 8px 14px 10px;
+  border-top: 1px solid var(--dsw-alias-border-l1, rgba(255, 255, 255, 0.1));
+  color: var(--dsw-alias-label-tertiary, #8b929c);
+  font: var(--dsw-font-xxs-12, 12px/18px system-ui, sans-serif);
+  text-align: right;
+}
