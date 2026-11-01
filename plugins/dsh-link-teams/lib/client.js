@@ -886,7 +886,7 @@ function treeEntries(teams, sessionId = null) {
   for (const node of nodes) byId.set(String(node.id), node);
   const out = [];
   const seen = /* @__PURE__ */ new Set();
-  const walk = (id, depth) => {
+  const walk = (id, depth, parentId) => {
     if (seen.has(id)) return;
     seen.add(id);
     const node = byId.get(id) ?? { id };
@@ -898,12 +898,13 @@ function treeEntries(teams, sessionId = null) {
       lead: text(node.lead),
       contested: node.contested === true,
       observedOnly: node.declared !== true,
+      parentId,
       foreign: isForeignTeam(id, sessionId)
     });
-    for (const kid of array(children[id])) if (typeof kid === "string") walk(kid, depth + 1);
+    for (const kid of array(children[id])) if (typeof kid === "string") walk(kid, depth + 1, id);
   };
-  for (const root of array(tree.roots)) if (typeof root === "string") walk(root, 0);
-  for (const node of nodes) walk(String(node.id), 0);
+  for (const root of array(tree.roots)) if (typeof root === "string") walk(root, 0, null);
+  for (const node of nodes) walk(String(node.id), 0, null);
   return out;
 }
 function taskEntries(doc, t) {
@@ -1245,6 +1246,16 @@ function agentNetwork(doc, t, now = 0) {
 // plugins/dsh-link-teams/src/client/index.tsx
 var import_jsx_runtime2 = require("react/jsx-runtime");
 var API_PATH = "/api/dsh-link-teams/state";
+var STRUCTURE_PATH = API_PATH + "?view=structure";
+var docEtags = /* @__PURE__ */ new Map();
+function etagOf(path) {
+  return docEtags.get(path) ?? null;
+}
+function rememberEtag(path, value) {
+  if (value === null || value === "") docEtags.delete(path);
+  else docEtags.set(path, value);
+}
+var refreshing = false;
 var POLL_MS = 2e3;
 var RUNTIME_PATH = "/api/session/list";
 var TAB_KIND = "link-teams";
@@ -1409,9 +1420,22 @@ function TeamsBody(props) {
     }
   }, [picked, data]);
   const refresh = (0, import_react2.useCallback)(async () => {
+    if (refreshing) return;
+    refreshing = true;
     setBusy(true);
     try {
-      const response = await fetch(API_PATH, { method: "GET", credentials: "same-origin", cache: "no-store" });
+      const etag = etagOf(API_PATH);
+      const response = await fetch(API_PATH, {
+        method: "GET",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: etag === null ? {} : { "if-none-match": etag }
+      });
+      if (response.status === 304) {
+        setSeenAt(Date.now());
+        return;
+      }
+      rememberEtag(API_PATH, response.headers.get("etag"));
       let payload = null;
       try {
         payload = await response.json();
@@ -1433,6 +1457,7 @@ function TeamsBody(props) {
       setData(null);
       setError(String(e?.message ?? e));
     } finally {
+      refreshing = false;
       setBusy(false);
     }
   }, [t]);
@@ -1630,7 +1655,7 @@ function TeamsBody(props) {
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { style: S.meta, children: t("teams.tree.subtitle") })
       ] }),
       tree.filter((entry) => entry.observedOnly !== true && entry.foreign !== true).map((entry) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "dlt-treeRow", style: { ...S.row, paddingLeft: 12 * entry.depth, cursor: "pointer" }, "data-teams-row": entry.id, onClick: () => {
-        openTeamSession(entry.id);
+        openTeamSession(entry.id, void 0, entry.parentId ?? void 0);
       }, title: "\u6253\u5F00\u4F1A\u8BDD " + entry.id, children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { style: S.grow, title: entry.id, children: (entry.depth > 0 ? "\u2514 " : "") + entry.label }),
         entry.lead === null ? null : /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { style: S.chip(false), children: t("teams.tree.lead", { id: entry.lead }) }),
@@ -1639,7 +1664,7 @@ function TeamsBody(props) {
       tree.filter((entry) => entry.foreign === true).length === 0 ? null : /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("details", { className: "dlt-fold", "data-teams-fold": "other-sessions", children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("summary", { className: "dlt-foldSummary", children: t("teams.tree.otherSessions") + " \xB7 " + String(tree.filter((entry) => entry.foreign === true).length) }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("ul", { className: "dlt-foldList", children: tree.filter((entry) => entry.foreign === true).map((entry) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("li", { className: "dlt-foldRow dlt-treeRow", "data-teams-row": entry.id, style: { opacity: 0.55, cursor: "pointer" }, onClick: () => {
-          openTeamSession(entry.id);
+          openTeamSession(entry.id, void 0, entry.parentId ?? void 0);
         }, title: "\u6253\u5F00\u4F1A\u8BDD " + entry.id, children: [
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { title: entry.id, children: (entry.depth > 0 ? "\u2514 " : "") + entry.label }),
           entry.lead === null ? null : " \xB7 " + t("teams.tree.lead", { id: entry.lead })
@@ -1648,7 +1673,7 @@ function TeamsBody(props) {
       tree.filter((entry) => entry.observedOnly === true).length === 0 ? null : /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("details", { className: "dlt-fold", "data-teams-fold": "observed-only", open: void 0, children: [
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("summary", { className: "dlt-foldSummary", children: t("teams.tree.observedOnly") + " \xB7 " + String(tree.filter((entry) => entry.observedOnly === true).length) }),
         /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("ul", { className: "dlt-foldList", children: tree.filter((entry) => entry.observedOnly === true).map((entry) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("li", { className: "dlt-foldRow dlt-treeRow", "data-teams-row": entry.id, style: { cursor: "pointer" }, onClick: () => {
-          openTeamSession(entry.id);
+          openTeamSession(entry.id, void 0, entry.parentId ?? void 0);
         }, title: "\u6253\u5F00\u4F1A\u8BDD " + entry.id, children: [
           /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("span", { title: entry.id, children: (entry.depth > 0 ? "\u2514 " : "") + entry.label }),
           entry.lead === null ? null : " \xB7 " + t("teams.tree.lead", { id: entry.lead }),

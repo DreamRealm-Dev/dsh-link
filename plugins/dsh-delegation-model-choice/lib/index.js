@@ -299,61 +299,37 @@ function requireLead(services, agent) {
   return { team, lead: membership.root }
 }
 
-/** Append one team/member edge to the Lead's durable journal and flush it. */
-async function appendMember(services, lead, member) {
-  const sessions = services.get('sessions')
-  if (sessions === undefined) throw new Error('the session store is not mounted, so a teammate cannot be journaled')
-  lead.session.append('team/member', { version: 2, teamId: String(lead.id), member })
-  await sessions.flush(lead.session)
-}
-
 /**
- * Start one teammate whose child route is not the Lead's own route.
- * Reproduces the Team service's provisioning protocol: journal the member as
- * provisioning, start the durable continuable child with explicit agentOptions,
- * then journal the active edge.
+ * Start one teammate through the Team service with an explicit model route.
+ *
+ * The service now accepts \`agentOptions\` on \`SpawnTeammateRequest\`, so the service owns
+ * the provisioning/active edges, the child identity, the depth admission, and recovery.
+ * The plugin only decided that the route is approved.
  */
-async function spawnTeammateOnRoute(services, config, lead, args, agentOptions, signal) {
-  const subagents = services.get('subagents')
-  if (subagents === undefined) throw new Error('the subagent registry is not mounted, so a teammate cannot be started')
-  const name = args.name
-  assertMemberName(name)
-  const description = String(args.description)
+async function spawnTeammateOnRoute(services, config, caller, args, agentOptions, signal) {
+  const team = services.get('agentTeams')
+  if (team === undefined) throw new Error('Agent Teams is not mounted in this session')
   const context = args.context === 'fork' ? 'fork' : 'fresh'
-  const provider = context === 'fork' ? config.forkProvider : config.freshProvider
-  const childId = mintChildId('teammate')
-  const member = { id: childId, name, description, provider, context, phase: 'provisioning' }
-  await appendMember(services, lead, member)
-  try {
-    await subagents.startContinuable({
-      childId,
-      provider,
-      label: description,
-      request: {
-        prompt: [{ type: 'text', text: String(args.prompt) }],
-        parent: lead,
-        agentOptions,
-      },
-      signal,
-    })
-  } catch (error) {
-    try {
-      await appendMember(services, lead, { ...member, phase: 'failed', error: errorMessage(error) })
-    } catch (_cleanupError) {
-      // The failed edge is best-effort; the original creation error is authoritative.
-    }
-    throw error
-  }
-  await appendMember(services, lead, { ...member, phase: 'active' })
-  return {
-    id: childId,
-    name,
-    role: 'teammate',
-    status: 'running',
-    description,
-    provider,
+  const result = await team.spawnTeammate(caller, {
+    name: String(args.name),
+    description: String(args.description),
+    prompt: [{ type: 'text', text: String(args.prompt) }],
     context,
-    model: optionalText(agentOptions.model),
+    provider: context === 'fork' ? config.forkProvider : config.freshProvider,
+    agentOptions,
+    ...args.under === undefined ? {} : { under: String(args.under) },
+    signal,
+  })
+  const view = result.member
+  return {
+    id: String(view.id),
+    name: String(view.name),
+    role: String(view.role),
+    status: String(view.status),
+    description: view.description === undefined ? undefined : String(view.description),
+    provider: view.provider === undefined ? undefined : String(view.provider),
+    context: view.context === undefined ? undefined : String(view.context),
+    model: view.model === undefined ? optionalText(agentOptions === undefined ? undefined : agentOptions.model) : String(view.model),
   }
 }
 
@@ -597,7 +573,8 @@ function buildTools(services, config, helpers) {
         rememberConversationGrant(agent, request.requested, config)
       }
       const label = optionalText(args.label) ?? 'delegated subagent'
-      const started = await subagents.startContinuable({
+      const started = await subagents.startActivation({
+        delivery: 'parent',
         provider: config.freshProvider,
         label,
         request: {

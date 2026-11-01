@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * Refuse a repository state that exposes a local account name or machine path.
+ * Refuse a repository state that exposes a local account name.
  *
- * Development checkouts quote absolute paths; those quotes are useful locally and must never
- * ship. This gate fails when a tracked file still carries a concrete Windows user profile path
- * or a local absolute drive path, and names the file so it can be replaced with a placeholder.
+ * Development checkouts quote absolute paths; the publishing sanitizer rewrites the account
+ * segment to `<user>`. This gate fails when a file still names a concrete Windows or POSIX
+ * user profile directory, and names the file so it can be sanitized. Documented placeholders
+ * such as `/Users/<user>` are not account names and stay allowed.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
@@ -12,9 +13,11 @@ import { join } from 'node:path'
 const ROOT = process.argv[2] ?? process.cwd()
 const SKIP = /(^|[\\/])(\.git|node_modules|vendor|target|\.tmp)([\\/]|$)/
 const TEXT = /(\.md|\.json|\.mjs|\.js|\.ts|\.tsx|\.yml|\.yaml|\.rs|\.toml|\.txt|\.ps1|\.py|\.css|\.html|\.svg|\.gitignore|\.cjs)$/i
+// Account-shaped segments that are documentation placeholders, not real profile names.
+const PLACEHOLDER = '(?!<user>|name\\b|username\\b|user\\b|you\\b|test\\b|tester\\b|example\\b)'
 const RULES = [
-  ['concrete Windows user path', /Users[\\/]+(?!<user>)[A-Za-z0-9._-]+/],
-  ['local absolute drive path', /(?:^|[\s"'`(=])[A-Za-z]:[\\/]+(?!Users[\\/]<user>|Windows|Program Files)/m],
+  ['concrete Windows user path', new RegExp('Users[\\\\/]+' + PLACEHOLDER + '[A-Za-z0-9._-]+')],
+  ['concrete POSIX user path', new RegExp('(?:^|[^A-Za-z0-9])[/\\\\]Users[/\\\\]+' + PLACEHOLDER + '[A-Za-z0-9._-]+')],
 ]
 
 /** Collect every regular file below one directory. */

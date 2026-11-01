@@ -172,6 +172,8 @@ export interface TreeEntry {
   readonly lead: string | null
   readonly contested: boolean
   readonly observedOnly: boolean
+  /** Parent team id in the served tree, or null for a root; a nested team's session needs it to open. */
+  readonly parentId: string | null
   /** R390: true when the team id names a DIFFERENT session than the one on screen, so the pane can dim it. */
   readonly foreign?: boolean
 }
@@ -220,7 +222,7 @@ export function treeEntries(teams: unknown, sessionId: string | null = null): Tr
   for (const node of nodes) byId.set(String(node.id), node)
   const out: TreeEntry[] = []
   const seen = new Set<string>()
-  const walk = (id: string, depth: number): void => {
+  const walk = (id: string, depth: number, parentId: string | null): void => {
     if (seen.has(id)) return
     seen.add(id)
     const node = byId.get(id) ?? { id }
@@ -232,12 +234,13 @@ export function treeEntries(teams: unknown, sessionId: string | null = null): Tr
       lead: text(node.lead),
       contested: node.contested === true,
       observedOnly: node.declared !== true,
+      parentId,
       foreign: isForeignTeam(id, sessionId),
     })
-    for (const kid of array(children[id])) if (typeof kid === 'string') walk(kid, depth + 1)
+    for (const kid of array(children[id])) if (typeof kid === 'string') walk(kid, depth + 1, id)
   }
-  for (const root of array(tree.roots)) if (typeof root === 'string') walk(root, 0)
-  for (const node of nodes) walk(String(node.id), 0)
+  for (const root of array(tree.roots)) if (typeof root === 'string') walk(root, 0, null)
+  for (const node of nodes) walk(String(node.id), 0, null)
   return out
 }
 

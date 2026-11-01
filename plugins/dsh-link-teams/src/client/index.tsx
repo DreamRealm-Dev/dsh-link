@@ -59,6 +59,28 @@ type Doc = Record<string, unknown>
 
 /** Where the pane reads the folded world. */
 const API_PATH = '/api/dsh-link-teams/state'
+/** The structure popover asks for the tree and member rows only; the host omits the rest. */
+const STRUCTURE_PATH = API_PATH + '?view=structure'
+
+/**
+ * Conditional-GET validators, per read path. The route answers an ETag, so an unchanged ledger
+ * costs one 304 instead of a re-parsed document and a re-render on the renderer's main thread.
+ */
+const docEtags = new Map<string, string>()
+
+/** The validator this window holds for one read path, if any. */
+function etagOf(path: string): string | null {
+  return docEtags.get(path) ?? null
+}
+
+/** Remember (or drop) the validator from one reply. */
+function rememberEtag(path: string, value: string | null): void {
+  if (value === null || value === '') docEtags.delete(path)
+  else docEtags.set(path, value)
+}
+
+/** Whether one reading is already in flight, so a slow kernel cannot stack polls. */
+let refreshing = false
 /** How often the pane re-reads it. */
 const POLL_MS = 2000
 
@@ -309,9 +331,23 @@ function TeamsBody(props: PaneProps) {
   }, [picked, data])
 
   const refresh = useCallback(async () => {
+    // One reading in flight at a time: under a heavy turn a slow answer must not stack polls.
+    if (refreshing) return
+    refreshing = true
     setBusy(true)
     try {
-      const response = await fetch(API_PATH, { method: 'GET', credentials: 'same-origin', cache: 'no-store' })
+      const etag = etagOf(API_PATH)
+      const response = await fetch(API_PATH, {
+        method: 'GET',
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: etag === null ? {} : { 'if-none-match': etag },
+      })
+      if (response.status === 304) {
+        setSeenAt(Date.now())
+        return
+      }
+      rememberEtag(API_PATH, response.headers.get('etag'))
       let payload: Doc | null = null
       try {
         payload = (await response.json()) as Doc
@@ -333,6 +369,7 @@ function TeamsBody(props: PaneProps) {
       setData(null)
       setError(String((e as { message?: unknown })?.message ?? e))
     } finally {
+      refreshing = false
       setBusy(false)
     }
   }, [t])
@@ -570,7 +607,7 @@ function TeamsBody(props: PaneProps) {
         <div style={S.card}>
           <div style={S.cardTitle}>{t('teams.tree.title')} <span style={S.meta}>{t('teams.tree.subtitle')}</span></div>
           {tree.filter((entry) => entry.observedOnly !== true && entry.foreign !== true).map((entry) => (
-            <div key={entry.key} className="dlt-treeRow" style={{ ...S.row, paddingLeft: 12 * entry.depth, cursor: 'pointer' }} data-teams-row={entry.id} onClick={() => { openTeamSession(entry.id) }} title={'打开会话 ' + entry.id}>
+            <div key={entry.key} className="dlt-treeRow" style={{ ...S.row, paddingLeft: 12 * entry.depth, cursor: 'pointer' }} data-teams-row={entry.id} onClick={() => { openTeamSession(entry.id, undefined, entry.parentId ?? undefined) }} title={'打开会话 ' + entry.id}>
               <span style={S.grow} title={entry.id}>{(entry.depth > 0 ? '└ ' : '') + entry.label}</span>
               {entry.lead === null ? null : <span style={S.chip(false)}>{t('teams.tree.lead', { id: entry.lead })}</span>}
               {entry.contested ? <span style={S.chip(true)}>{t('teams.tree.contested')}</span> : null}
@@ -581,7 +618,7 @@ function TeamsBody(props: PaneProps) {
               <summary className="dlt-foldSummary">{t('teams.tree.otherSessions') + ' \u00b7 ' + String(tree.filter((entry) => entry.foreign === true).length)}</summary>
               <ul className="dlt-foldList">
                 {tree.filter((entry) => entry.foreign === true).map((entry) => (
-                  <li className="dlt-foldRow dlt-treeRow" key={entry.key} data-teams-row={entry.id} style={{ opacity: 0.55, cursor: 'pointer' }} onClick={() => { openTeamSession(entry.id) }} title={'打开会话 ' + entry.id}>
+                  <li className="dlt-foldRow dlt-treeRow" key={entry.key} data-teams-row={entry.id} style={{ opacity: 0.55, cursor: 'pointer' }} onClick={() => { openTeamSession(entry.id, undefined, entry.parentId ?? undefined) }} title={'打开会话 ' + entry.id}>
                     <span title={entry.id}>{(entry.depth > 0 ? '└ ' : '') + entry.label}</span>
                     {entry.lead === null ? null : ' \u00b7 ' + t('teams.tree.lead', { id: entry.lead })}
                   </li>
@@ -598,7 +635,7 @@ function TeamsBody(props: PaneProps) {
               <summary className="dlt-foldSummary">{t('teams.tree.observedOnly') + ' \u00b7 ' + String(tree.filter((entry) => entry.observedOnly === true).length)}</summary>
               <ul className="dlt-foldList">
                 {tree.filter((entry) => entry.observedOnly === true).map((entry) => (
-                  <li className="dlt-foldRow dlt-treeRow" key={entry.key} data-teams-row={entry.id} style={{ cursor: 'pointer' }} onClick={() => { openTeamSession(entry.id) }} title={'打开会话 ' + entry.id}>
+                  <li className="dlt-foldRow dlt-treeRow" key={entry.key} data-teams-row={entry.id} style={{ cursor: 'pointer' }} onClick={() => { openTeamSession(entry.id, undefined, entry.parentId ?? undefined) }} title={'打开会话 ' + entry.id}>
                     <span title={entry.id}>{(entry.depth > 0 ? '└ ' : '') + entry.label}</span>
                     {entry.lead === null ? null : ' \u00b7 ' + t('teams.tree.lead', { id: entry.lead })}
                     {entry.contested ? ' \u00b7 ' + t('teams.tree.contested') : null}
@@ -1116,19 +1153,29 @@ function TeamStructureAction(): JSX.Element {
     if (!open) return undefined
     let live = true
     const load = (): void => {
-      void fetch('/api/dsh-link-teams/state', { headers: { accept: 'application/json' } })
-        .then((answer) => (answer.ok ? answer.json() as Promise<never> : null))
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return
+      const etag = etagOf(STRUCTURE_PATH)
+      void fetch(STRUCTURE_PATH, { headers: etag === null ? { accept: 'application/json' } : { accept: 'application/json', 'if-none-match': etag } })
+        .then((answer) => {
+          if (answer.status === 304) return null
+          if (!answer.ok) return null
+          rememberEtag(STRUCTURE_PATH, answer.headers.get('etag'))
+          return answer.json() as Promise<never>
+        })
         .then((body) => { if (live && body !== null) setDoc(body) })
         .catch(() => { /* a structure card that cannot read says nothing, like the pane's own failure state */ })
     }
     load()
-    const timer = setInterval(load, 4000)
+    const timer = setInterval(load, 6000)
     let runtimeLive = true
     const loadRuntime = (): void => {
       void kernelRuntime().then((map) => { if (runtimeLive && map !== null) setRuntime(map) }).catch(() => {})
     }
     loadRuntime()
-    const runtimeTimer = setInterval(loadRuntime, 2000)
+    const runtimeTimer = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return
+      loadRuntime()
+    }, 3000)
     return () => { live = false; clearInterval(timer); runtimeLive = false; clearInterval(runtimeTimer) }
   }, [open])
   const me = (() => {

@@ -1,3 +1,6 @@
+// plugins/dsh-link-teams/src/index.ts
+import { createHash } from "node:crypto";
+
 // plugins/dsh-link-teams/src/world.ts
 var FIXTURE_ID = /^(?:gate-|g\d+-witness-|r1\d\d-|r2\d\d-)/i;
 function isFixtureId(value) {
@@ -122,11 +125,12 @@ var inject = [];
 var DEFAULT_PATH = "/api/dsh-link-teams/state";
 var TITLE_PATH = "/api/dsh-link-teams/session-title";
 var DEFAULT_STREAM_LIMIT = 40;
-function sendJson(res, status, body) {
+function sendJson(res, status, body, etag = null) {
   const text2 = JSON.stringify(body);
   res.statusCode = status;
   res.setHeader("content-type", "application/json; charset=utf-8");
   res.setHeader("cache-control", "no-store");
+  if (typeof etag === "string") res.setHeader("etag", etag);
   res.end(text2);
 }
 function fixtureFieldOf(record2) {
@@ -174,7 +178,7 @@ function apply(ctx, config = {}) {
   let served = 0;
   let refused = 0;
   let lastError = null;
-  function snapshot() {
+  function snapshot(options = {}) {
     const collab = ctx.get("linkCollab");
     if (collab === void 0 || collab === null) {
       return {
@@ -217,61 +221,72 @@ function apply(ctx, config = {}) {
     const records = log.replay();
     const world = composeWorld(state);
     const from = Math.max(0, records.length - streamLimit);
-    return {
-      status: 200,
-      body: {
-        ok: true,
-        at: Date.now(),
-        path,
-        ledger: {
-          directory: typeof log.directory === "string" ? log.directory : null,
-          writer: log.writer ?? null,
-          instance: log.instance ?? null,
-          lastSeq: typeof log.lastSeq === "number" ? log.lastSeq : null,
-          records: records.length,
-          damage: log.damage ?? null
-        },
-        // The world's counts: `teams` is the number of nodes in the tree served below, never a second
-        // notion of "how many teams" (`src/world.ts`).
-        counts: world.counts,
-        through: state.through ?? null,
-        teams: world.teams,
-        // The ledger view: the rows the fold holds, each flagged when it carries a fixture name.
-        // R344 (perf, measured in RESEARCH-RUST-PERF): every task/member row carried its FULL `losers` history, so the
-        // served document grew with the number of write CONFLICTS rather than with the number of entities - 5.12 MB and
-        // 41.6 ms of JSON per 2 s poll at L=128k in the research bench. The pane reads `losers` only off the team TREE
-        // nodes (world.ts:88), never off these flat rows, so the rows now carry the COUNT and the history stays in the
-        // ledger where a diagnosis would look for it.
-        // R377: the flag and the FIELD that raised it travel together here too, for the same reason as in `row`.
-        tasks: Array.isArray(state.tasks) ? state.tasks.map((task) => {
-          const { losers, ...rest } = task ?? {};
-          const by = isFixtureId(task?.team) ? "team" : isFixtureId(task?.id) ? "id" : null;
-          return { ...rest, losersCount: Array.isArray(losers) ? losers.length : 0, fixture: by !== null, fixtureBy: by };
-        }) : [],
-        members: Array.isArray(state.members) ? state.members.map((member) => {
-          const { losers, ...rest } = member ?? {};
-          const by = isFixtureId(member?.team) ? "team" : isFixtureId(member?.id) ? "id" : null;
-          return { ...rest, losersCount: Array.isArray(losers) ? losers.length : 0, fixture: by !== null, fixtureBy: by };
-        }) : [],
-        registry: state.registry ?? null,
-        liveness: state.liveness ?? null,
-        peers: state.peers ?? null,
-        board: state.board ?? null,
-        // R181: the isolation facts the reclaimer writes (member/quarantine rows). They were folded but
-        // never served, so a reader of this route could watch a task be taken away from a silent owner and
-        // still not learn that the owner was set aside - the fault-isolation half of the round was
-        // invisible. Optional like every other fold field: a ledger with no isolation yields null, never a
-        // missing key, so a pane can tell "nobody is quarantined" from "this build does not say".
-        quarantine: state.quarantine ?? null,
-        // How many rows on this answer carry a fixture name. Counts, never ids: the ids are withheld from
-        // the world (see `teams.withheld`) and the ledger view is not allowed to reintroduce them as names.
-        // R344: the census describes what is ON SCREEN (this page of the stream), not the whole ledger - the pane line
-        // says "N fixture rows are on screen", and scanning every record on every 2 s poll was the other half of the cost.
-        fixtures: fixtureCensus(state, records.slice(from)),
-        stream: records.slice(from).map(row),
-        served: served + 1
-      }
+    const body = {
+      ok: true,
+      at: Date.now(),
+      path,
+      ledger: {
+        directory: typeof log.directory === "string" ? log.directory : null,
+        writer: log.writer ?? null,
+        instance: log.instance ?? null,
+        lastSeq: typeof log.lastSeq === "number" ? log.lastSeq : null,
+        records: records.length,
+        damage: log.damage ?? null
+      },
+      // The world's counts: `teams` is the number of nodes in the tree served below, never a second
+      // notion of "how many teams" (`src/world.ts`).
+      counts: world.counts,
+      through: state.through ?? null,
+      teams: world.teams,
+      // The ledger view: the rows the fold holds, each flagged when it carries a fixture name.
+      // R344 (perf, measured in RESEARCH-RUST-PERF): every task/member row carried its FULL `losers` history, so the
+      // served document grew with the number of write CONFLICTS rather than with the number of entities - 5.12 MB and
+      // 41.6 ms of JSON per 2 s poll at L=128k in the research bench. The pane reads `losers` only off the team TREE
+      // nodes (world.ts:88), never off these flat rows, so the rows now carry the COUNT and the history stays in the
+      // ledger where a diagnosis would look for it.
+      // R377: the flag and the FIELD that raised it travel together here too, for the same reason as in `row`.
+      tasks: Array.isArray(state.tasks) ? state.tasks.map((task) => {
+        const { losers, ...rest } = task ?? {};
+        const by = isFixtureId(task?.team) ? "team" : isFixtureId(task?.id) ? "id" : null;
+        return { ...rest, losersCount: Array.isArray(losers) ? losers.length : 0, fixture: by !== null, fixtureBy: by };
+      }) : [],
+      members: Array.isArray(state.members) ? state.members.map((member) => {
+        const { losers, ...rest } = member ?? {};
+        const by = isFixtureId(member?.team) ? "team" : isFixtureId(member?.id) ? "id" : null;
+        return { ...rest, losersCount: Array.isArray(losers) ? losers.length : 0, fixture: by !== null, fixtureBy: by };
+      }) : [],
+      registry: state.registry ?? null,
+      liveness: state.liveness ?? null,
+      peers: state.peers ?? null,
+      board: state.board ?? null,
+      // R181: the isolation facts the reclaimer writes (member/quarantine rows). They were folded but
+      // never served, so a reader of this route could watch a task be taken away from a silent owner and
+      // still not learn that the owner was set aside - the fault-isolation half of the round was
+      // invisible. Optional like every other fold field: a ledger with no isolation yields null, never a
+      // missing key, so a pane can tell "nobody is quarantined" from "this build does not say".
+      quarantine: state.quarantine ?? null,
+      // How many rows on this answer carry a fixture name. Counts, never ids: the ids are withheld from
+      // the world (see `teams.withheld`) and the ledger view is not allowed to reintroduce them as names.
+      // R344: the census describes what is ON SCREEN (this page of the stream), not the whole ledger - the pane line
+      // says "N fixture rows are on screen", and scanning every record on every 2 s poll was the other half of the cost.
+      fixtures: fixtureCensus(state, records.slice(from)),
+      stream: records.slice(from).map(row),
+      served: served + 1
     };
+    if (options.view === "structure") {
+      return {
+        status: 200,
+        body: {
+          ok: true,
+          at: body.at,
+          through: body.through,
+          counts: body.counts,
+          teams: body.teams,
+          members: body.members
+        }
+      };
+    }
+    return { status: 200, body };
   }
   async function handler(req, res) {
     try {
@@ -286,10 +301,21 @@ function apply(ctx, config = {}) {
         });
         return;
       }
-      const answer = snapshot();
+      const url = new URL(String(req.url ?? ""), "http://127.0.0.1");
+      const answer = snapshot({ view: url.searchParams.get("view") === "structure" ? "structure" : "full" });
       if (answer.status === 200) served += 1;
       else refused += 1;
-      sendJson(res, answer.status, answer.body);
+      const text2 = JSON.stringify(answer.body);
+      const stable = JSON.stringify({ ...answer.body, at: 0, served: 0 });
+      const etag = '"' + createHash("sha1").update(stable).digest("hex") + '"';
+      if (req.method === "GET" && String(req.headers?.["if-none-match"] ?? "") === etag) {
+        res.statusCode = 304;
+        res.setHeader("etag", etag);
+        res.setHeader("cache-control", "no-store");
+        res.end();
+        return;
+      }
+      sendJson(res, answer.status, answer.body, etag);
     } catch (error) {
       refused += 1;
       lastError = String(error?.message ?? error);

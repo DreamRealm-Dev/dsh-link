@@ -32,6 +32,7 @@
 //! with a small boot/recovery page (see [`super::shellpage`]). That keeps one origin
 //! and one code path for the window: it always talks to this proxy.
 
+use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
@@ -77,6 +78,56 @@ pub const LINK_PREFIX: &str = "/link";
 /// buffer, not a quota.
 const MAX_BODY_BYTES: usize = 256 * 1024 * 1024;
 
+/// Largest single asset reply kept for replay. Bundles are a few megabytes; anything
+/// larger streams straight through rather than being duplicated in the shell's memory.
+const MAX_CACHED_ASSET_BYTES: u64 = 16 * 1024 * 1024;
+
+/// Entry ceiling, so a long-lived window cannot turn the asset cache into a leak.
+const MAX_CACHED_ASSETS: usize = 512;
+
+/// One kernel asset reply kept for replay.
+///
+/// The window's document used to wait on the kernel's HTTP server for every script,
+/// stylesheet and image, and that server shares one event loop with every agent. Under a
+/// heavy turn the page therefore stalled on assets it had already downloaded once. A cached
+/// reply is served from the shell instead; the index document is never cached because it
+/// carries the per-boot module manifest and the injected bridge.
+#[derive(Clone)]
+struct CachedAsset {
+    /// Kernel base the reply came from; a restarted kernel invalidates the entry.
+    base: String,
+    status: StatusCode,
+    headers: Vec<(String, String)>,
+    body: Bytes,
+}
+
+impl CachedAsset {
+    fn into_response(self) -> Response {
+        let mut builder = Response::builder().status(self.status);
+        for (name, value) in self.headers {
+            builder = builder.header(name.as_str(), value);
+        }
+        builder
+            .body(Body::from(self.body))
+            .unwrap_or_else(|_| internal("build cached asset response").into_response())
+    }
+}
+
+/// Whether a reply is an immutable-enough static asset to replay from memory.
+fn cacheable_content_type(content_type: &str) -> bool {
+    let kind = content_type
+        .split(';')
+        .next()
+        .unwrap_or("")
+        .trim()
+        .to_ascii_lowercase();
+    kind.contains("javascript")
+        || kind == "text/css"
+        || kind.starts_with("image/")
+        || kind.starts_with("font/")
+        || kind == "application/wasm"
+}
+
 /// Shared proxy state: the kernel credentials to present upstream, the supervisor
 /// that produces them, and the liveness signals the window watchdog consumes.
 #[derive(Clone)]
@@ -92,6 +143,10 @@ pub struct ProxyState {
     /// The application handle, for the two things a request can ask the shell to do:
     /// open a link in the system browser, and put one on the clipboard.
     app: tauri::AppHandle,
+    /// Static replies already fetched from the kernel, keyed by path plus query (the
+    /// client's bundles are rev-busted in the query). Serving these here is what keeps the
+    /// window's own document independent of the kernel's agent load.
+    assets: Arc<Mutex<HashMap<String, CachedAsset>>>,
 }
 
 impl ProxyState {
@@ -143,6 +198,7 @@ pub fn router(supervisor: KernelSupervisor, app: tauri::AppHandle) -> Router {
         liveness: supervisor.liveness(),
         copied_authorize: Arc::new(Mutex::new(None)),
         app,
+        assets: Arc::new(Mutex::new(HashMap::new())),
     };
 
     Router::new()
@@ -1109,6 +1165,11 @@ async fn forward_unary(
     if let Some(content_type) = headers.get(header::CONTENT_TYPE) {
         outgoing = outgoing.header(header::CONTENT_TYPE, content_type.clone());
     }
+    // R514: a read route may answer an ETag; forwarding the client's validator is what turns an
+    // unchanged poll into a 304 instead of a body parsed and re-rendered on the main thread.
+    if let Some(validator) = headers.get(header::IF_NONE_MATCH) {
+        outgoing = outgoing.header(header::IF_NONE_MATCH, validator.clone());
+    }
     if !body.is_empty() {
         outgoing = outgoing.body(body.to_vec());
     }
@@ -1134,6 +1195,29 @@ async fn forward_static(
     let Some(credentials) = state.credentials.get() else {
         return unavailable("kernel is not ready");
     };
+
+    // R513: the window's assets are served from this cache after their first fetch. The kernel's
+    // HTTP server shares one event loop with every agent, so under a heavy turn the document used
+    // to stall on scripts and styles it had already downloaded. The index is excluded: it carries
+    // the per-boot module manifest and the injected bridge.
+    let is_document = matches!(uri.path(), "/" | "/index.html");
+    let wants_cache = method == Method::GET;
+    let cache_key = match uri.query() {
+        Some(query) => format!("{}?{}", uri.path(), query),
+        None => uri.path().to_owned(),
+    };
+    if wants_cache && !is_document {
+        let hit = {
+            let cache = state.assets.lock().unwrap_or_else(|error| error.into_inner());
+            cache
+                .get(&cache_key)
+                .filter(|asset| asset.base == credentials.base)
+                .cloned()
+        };
+        if let Some(asset) = hit {
+            return asset.into_response();
+        }
+    }
 
     // `set_path` percent-encodes `?`, so the query has to be set separately. The client
     // bundle URLs make this load-bearing rather than academic: they are
@@ -1162,8 +1246,6 @@ async fn forward_static(
     // The root document is the one reply that is not forwarded as-is: the shell's
     // bridge is added to it. Every other reply streams through untouched, which keeps
     // bundles and attachments off this task's heap.
-    let is_document = matches!(uri.path(), "/" | "/index.html");
-
     let upstream = match client
         .request(method, url)
         .header(header::ACCEPT, accept)
@@ -1177,7 +1259,59 @@ async fn forward_static(
     if is_document {
         return inject_bridge(upstream).await;
     }
-    relay_body(upstream).await
+    if !wants_cache {
+        return relay_body(upstream).await;
+    }
+    let status = StatusCode::from_u16(upstream.status().as_u16()).unwrap_or(StatusCode::BAD_GATEWAY);
+    let content_type = upstream
+        .headers()
+        .get(header::CONTENT_TYPE)
+        .and_then(|value| value.to_str().ok())
+        .unwrap_or("");
+    let too_large = upstream
+        .content_length()
+        .is_some_and(|length| length > MAX_CACHED_ASSET_BYTES);
+    if status != StatusCode::OK || !cacheable_content_type(content_type) || too_large {
+        return relay_body(upstream).await;
+    }
+    let headers = asset_headers(upstream.headers());
+    let body = match upstream.bytes().await {
+        Ok(body) => body,
+        Err(error) => return internal(&format!("read upstream asset body: {error}")),
+    };
+    if body.len() as u64 <= MAX_CACHED_ASSET_BYTES {
+        let asset = CachedAsset {
+            base: credentials.base.clone(),
+            status,
+            headers: headers.clone(),
+            body: body.clone(),
+        };
+        let mut cache = state.assets.lock().unwrap_or_else(|error| error.into_inner());
+        if cache.len() >= MAX_CACHED_ASSETS {
+            cache.clear();
+        }
+        cache.insert(cache_key, asset);
+    }
+    let mut builder = Response::builder().status(status);
+    for (name, value) in headers {
+        builder = builder.header(name.as_str(), value);
+    }
+    builder
+        .body(Body::from(body))
+        .unwrap_or_else(|_| internal("build cached asset response").into_response())
+}
+
+/// Headers worth keeping on a cached asset: its type, transfer encoding and the validators
+/// the webview itself may honour. Cookies and hop-by-hop headers are the kernel's, not the page's.
+fn asset_headers(headers: &HeaderMap) -> Vec<(String, String)> {
+    const KEPT: [&str; 4] = ["content-type", "content-encoding", "cache-control", "etag"];
+    let mut kept = Vec::new();
+    for name in KEPT {
+        if let Some(value) = headers.get(name).and_then(|value| value.to_str().ok()) {
+            kept.push((name.to_owned(), value.to_owned()));
+        }
+    }
+    kept
 }
 
 /// Serve the official client's index with the shell bridge added.
@@ -1493,6 +1627,11 @@ async fn relay_body(upstream: reqwest::Response) -> Response {
         .headers()
         .get(reqwest::header::CONTENT_TYPE)
         .and_then(|value| value.to_str().ok().map(str::to_owned));
+    // R514: the validator travels too, so the client can make the next poll conditional.
+    let etag = upstream
+        .headers()
+        .get(reqwest::header::ETAG)
+        .and_then(|value| value.to_str().ok().map(str::to_owned));
     let stream = upstream
         .bytes_stream()
         .map(|chunk| chunk.map_err(std::io::Error::other));
@@ -1500,6 +1639,9 @@ async fn relay_body(upstream: reqwest::Response) -> Response {
     let mut builder = Response::builder().status(status);
     if let Some(content_type) = content_type {
         builder = builder.header(header::CONTENT_TYPE, content_type);
+    }
+    if let Some(etag) = etag {
+        builder = builder.header(header::ETAG, etag);
     }
     builder
         .body(Body::from_stream(stream))

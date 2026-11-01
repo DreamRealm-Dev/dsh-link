@@ -43,6 +43,7 @@
  * surface.
  */
 
+import { createHash } from 'node:crypto'
 import { composeWorld, fixtureCensus, isFixtureId } from './world.ts'
 
 export const name = 'dsh-link-teams'
@@ -66,11 +67,12 @@ const TITLE_PATH = '/api/dsh-link-teams/session-title'
 /** How many control records travel with the state (the pane's "交流" list). */
 const DEFAULT_STREAM_LIMIT = 40
 
-function sendJson(res, status, body) {
+function sendJson(res, status, body, etag = null) {
   const text = JSON.stringify(body)
   res.statusCode = status
   res.setHeader('content-type', 'application/json; charset=utf-8')
   res.setHeader('cache-control', 'no-store')
+  if (typeof etag === 'string') res.setHeader('etag', etag)
   res.end(text)
 }
 
@@ -138,13 +140,13 @@ export function apply(ctx, config = {}) {
   const streamLimit =
     Number.isInteger(settings.streamLimit) && settings.streamLimit > 0 ? settings.streamLimit : DEFAULT_STREAM_LIMIT
 
-  const disposers = []
+  const disposers: Array<() => void> = []
   let served = 0
   let refused = 0
   let lastError = null
 
   /** The whole read surface, in one place, with no path that throws past it. */
-  function snapshot() {
+  function snapshot(options: { view?: 'full' | 'structure' } = {}) {
     const collab = ctx.get('linkCollab')
     if (collab === undefined || collab === null) {
       return {
@@ -189,10 +191,8 @@ export function apply(ctx, config = {}) {
     // derived from two different notions of "team" if there is only one place that derives either.
     const world = composeWorld(state)
     const from = Math.max(0, records.length - streamLimit)
-    return {
-      status: 200,
-      body: {
-        ok: true,
+    const body = {
+      ok: true,
         at: Date.now(),
         path,
         ledger: {
@@ -234,8 +234,24 @@ export function apply(ctx, config = {}) {
         fixtures: fixtureCensus(state, records.slice(from)),
         stream: records.slice(from).map(row),
         served: served + 1,
-      },
     }
+    // R514: the structure popover reads the tree and the member rows only. Serving the registry,
+    // peers, board, quarantine, ledger and stream to it was megabytes of JSON parsed on the
+    // renderer's main thread every poll, for fields it never renders.
+    if (options.view === 'structure') {
+      return {
+        status: 200,
+        body: {
+          ok: true,
+          at: body.at,
+          through: body.through,
+          counts: body.counts,
+          teams: body.teams,
+          members: body.members,
+        },
+      }
+    }
+    return { status: 200, body }
   }
 
   async function handler(req, res) {
@@ -252,10 +268,23 @@ export function apply(ctx, config = {}) {
         })
         return
       }
-      const answer = snapshot()
+      const url = new URL(String(req.url ?? ''), 'http://127.0.0.1')
+      const answer = snapshot({ view: url.searchParams.get('view') === 'structure' ? 'structure' : 'full' })
       if (answer.status === 200) served += 1
       else refused += 1
-      sendJson(res, answer.status, answer.body)
+      const text = JSON.stringify(answer.body)
+      // `at` and the served counter change on every answer without describing a change in the
+      // ledger, so the validator is computed with them pinned; otherwise every poll is a new ETag.
+      const stable = JSON.stringify({ ...answer.body, at: 0, served: 0 })
+      const etag = '"' + createHash('sha1').update(stable).digest('hex') + '"'
+      if (req.method === 'GET' && String(req.headers?.['if-none-match'] ?? '') === etag) {
+        res.statusCode = 304
+        res.setHeader('etag', etag)
+        res.setHeader('cache-control', 'no-store')
+        res.end()
+        return
+      }
+      sendJson(res, answer.status, answer.body, etag)
     } catch (error) {
       refused += 1
       lastError = String(error?.message ?? error)
