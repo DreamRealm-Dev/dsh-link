@@ -40,14 +40,29 @@ impl KernelLocation {
     }
 }
 
-/// Resolve the kernel checkout relative to this crate's manifest directory.
+/// The development crate directory, derived from the running executable.
 ///
-/// The checkout lives at `<repo>/core/deepseek-harness`, and `CARGO_MANIFEST_DIR`
-/// is `<repo>/src-tauri` in both dev and bundled runs, so one parent hop finds it
-/// either way.
+/// Deriving it at run time keeps the build machine's absolute path out of the published
+/// binary: `<repo>/src-tauri/target/<profile>` is the same location at development time, and
+/// the derivation simply fails for an installed copy that has no sibling checkout.
+pub fn dev_manifest_dir() -> Option<PathBuf> {
+    let exe = std::env::current_exe().ok()?;
+    let profile = exe.parent()?;
+    let target = profile.parent()?;
+    target.parent().map(Path::to_path_buf)
+}
+
+/// The development repository root, one parent above [dev_manifest_dir].
+pub fn dev_repo_root() -> Option<PathBuf> {
+    dev_manifest_dir().and_then(|crate_dir| crate_dir.parent().map(Path::to_path_buf))
+}
+
+/// Resolve the kernel checkout relative to the development repository root.
+///
+/// The checkout lives at `<repo>/core/deepseek-harness`. A published binary resolves no
+/// development root, so the relative fallback is reported instead of guessing a machine path.
 pub fn kernel_root() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .parent()
+    dev_repo_root()
         .map(|repo| repo.join("core").join("deepseek-harness"))
         .unwrap_or_else(|| PathBuf::from("core").join("deepseek-harness"))
 }

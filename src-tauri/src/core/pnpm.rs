@@ -15,6 +15,8 @@
 use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 
+use super::locator;
+
 /// The bundled pnpm entry, relative to a resources directory.
 const ENTRY: &str = "pnpm/bin/pnpm.mjs";
 
@@ -108,8 +110,11 @@ fn locate_entry(exe_dir: Option<PathBuf>) -> Option<PathBuf> {
         // macOS app bundles keep resources beside the executable's parent.
         candidates.push(dir.join("..").join("Resources").join(ENTRY));
     }
-    // The development run has no resource copy at all: take the checkout's own tree.
-    candidates.push(Path::new(env!("CARGO_MANIFEST_DIR")).join("resources").join(ENTRY));
+    // The development run has no resource copy at all: take the checkout's own tree. The
+    // directory is derived at run time so a published binary does not carry the build path.
+    if let Some(crate_dir) = locator::dev_manifest_dir() {
+        candidates.push(crate_dir.join("resources").join(ENTRY));
+    }
     candidates.into_iter().find(|path| path.is_file())
 }
 

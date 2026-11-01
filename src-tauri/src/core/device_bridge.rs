@@ -2565,8 +2565,7 @@ mod tests {
         };
         assert_eq!(code.len(), 6, "the phone shows a six-digit pairing code");
 
-        let driver = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .parent()
+        let driver = crate::core::locator::dev_repo_root()
             .expect("the crate lives inside the repository")
             .join("tools/device-bridge/drive.mjs");
         assert!(driver.exists(), "the host driver is missing at {}", driver.display());
