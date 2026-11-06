@@ -73,6 +73,7 @@
 //! is unchanged - a real input, and the bare `GET /__shell/panel/report?userInput=` beacon a page (or a
 //! gate) can send with no gesture at all, still takes the panel by name.
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Mutex, OnceLock};
 use std::time::{Duration, Instant};
 
@@ -1671,6 +1672,89 @@ fn place_all(_app: &AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+/// How long a foreground transition is given before the panel is re-placed.
+///
+/// A restored window has not finished its own layout when it comes back: R395 measured the client's deck
+/// reporting the WHOLE window for about 1.5s and reflowing back afterwards. A placement fired *into* that
+/// reflow is a placement against a rect that is about to change, so this waits one beat and then places
+/// against the surface the shell already stored - which is the settled one, because the page that measured
+/// it has been re-run by then.
+const FOREGROUND_SETTLE: Duration = Duration::from_millis(180);
+
+/// Bumped by every foreground transition the shell sees (focus gained, scale factor changed).
+///
+/// It is the ONLY thing that crosses the thread boundary: the worker reads it after each placement to learn
+/// whether a newer state arrived while it was working, so a burst of transitions becomes one extra pass
+/// rather than one extra thread - and one extra round of native SetBounds calls - per event.
+static FOREGROUND_EPOCH: AtomicU64 = AtomicU64::new(0);
+
+/// Whether a worker thread is already on its way to place the panel.
+static FOREGROUND_WORKER: AtomicBool = AtomicBool::new(false);
+
+/// Whether a worker that has just placed for `seen` still has work to do.
+///
+/// Split out of [`replace_after_foreground`] so the coalescing rule can be read and tested without a
+/// window: any transition after the one that was placed means the newest state has not been placed yet.
+fn superseded(seen: u64, latest: u64) -> bool {
+    latest != seen
+}
+
+/// Re-place the mounted panel after the window comes back to the foreground.
+///
+/// Called from `handle_run_event`, i.e. from the thread that owns the window, so every line here is
+/// bookkeeping: the placement itself runs on a worker thread (the closure below).
+///
+/// Why the shell does this at all: a minimise + restore (and any activation that takes the window away and
+/// back) is exactly when a child webview's rectangle can be left behind, and until now nothing in the
+/// shell's run-event half reacted to a restore - the page's own host had to guess, from a layout that is
+/// still reflowing, that it should re-place (R393's note in core/panel_host.js, on the trusted-placement rule and
+/// the gap it left in the shell, records that).
+///
+/// What it deliberately does NOT do: create a child webview, close one, reload one, or touch the kernel.
+/// The rects come from the surface already stored in `state()`, so this path can only put the SAME webviews
+/// back where the shell already said they belong.
+pub fn replace_after_foreground(app: &AppHandle) {
+    FOREGROUND_EPOCH.fetch_add(1, Ordering::SeqCst);
+    if FOREGROUND_WORKER.swap(true, Ordering::SeqCst) {
+        // Somebody is already scheduled: the epoch above is how they learn this transition happened, so
+        // nothing is lost by returning here - and starting a second thread is exactly what a burst of
+        // focus/resize/scale events must not do.
+        return;
+    }
+    let handle = app.clone();
+    std::thread::spawn(move || {
+        loop {
+            std::thread::sleep(FOREGROUND_SETTLE);
+            let seen = FOREGROUND_EPOCH.load(Ordering::SeqCst);
+            if let Err(error) = replace_now(&handle) {
+                // Named rather than silent: a placement that did not take leaves the panel at whatever
+                // rect the restore produced, which is the shape R390 was reported as.
+                println!("[browser] the foreground re-place did not take: {error}");
+            }
+            if !superseded(seen, FOREGROUND_EPOCH.load(Ordering::SeqCst)) {
+                break;
+            }
+        }
+        FOREGROUND_WORKER.store(false, Ordering::SeqCst);
+    });
+}
+
+/// Put the panel where the shell's stored state says it goes, if it is up at all.
+///
+/// A panel that is not mounted is not touched: parking it is `unmount`'s job, and a foreground transition
+/// must not bring back a browser the user closed. Nothing here reads the page, so no round trip is needed
+/// and none is made.
+pub fn replace_now(app: &AppHandle) -> Result<(), String> {
+    let mounted = {
+        let panel = state().lock().unwrap();
+        panel.mounted
+    };
+    if !mounted {
+        return Ok(());
+    }
+    place_all(app)
+}
+
 /// Apply the stored mode to the active tab's page through the in-process protocol and record whether
 /// the page took it. fit clears the override (the page's viewport IS the content rect); fixed sets the
 /// contract's viewport with scale = min(contentW / w, contentH / h).
@@ -2317,6 +2401,26 @@ pub fn cdp(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// R396: the coalescing rule behind the foreground re-place.
+    ///
+    /// A burst of transitions (focus gained, scale factor changed, a restore's own resize) must not become a
+    /// burst of native placements: the worker places the NEWEST state it can see, and asks for one more pass
+    /// only when a transition arrived while it was working. Both directions are asserted here because the
+    /// second one is the half that silently loses a placement - a worker that reads the epoch once, before it
+    /// places, forgets a transition that lands mid-placement and leaves the panel on the pre-restore rect
+    /// until something else moves it.
+    #[test]
+    fn a_foreground_burst_is_one_placement_plus_one_pass_per_late_transition() {
+        // Nothing arrived while the worker placed: it stops after that one placement.
+        assert!(!superseded(7, 7));
+        // A transition landed while it was working: exactly one more pass, no matter how many landed.
+        assert!(superseded(7, 8));
+        assert!(superseded(7, 9));
+        assert!(superseded(7, 64));
+        // An epoch only ever moves forward, so an older reading is never mistaken for a newer state.
+        assert!(superseded(8, 7));
+    }
 
     /// R184-D: which protocol calls open a window at all. The domain matters: `Input.*` delivers events
     /// (or text) into a page, everything else the panel is asked for injects no input event.

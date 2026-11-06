@@ -1,6 +1,0 @@
-- insert:
-    - id: layer-config
-      name: base
-      config:
-        a: 1
-

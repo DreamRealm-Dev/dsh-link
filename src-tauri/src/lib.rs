@@ -487,9 +487,11 @@ fn start_tray(handle: &tauri::AppHandle) -> tauri::Result<()> {
 
 /// The run-event half of the shell, shared by both entries for the same reason `boot` is.
 ///
-/// Three behaviours: a close hides the window instead of quitting, a system appearance change is followed only
-/// while the palette is still the system's, and `RunEvent::Exit` stops the kernel child explicitly. A host that
-/// embedded the shell gets all three by passing this function to `App::run`.
+/// Five behaviours: a close hides the window instead of quitting, a system appearance change is followed only
+/// while the palette is still the system's, a foreground transition schedules one coalesced re-place of the sidebar
+/// panel on a worker thread (see [`core::sidebar_panel::replace_after_foreground`]), a window resize copies the real
+/// client size onto the window's own webview on Windows (see [`resize_window_webview`]), and `RunEvent::Exit` stops
+/// the kernel child explicitly. A host that embedded the shell gets all five by passing this function to `App::run`.
 pub fn handle_run_event(app_handle: &tauri::AppHandle, event: tauri::RunEvent) {
     match event {
         // Closing the window is not quitting. The kernel keeps running and the
@@ -517,6 +519,35 @@ pub fn handle_run_event(app_handle: &tauri::AppHandle, event: tauri::RunEvent) {
                 shell.follow_system(&app_handle);
             }
     }
+    // A window that has been minimised and brought back is a window the compositor is
+    // re-presenting, so NOTHING that costs a native call may run here: this thread is the one
+    // that owns the window, and a placement on it is a placement the user waits behind.
+    //
+    // Two facts make this the right place for the work rather than the page's:
+    //   * `Focused` does arrive for this window - the comment above records that Tauri 2.12/wry
+    //     0.57 deliver Focused and Resized to this hook (only CloseRequested is missing);
+    //   * a restore is exactly when a child webview's rectangle can be left behind. The page
+    //     that measures the right column can only re-place it from a layout it is still
+    //     reflowing (R395 measured the deck reporting the whole window for ~1.5s after a
+    //     restore), and R393's note in core/panel_host.js records the gap in the shell:
+    //     "nothing in handle_run_event reacts to a restore".
+    // The work is therefore SCHEDULED: one coalesced, off-thread re-place from the shell's own
+    // stored surface (core::sidebar_panel::replace_after_foreground), which reuses the child
+    // webviews the window already has instead of creating, closing or reloading any of them.
+    tauri::RunEvent::WindowEvent {
+        event: WindowEvent::Focused(true) | WindowEvent::ScaleFactorChanged { .. },
+        ..
+    } => core::sidebar_panel::replace_after_foreground(app_handle),
+    // A window resize is the one native size the shell still has to copy by hand on Windows: Tauri's
+    // proportional resize pass is switched off for these windows (see keep_webview_sized_by_wry), so
+    // the window's own webview gets its new client size here. The minimized event is skipped inside
+    // resize_window_webview: its "size" is the placeholder rect, which is exactly the title-bar strip
+    // this fix keeps out of the page.
+    tauri::RunEvent::WindowEvent {
+        label,
+        event: WindowEvent::Resized(size),
+        ..
+    } => resize_window_webview(app_handle, &label, size),
     tauri::RunEvent::WindowEvent { label, event, .. } => {
         if let WindowEvent::CloseRequested { api, .. } = &event {
             if !QUITTING.load(Ordering::SeqCst) {
@@ -539,6 +570,64 @@ pub fn handle_run_event(app_handle: &tauri::AppHandle, event: tauri::RunEvent) {
     }
     _ => {}
     }
+}
+
+/// Stop Tauri's proportional resize pass from sizing the shell's own window webviews (Windows only).
+///
+/// The shell enables tauri's `unstable` feature because the sidebar browser needs `Window::add_child`, and with
+/// that feature a `WebviewWindow`'s own webview is registered for the runtime's auto-resize pass. That pass does
+/// not filter `SIZE_MINIMIZED`: tao forwards the minimized `WM_SIZE`, and this shell's undecorated window reports
+/// its minimized placeholder rectangle there (measured 158x26 at 150% DPI). Every minimize therefore squeezed the
+/// webview - and the page laid out inside it - down to a title-bar-sized strip, and the restore animation showed
+/// exactly that strip until the window was foregrounded and the webview was sized again.
+///
+/// What sizes the webview instead: wry skips `SIZE_MINIMIZED` in its own `WM_SIZE` handler, but with `unstable` a
+/// window's webview is a child webview in wry's terms, so that handler is never attached to it; the real client size
+/// is copied over by [`resize_window_webview`] from the window's `Resized` event instead. That copy is a message to
+/// the runtime (no native call on the event-loop thread), which is the discipline the sidebar's child webviews are
+/// placed with.
+///
+/// Only Windows needs this: `SIZE_MINIMIZED` and the minimized placeholder rectangle are Win32 facts. Other desktop
+/// platforms keep Tauri's pass in charge.
+fn keep_webview_sized_by_wry(window: &tauri::WebviewWindow) {
+    #[cfg(windows)]
+    {
+        if let Err(error) = window.as_ref().set_auto_resize(false) {
+            eprintln!("[shell] could not keep the window's webview out of the proportional resize pass: {error}");
+        }
+    }
+    #[cfg(not(windows))]
+    let _ = window;
+}
+
+/// Give a window's own webview the window's real client size: the other half of
+/// [`keep_webview_sized_by_wry`], called from [`handle_run_event`] for every `Resized` event.
+///
+/// Skipped when the event is not a layout: a minimized window reports its placeholder rectangle - the title-bar
+/// strip this path exists to keep out of the page - and a zero size carries nothing to apply. The size arrives in
+/// physical pixels, which is what wry's placement wants, and the call is a message to the runtime, so the window's
+/// event-loop thread does not wait for a native resize.
+fn resize_window_webview(app: &tauri::AppHandle, label: &str, size: tauri::PhysicalSize<u32>) {
+    #[cfg(windows)]
+    {
+        if size.width == 0 || size.height == 0 {
+            return;
+        }
+        let Some(window) = app.get_webview_window(label) else {
+            // A host-embedded shell sits in a plain host Window, whose child webview keeps its own auto_resize
+            // (the shell does not own that window's frame): there is nothing to copy here.
+            return;
+        };
+        if window.is_minimized().unwrap_or(false) {
+            return;
+        }
+        let webview: &tauri::Webview = window.as_ref();
+        if let Err(error) = webview.set_size(size) {
+            eprintln!("[shell] could not give the window's webview its client size: {error}");
+        }
+    }
+    #[cfg(not(windows))]
+    let _ = (app, label, size);
 }
 
 /// Open ANOTHER WINDOW of this running instance.
@@ -597,7 +686,10 @@ pub fn open_extra_window(handle: &tauri::AppHandle) -> Result<String, String> {
         });
     #[cfg(desktop)]
     let builder = builder.decorations(false).shadow(false).center();
-    builder.build().map_err(|error| format!("could not build {label}: {error}"))?;
+    let window = builder.build().map_err(|error| format!("could not build {label}: {error}"))?;
+    // Another window built the same way is the same shape: without this its restore would show the same
+    // title-bar strip (see keep_webview_sized_by_wry).
+    keep_webview_sized_by_wry(&window);
     eprintln!("[shell] opened another window {label:?} on {SELF_ORIGIN} (same instance, same kernel, same session)");
     Ok(label)
 }
@@ -704,7 +796,13 @@ fn build_window(handle: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Err
     // activity-hosted webview to work with and no second window to make, so a refusal
     // there is reported and the proxy stays up rather than taking the process down.
     #[cfg(desktop)]
-    built?;
+    {
+        let window = built?;
+        // The webview stops following Tauri's proportional resize pass, which would otherwise squeeze it to
+        // the minimized placeholder on every minimize (see keep_webview_sized_by_wry); the Resized arm in
+        // handle_run_event then copies the real client size onto it.
+        keep_webview_sized_by_wry(&window);
+    }
     #[cfg(mobile)]
     if let Err(error) = built {
         eprintln!("[shell] mobile webview: {error}");
@@ -1065,6 +1163,29 @@ pub(crate) fn open_url(app: &tauri::AppHandle, url: &str) {
     }
 }
 
+/// Whether a watchdog sample can say anything about this window's renderer.
+///
+/// `is_visible` alone is not that question. On Windows it is `IsWindowVisible`, which stays
+/// true for a MINIMIZED window (tao reads exactly that flag,
+/// `platform_impl/windows/util.rs:203`), and a minimized window is exactly the shape whose page
+/// the compositor stops driving: its timers are throttled and the kernel may have dropped its
+/// sockets. Sampling that page's silence reads "nobody is looking" as "the renderer died", so the
+/// window has to be both shown and not minimized before its quiet counts.
+fn window_observable(window: &tauri::WebviewWindow) -> bool {
+    if !window.is_visible().unwrap_or(false) {
+        return false;
+    }
+    #[cfg(desktop)]
+    {
+        !window.is_minimized().unwrap_or(false)
+    }
+    // A mobile webview is the activity's own and has no minimized state to be excluded.
+    #[cfg(not(desktop))]
+    {
+        true
+    }
+}
+
 /// Watch the main window for a dead renderer and try to bring it back.
 ///
 /// A reload re-runs the official client's boot in place; if three reloads cannot
@@ -1075,10 +1196,11 @@ pub(crate) fn open_url(app: &tauri::AppHandle, url: &str) {
 ///
 /// Two disciplines are lifted from the DSH EAC renderer recovery state machine:
 /// a hidden (or suspended, or RDP-detached) renderer throttles its own timers and
-/// may legitimately go quiet, so hidden windows are judged neither healthy nor
-/// dead — the cycle simply skips them; and the attempt counter clears only after
-/// health has held for [`WATCHDOG_STABLE`], so a crash that re-appears seconds
-/// after every recovery is never mistaken for a cure.
+/// may legitimately go quiet, so windows the user cannot see are judged neither
+/// healthy nor dead — the cycle skips them AND restarts their silence clock (see
+/// [`window_observable`]); and the attempt counter clears only after health has
+/// held for [`WATCHDOG_STABLE`], so a crash that re-appears seconds after every
+/// recovery is never mistaken for a cure.
 async fn watch_window(handle: tauri::AppHandle, supervisor: KernelSupervisor) {
     let mut reloads: u32 = 0;
     let mut healthy_since: Option<tokio::time::Instant> = None;
@@ -1096,10 +1218,16 @@ async fn watch_window(handle: tauri::AppHandle, supervisor: KernelSupervisor) {
         let Some(window) = handle.get_webview_window(embed::window_label()) else {
             continue;
         };
-        if !window.is_visible().unwrap_or(false) {
+        if !window_observable(&window) {
+            // Neither healthy nor dead: the page is allowed to be silent while the user
+            // cannot see it, so this sample says nothing about the renderer. Restarting
+            // the silence clock here is what keeps the first sample after the window is
+            // brought back from reading the whole unseen stretch as a crash - which made
+            // every reopen reload a live page and spend its first seconds booting the
+            // client again instead of showing the interface that was already there.
+            supervisor.liveness().note_unobserved();
             continue;
         }
-
         if supervisor.status().phase != core::supervisor::KernelPhase::Ready {
             // A dead kernel is the supervisor's problem, not the renderer's; and
             // while it is down the page legitimately has no sockets to offer.

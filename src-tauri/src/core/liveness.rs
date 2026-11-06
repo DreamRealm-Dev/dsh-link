@@ -21,6 +21,14 @@ use std::time::{SystemTime, UNIX_EPOCH};
 /// blips both signals is not mistaken for a crash.
 pub const STALE_AFTER_MS: u64 = 60_000;
 
+/// Milliseconds since the Unix epoch, for the silence clock.
+fn now_ms() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|since| since.as_millis() as u64)
+        .unwrap_or(0)
+}
+
 /// Window liveness as seen from the proxy.
 #[derive(Default)]
 pub struct Liveness {
@@ -36,11 +44,7 @@ pub struct Liveness {
 impl Liveness {
     /// Record any proxied request as a sign of life.
     pub fn touch_request(&self) {
-        let now = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .map(|since| since.as_millis() as u64)
-            .unwrap_or(0);
-        self.last_request_ms.store(now, Ordering::Relaxed);
+        self.last_request_ms.store(now_ms(), Ordering::Relaxed);
     }
 
     /// Record a relay opening: the page reached the official client.
@@ -59,16 +63,68 @@ impl Liveness {
         }
     }
 
+    /// Discard the silence clock because the window could not be observed.
+    ///
+    /// A hidden or minimized window is throttled by the compositor: it may make no request
+    /// and hold no socket for as long as it stays out of sight. That silence is not evidence
+    /// about its renderer, so a sample that cannot observe the window restarts the clock
+    /// instead of letting it run. Without this, the first sample after the window is brought
+    /// back reads the whole unseen stretch as death and reloads a healthy page - which the
+    /// user sees as an interface that takes seconds to appear every time it is opened.
+    pub fn note_unobserved(&self) {
+        self.touch_request();
+    }
+
     /// Whether a page that once lived has now gone quiet on every channel.
     pub fn window_stale(&self) -> bool {
         if !self.ever_connected.load(Ordering::Relaxed) || self.ws_live.load(Ordering::Relaxed) > 0 {
             return false;
         }
-        let now = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .map(|since| since.as_millis() as u64)
-            .unwrap_or(0);
         let last = self.last_request_ms.load(Ordering::Relaxed);
-        now.saturating_sub(last) > STALE_AFTER_MS
+        now_ms().saturating_sub(last) > STALE_AFTER_MS
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn an_unobserved_window_does_not_read_as_dead() {
+        let liveness = Liveness::default();
+        // The page reached the client once and holds no socket now, so its silence is the
+        // signal the watchdog judges.
+        liveness.ws_opened();
+        liveness.ws_closed();
+        // Ten minutes of it, as a window left minimized the whole time would show.
+        liveness
+            .last_request_ms
+            .store(now_ms().saturating_sub(600_000), Ordering::Relaxed);
+        assert!(liveness.window_stale(), "silence past the limit is what the watchdog judges");
+
+        liveness.note_unobserved();
+        assert!(
+            !liveness.window_stale(),
+            "a sample that cannot see the window restarts the clock instead of reading the unseen time as a crash"
+        );
+    }
+
+    #[test]
+    fn a_page_that_never_connected_is_never_stale() {
+        let liveness = Liveness::default();
+        liveness
+            .last_request_ms
+            .store(now_ms().saturating_sub(600_000), Ordering::Relaxed);
+        assert!(!liveness.window_stale(), "the boot page opens no socket, so it cannot be judged");
+    }
+
+    #[test]
+    fn an_open_socket_keeps_a_quiet_page_alive() {
+        let liveness = Liveness::default();
+        liveness.ws_opened();
+        liveness
+            .last_request_ms
+            .store(now_ms().saturating_sub(600_000), Ordering::Relaxed);
+        assert!(!liveness.window_stale(), "a held socket is liveness whatever the request clock says");
     }
 }

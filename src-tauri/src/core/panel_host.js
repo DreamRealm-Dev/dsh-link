@@ -29,7 +29,7 @@
 // sidebar browser (measured in R164: the home screen with its own left rail, drawn inside the panel's rectangle).
 var HOME = location.origin + '/__shell/panel-start';
   var MIN = 48; /* a surface smaller than this holds no browser */
-  var STATE = { open: false, url: HOME, placed: null, last: null, healAt: null, settleUntil: 0, drag: { dx: 0, dy: 0, dw: 0, dh: 0 } };
+  var STATE = { open: false, url: HOME, placed: null, last: null, healAt: null, settleUntil: 0, placing: false, again: null, drag: { dx: 0, dy: 0, dw: 0, dh: 0 } };
   function post(payload) {
     return fetch('/__shell/panel', {
       method: 'POST', credentials: 'omit',
@@ -96,11 +96,29 @@ var HOME = location.origin + '/__shell/panel-start';
     return onScreen(moved)
   }
   function key(spot) { return spot === null ? 'closed' : [spot.x, spot.y, spot.w, spot.h].join(',') }
+  /* R396: ONE placement outstanding at a time, and the newest rect wins.
+   *
+   * A restore makes the answer slow (the shell is re-presenting the child webviews), and the 400 ms beat below
+   * used to post the same rect again for as long as that took - each post a fresh round of native SetBounds calls
+   * in the shell, on the one occasion where those calls are expensive. Now a tick that arrives while a placement
+   * is in flight only records the rect it wanted; the answer schedules the next attempt. */
   function place(spot, tries) {
+    if (STATE.placing === true) { STATE.again = spot; return }
+    STATE.placing = true
     post({ op: 'set-bounds', x: spot.x, y: spot.y, w: spot.w, h: spot.h }).then(function (answer) {
-      if (answer !== null && answer.exists === true) { STATE.placed = key(spot); return }
-      if (tries < 15) { setTimeout(function () { place(spot, tries + 1) }, 200) }
-      else { console.warn('DSH Link panel: the shell never reported an existing panel to place') }
+      STATE.placing = false
+      if (answer !== null && answer.exists === true) {
+        STATE.placed = key(spot)
+        if (STATE.again !== null) { var latest = STATE.again; STATE.again = null; place(latest, 0) }
+        return
+      }
+      if (tries < 15) {
+        setTimeout(function () {
+          var wanted = STATE.again === null ? spot : STATE.again
+          STATE.again = null
+          place(wanted, tries + 1)
+        }, 200)
+      } else { console.warn('DSH Link panel: the shell never reported an existing panel to place') }
     })
   }
   var ticks = 0
@@ -290,8 +308,15 @@ var HOME = location.origin + '/__shell/panel-start';
    * A legitimate full-window mode is unaffected: it survives the settle period, and a settled rect is never filtered. */
   window.addEventListener('resize', function () { STATE.last = null; STATE.settleUntil = Date.now() + 1500 })
   if (document.addEventListener) {
+    /* R396: this handler USED to call sync() - i.e. it posted op=set-bounds from the visibilitychange event itself,
+     * which is the worst moment to ask the shell for native work: the window has just been restored, its child
+     * webviews are being re-presented by the compositor, and the rect being measured belongs to a layout that is
+     * still reflowing (that is what settleUntil above is for). Forgetting what the host thought it had placed is
+     * still the point of the handler - the shell re-places from its own stored surface on the same transition - so
+     * the next beat places exactly once, on the settled layout, and the restore costs the renderer this tick
+     * instead of a native round trip inside the event. */
     document.addEventListener('visibilitychange', function () {
-      if (document.visibilityState === 'visible') { STATE.last = null; STATE.settleUntil = Date.now() + 1500; sync() }
+      if (document.visibilityState === 'visible') { STATE.last = null; STATE.placed = null; STATE.settleUntil = Date.now() + 1500 }
     })
   }
 
